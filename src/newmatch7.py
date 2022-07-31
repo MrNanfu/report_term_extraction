@@ -1,0 +1,486 @@
+# coding:utf-8
+import copy
+
+from pathological import word_probbinglicebie, word_probbinglibuwei, word_probbingliwuli, word_probchaoshengwuli, \
+    word_probbingliwulinangxing, word_probbingliliangexing, word_probchaoshengliangexing, word_probliangxing, \
+    word_probexing, word_probliang_or_e, word_probbinglibingli, word_probchaoshengcebie, word_probchaoshengbuwei, \
+    word_probchaoshengbingli,word_probexing_major,word_probliang_or_e_major,word_probliangxing_major,word_probliangxing_minor
+
+# 顺序 侧别1 部位2 bp 物理性质3 pp 良恶性4 bm 病理性质5
+from pathological import pathologicalfuc
+from ultrasound import ultrasoundfuc
+
+#主函数
+def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultrasound_report):
+    lenstringb = len(pathological_report)
+    lenstringc = len(ultrasound_report)
+    pathologicalfuc(pathological_bodypart, pathological_report)
+    ultrasoundfuc(ultrasound_bodypart, ultrasound_report)
+    from pathological import segmentsb1, segmentsb2, segmentsb3, segmentsb4, segmentsb5, leninputbingli, segmentsb2temp, \
+        segmentsb5bf  # 引入之前两个函数中得到的列表信息
+    from ultrasound import segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5, leninputchaosheng, segmentsc2temp
+    global segmentsb1, segmentsb2, segmentsb3, segmentsb4, segmentsb5, segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5, leninputbingli, leninputchaosheng, segmentsb5bf
+    #生成一个整体列表的形式
+    def fuc1(segments2, segments3, segments4, segments5, lenstring):
+        segmentsall = []
+        # 整体大列表 的第一层列表数和部位数目相同
+        lenalldiv = int(len(segments2) / 2)#带着位置信息，注意除以二
+        for ialldiv in range(lenalldiv):
+            segmentsall.append([])
+        # 整体大列表 的第二层列表数为5
+        for ialldiv in range(lenalldiv):
+            for j in range(5):
+                segmentsall[ialldiv].append([])
+        #填入“部位分割标志”字样
+        for ialldiv in range(lenalldiv):
+            (segmentsall[ialldiv])[0].append('部位分割标志')
+        # 填入 部位
+        for ialldiv in range(lenalldiv):  # 注意这里不除二,前面除过了
+            (segmentsall[ialldiv])[1].append(segments2[2 * ialldiv])
+            (segmentsall[ialldiv])[1].append(segments2[int(2 * ialldiv + 1)])
+
+        #建立一个填两两部位之间的位置都有哪些的列表
+        lenalldiv = int(len(segments2) / 2)
+        segmentsnum = []
+        for inum in range(lenalldiv):
+            segmentsnum.append([])
+        # 开始填入位置信息
+        idiv = 0
+        while (1):
+            if lenalldiv == 0:
+                break
+            if idiv < lenalldiv - 1:
+                segmentsnum[idiv].extend(range(segments2[2 * idiv + 1], segments2[2 * idiv + 3]))
+                idiv = idiv + 1
+            if idiv == lenalldiv - 1:
+                segmentsnum[idiv].extend(range(segments2[2 * idiv + 1], lenstring))
+                break
+
+        # 把病理项、良性恶性、实性囊性放到列表里，如果某个病理信息的位置，在两个器官位置的中间，那它应该放入前一个器官所在的列表
+        for j5 in range(int(len(segments5) / 2)):
+            for jnum in range(len(segmentsnum)):
+                if segments5[2 * j5 + 1] in segmentsnum[jnum]:
+                    (segmentsall[jnum])[4].append(segments5[2 * j5])
+                    (segmentsall[jnum])[4].append(segments5[2 * j5 + 1])
+        for j4 in range(int(len(segments4) / 2)):
+            for jnum in range(len(segmentsnum)):
+                if segments4[2 * j4 + 1] in segmentsnum[jnum]:
+                    (segmentsall[jnum])[3].append(segments4[2 * j4])
+                    (segmentsall[jnum])[3].append(segments4[2 * j4 + 1])
+        for j3 in range(int(len(segments3) / 2)):
+            for jnum in range(len(segmentsnum)):
+                if segments3[2 * j3 + 1] in segmentsnum[jnum]:
+                    (segmentsall[jnum])[2].append(segments3[2 * j3])
+                    (segmentsall[jnum])[2].append(segments3[2 * j3 + 1])
+        return (segmentsall, segmentsnum)
+
+    segmentsball, segmentsbnum = fuc1(segmentsb2, segmentsb3, segmentsb4, segmentsb5, lenstringb)
+    segmentscall, segmentscnum = fuc1(segmentsc2, segmentsc3, segmentsc4, segmentsc5, lenstringc)
+
+
+    # 出现双乳，需要展开，下面的字典需要根据数据里出现过什么不断补充，而且得注意需求是调整超声 病理 还是都调整
+    def unfold(segmentsall, segments2, string1, string2, string3):
+        lenalldiv = int(len(segments2) / 2)
+        i = 0
+        while (1):
+            if ((segmentsall[i])[1])[0] == string1:
+                sleft = (segmentsall[i])[1].copy()
+                sleft[0] = string2
+                sright = (segmentsall[i])[1].copy()
+                sright[0] = string3
+                m = (segmentsall[i]).copy()
+                m[1] = sleft
+                n = (segmentsall[i]).copy()
+                n[1] = sright
+                left = m
+                right = n
+                segmentsall[i] = left
+                segmentsall.insert(i + 1, right)
+                lenalldiv += 1
+            i = i + 1
+            if i == lenalldiv:
+                break
+        return segmentsall
+
+    segmentscall = unfold(segmentscall, segmentsc2, '双侧乳腺', '左侧乳腺', '右侧乳腺')
+    segmentscall = unfold(segmentscall, segmentsc2, '双乳', '左乳', '右乳')
+    segmentscall = unfold(segmentscall, segmentsc2, '双侧乳房', '左侧乳房', '右侧乳房')
+    segmentscall = unfold(segmentscall, segmentsc2, '双侧乳头', '左侧乳头', '右侧乳头')
+    segmentscall = unfold(segmentscall, segmentsc2, '双侧腋窝及锁骨区', '左侧腋窝及锁骨区', '右侧腋窝及锁骨区')
+
+    segmentsball = unfold(segmentsball, segmentsb2, '双侧乳腺', '左侧乳腺', '右侧乳腺')
+    segmentsball = unfold(segmentsball, segmentsb2, '双乳', '左乳', '右乳')
+    segmentsball = unfold(segmentsball, segmentsb2, '双侧乳房', '左侧乳房', '右侧乳房')
+    segmentsball = unfold(segmentsball, segmentsb2, '双侧乳头', '左侧乳头', '右侧乳头')
+    segmentsball = unfold(segmentsball, segmentsb2, '双侧腋窝及锁骨区', '左侧腋窝及锁骨区', '右侧腋窝及锁骨区')  # 注意要填归一化后的，即不能让它检测双侧腋窝
+
+
+
+
+
+    # 去掉位置信息
+    def new(segmentsall):
+        # 整体的嵌套大列表
+        segmentsnew = []
+        # 整体大列表 的第一层列表数和部位数目相同
+        lennewdiv = int(len(segmentsall))
+        for inewdiv in range(lennewdiv):
+            segmentsnew.append([])
+        # 整体大列表 的第二层列表数为5
+        for inewdiv in range(lennewdiv):
+            for j in range(5):
+                segmentsnew[inewdiv].append([])
+        for inewdiv in range(lennewdiv):
+            (segmentsnew[inewdiv])[0].append('部位分割标志')
+
+        for i in range(len(segmentsall)):
+            for j in range(1, 5):
+                lendiv = int(len((segmentsall[i])[j]) / 2)
+                for k in range(lendiv):
+                    (segmentsnew[i])[j].append(((segmentsall[i])[j])[2 * k])
+        return (segmentsnew)
+
+    segmentsbnew = new(segmentsball)
+    segmentscnew = new(segmentscall)
+    # print('\n')
+    # print('提取到的原始病理信息为')
+    # print(segmentsbnew)
+    # print('提取到的原始超声信息为')
+    # print(segmentscnew)
+
+    #拷贝一个作为输出，这里是提取到的原始病理信息和提取到的原始超声信息
+    segmentsbnew_copy_step1=copy.deepcopy(segmentsbnew)
+    segmentscnew_copy_step1 = copy.deepcopy(segmentscnew)
+
+    #越严重的病对应越高的数值，用于后续归一化
+    def get_key(dict, value):
+        return [k for k, v in dict.items() if v == value]
+    word_prob3 = {"无病变": 0.01, "混合性": 0.02, "囊性": 0.03, "囊实": 0.04, "实性": 0.05}
+    #注意实性囊性这里，医生之前没有给出严重的排名，我是根据网上查的写了一个，乳腺任务这里不用实性囊性，但接下来其他部位的时候需要医生确定下他们之间的排序
+    word_prob4 = {"良性": 0.01, "良性或恶性待定": 0.015, "恶性": 0.02}
+
+    #多个实性囊性出现时进行归一化
+    def normalization3(segments):
+        valueside = 0.01
+        for i in range(len(segments)):
+            valuesidetemp = word_prob3[segments[i]]
+            if valuesidetemp > valueside:
+                valueside = valuesidetemp
+        segments = get_key(word_prob3, valueside)
+        return segments
+
+    for i in range(len(segmentsbnew)):
+        segmentsbnew[i][2]=normalization3(segmentsbnew[i][2])
+    for i in range(len(segmentscnew)):
+        segmentscnew[i][2]=normalization3(segmentscnew[i][2])
+
+    #多个良性恶性出现时进行归一化
+    def normalization4(segments):
+        valueside = 0.01
+        for i in range(len(segments)):
+            if segments[i] in word_prob4:
+                valuesidetemp = word_prob4[segments[i]]
+                if valuesidetemp > valueside:
+                    valueside = valuesidetemp
+        segments = get_key(word_prob4, valueside)
+        return segments
+    for i in range(len(segmentsbnew)):
+        segmentsbnew[i][3]=normalization4(segmentsbnew[i][3])
+    for i in range(len(segmentscnew)):
+        segmentscnew[i][3]=normalization4(segmentscnew[i][3])
+
+    #主要诊断次要诊断需要进行筛选，注意逻辑图中主要次要病分类有问题，后来医生将所有的良恶性待定（绿色的）都放入主要诊断里了，我下面的四个字典也是根据调整后的进行构建的
+    #找到对应的数值
+    def normalization_major_minor_temp(segments):
+        segments_temp=[]
+        if len(segments)!=0:
+            for i in range(len(segments)):
+                if segments[i] in word_probexing_major:
+                    segments_temp.append(0.04)
+
+                elif segments[i] in word_probliang_or_e_major:
+                    segments_temp.append(0.03)
+
+                elif segments[i] in word_probliangxing_major:
+                    segments_temp.append(0.02)
+
+                elif segments[i] in word_probliangxing_minor:
+                    segments_temp.append(0.01)
+
+                else:
+                    break
+        return segments_temp
+
+    #找到其中最大的数值，以及其对应的字典是哪个
+    def get_temp_dictionary(segments_temp):
+        valuetemp = 0.01
+        for i in range(len(segments_temp)):
+            if segments_temp[i]>valuetemp:
+                valuetemp = segments_temp[i]
+
+        if valuetemp==0.04:
+            return word_probexing_major
+        if valuetemp==0.03:
+            return word_probliang_or_e_major
+        if valuetemp==0.02:
+            return word_probliangxing_major
+        if valuetemp==0.01:
+            return word_probliangxing_minor
+
+    #归一化
+    def normalization_major_minor(segments):
+        segments_temp = normalization_major_minor_temp(segments)
+        valuetemp_dictionary = get_temp_dictionary(segments_temp)
+        segments_normalization_major_minor=[]
+        for i in range(len(segments)):
+            if segments[i] in valuetemp_dictionary.keys():
+                segments_normalization_major_minor.append(segments[i])
+                break
+        return segments_normalization_major_minor
+
+
+    for i in range(len(segmentsbnew)):
+        segmentsbnew[i][4]=normalization_major_minor(segmentsbnew[i][4])
+        #医生给的字典里只有病理性质，所以不知道超声要不要也这样提取，先不加，加上后可能需要调整代码
+        # segmentscnew[i][4] = normalization_major_minor(segmentscnew[i][4])
+
+    #拷贝一个作为输出，这里是根据主要次要诊断筛选后的信息
+    segmentsbnew_copy_step2=copy.deepcopy(segmentsbnew)
+    segmentscnew_copy_step2 =copy.deepcopy(segmentscnew)
+
+    def get_key(dict, value):
+        return [k for k, v in dict.items() if v == value]
+
+    word_prob3 = {"无病变": 0.01, "混合性": 0.02, "囊性": 0.03, "囊实": 0.04, "实性": 0.05}
+    word_prob4 = {"良性": 0.01, "良性或恶性待定": 0.015, "恶性": 0.02}
+
+
+    # 合并左乳 合并右乳，即如左乳腺、左乳房、左乳头的信息都合并到一起作为左乳
+    def combine(word_prob2left, word_prob2right, segmentsnew):
+
+        segments3left = []
+        segments4left = []
+        segments5left = []
+        segments3right = []
+        segments4right = []
+        segments5right = []
+
+        # print('segmentsnew为')
+        # print(segmentsnew)
+        for i in range(len(segmentsnew)):
+            if ((segmentsnew[i])[1])[0] in word_prob2left:
+                segments5left.extend((segmentsnew[i])[4])
+                segments4left.extend((segmentsnew[i])[3])
+                segments3left.extend((segmentsnew[i])[2])
+
+            if ((segmentsnew[i])[1])[0] in word_prob2right:
+                segments5right.extend((segmentsnew[i])[4])
+                segments4right.extend((segmentsnew[i])[3])
+                segments3right.extend((segmentsnew[i])[2])
+
+        return segments3left, segments3right, segments4left, segments4right, segments5left, segments5right
+
+    segmentsb3left_breast, segmentsb3right_breast, segmentsb4left_breast, segmentsb4right_breast, segmentsb5left_breast, segmentsb5right_breast = combine(
+        {"左乳": 0.01, "左侧乳头": 0.01, "左侧乳房": 0.01, "左侧乳腺": 0.01}, {"右乳": 0.01, "右侧乳头": 0.01, "右侧乳房": 0.01, "右侧乳腺": 0.01},
+        segmentsbnew)
+    segmentsb3left_axilla, segmentsb3right_axilla, segmentsb4left_axilla, segmentsb4right_axilla, segmentsb5left_axilla, segmentsb5right_axilla = combine(
+        {"左侧腋窝": 0.01, "左侧锁骨": 0.01, "左腋窝": 0.01, "左锁骨": 0.01, "左侧腋窝及锁骨区": 0.01},
+        {"右侧腋窝": 0.01, "右侧锁骨": 0.01, "右腋窝": 0.01, "右锁骨": 0.01, "右侧腋窝及锁骨区": 0.01}, segmentsbnew)
+    segmentsc3left_breast, segmentsc3right_breast, segmentsc4left_breast, segmentsc4right_breast, segmentsc5left_breast, segmentsc5right_breast = combine(
+        {"左乳": 0.01, "左侧乳头": 0.01, "左侧乳房": 0.01, "左侧乳腺": 0.01}, {"右乳": 0.01, "右侧乳头": 0.01, "右侧乳房": 0.01, "右侧乳腺": 0.01},
+        segmentscnew)
+    segmentsc3left_axilla, segmentsc3right_axilla, segmentsc4left_axilla, segmentsc4right_axilla, segmentsc5left_axilla, segmentsc5right_axilla = combine(
+        {"左侧腋窝": 0.01, "左侧锁骨": 0.01, "左腋窝": 0.01, "左锁骨": 0.01, "左侧腋窝及锁骨区": 0.01},
+        {"右侧腋窝": 0.01, "右侧锁骨": 0.01, "右腋窝": 0.01, "右锁骨": 0.01, "右侧腋窝及锁骨区": 0.01}, segmentscnew)
+
+    #不是左乳右乳都要输出，要看病理报告提到了哪侧，属于之前都准备好左乳右乳信息了，这里哪侧不为空，输出哪侧
+    def findnotnone(segmentsnew):
+        segmentsnew_temp = []
+        for i in range(len(segmentsnew)):
+            if ((segmentsnew[i])[1])[0] in {"左乳": 0.01, "左侧乳头": 0.01, "左侧乳房": 0.01, "左侧乳腺": 0.01}:
+                segmentsnew_temp.append(0)
+            if ((segmentsnew[i])[1])[0] in {"右乳": 0.01, "右侧乳头": 0.01, "右侧乳房": 0.01, "右侧乳腺": 0.01}:
+                segmentsnew_temp.append(1)
+            if ((segmentsnew[i])[1])[0] in {"左侧腋窝": 0.01, "左侧锁骨": 0.01, "左腋窝": 0.01, "左锁骨": 0.01, "左侧腋窝及锁骨区": 0.01}:
+                segmentsnew_temp.append(2)
+            if ((segmentsnew[i])[1])[0] in {"右侧腋窝": 0.01, "右侧锁骨": 0.01, "右腋窝": 0.01, "右锁骨": 0.01, "右侧腋窝及锁骨区": 0.01}:
+                segmentsnew_temp.append(3)
+        return segmentsnew_temp
+    segmentsbnew_temp = findnotnone(segmentsbnew)
+    segmentscnew_temp = findnotnone(segmentscnew)
+
+    segmentsbfinal = [[['部位分割标志'], ['左乳'], segmentsb3left_breast, segmentsb4left_breast, segmentsb5left_breast],
+                      [['部位分割标志'], ['右乳'], segmentsb3right_breast, segmentsb4right_breast, segmentsb5right_breast],
+                      [['部位分割标志'], ['左侧腋窝及锁骨区'], segmentsb3left_axilla, segmentsb4left_axilla, segmentsb5left_axilla],
+                      [['部位分割标志'], ['右侧腋窝及锁骨区'], segmentsb3right_axilla, segmentsb4right_axilla,
+                       segmentsb5right_axilla]]
+
+    segmentscfinal = [[['部位分割标志'], ['左乳'], segmentsc3left_breast, segmentsc4left_breast, segmentsc5left_breast],
+                      [['部位分割标志'], ['右乳'], segmentsc3right_breast, segmentsc4right_breast, segmentsc5right_breast],
+                      [['部位分割标志'], ['左侧腋窝及锁骨区'], segmentsc3left_axilla, segmentsc4left_axilla, segmentsc5left_axilla],
+                      [['部位分割标志'], ['右侧腋窝及锁骨区'], segmentsc3right_axilla, segmentsc4right_axilla,
+                       segmentsc5right_axilla]]
+
+
+    segmentsb3right_breast = normalization3(segmentsb3right_breast)
+    segmentsc3right_breast = normalization3(segmentsc3right_breast)
+    segmentsb3left_breast = normalization3(segmentsb3left_breast)
+    segmentsc3left_breast = normalization3(segmentsc3left_breast)
+    segmentsb3left_axilla = normalization3(segmentsb3left_axilla)
+    segmentsb3right_axilla = normalization3(segmentsb3right_axilla)
+    segmentsc3left_axilla = normalization3(segmentsc3left_axilla)
+    segmentsc3right_axilla = normalization3(segmentsc3right_axilla)
+
+    segmentsb4right_breast = normalization4(segmentsb4right_breast)
+    segmentsc4right_breast = normalization4(segmentsc4right_breast)
+    segmentsb4left_breast = normalization4(segmentsb4left_breast)
+    segmentsc4left_breast = normalization4(segmentsc4left_breast)
+    segmentsb4left_axilla = normalization4(segmentsb4left_axilla)
+    segmentsb4right_axilla = normalization4(segmentsb4right_axilla)
+    segmentsc4left_axilla = normalization4(segmentsc4left_axilla)
+    segmentsc4right_axilla = normalization4(segmentsc4right_axilla)
+
+    # 这个不删除 这个是有用的
+    word_prob5 = {"BI-RADS 0": 0.005, "BI-RADS 1": 0.01, "BI-RADS 2": 0.02, "BI-RADS 3": 0.03, "BI-RADS 4a": 0.041,
+                  "BI-RADS 4b": 0.042, "BI-RADS 4c": 0.043, "BI-RADS 5": 0.05, "BI-RADS 6": 0.06}
+
+    #有时候超声报告里不全是BIRADS，偶尔因为过去的病史可以推断出具体的疾病，过去超声的逻辑是按BIRADS写的，包括它们之间归一化的比较，这里需要加一个区分开的函数，BIRADS和BIRADS之间归一化，不能混到一起
+    def divide5(segments):
+        segments_BIRADS = []
+        segments_others = []
+        for i in range(len(segments)):
+            if segments[i] in word_prob5:
+                segments_BIRADS.append(segments[i])
+            else:
+                segments_others.append(segments[i])
+        return segments_BIRADS, segments_others
+    #超声的病理性质信息中BIRADS归一化函数
+    def normalization5_BIRADS(segments):
+        valueside = 0.01
+        for i in range(len(segments)):
+            valuesidetemp = word_prob5[segments[i]]
+            if valuesidetemp > valueside:
+                valueside = valuesidetemp
+        segments = get_key(word_prob5, valueside)
+        return segments
+
+    # 超声的病理性质信息整体归一化函数
+    def normalization5c_all(segments):
+        segments_BIRADS, segments_others = divide5(segments)
+        segments_BIRADS = normalization5_BIRADS(segments_BIRADS)
+        segments_BIRADS_copy = segments_BIRADS.copy()
+        segments_BIRADS_copy.extend(segments_others)
+        # print('segments_BIRADS_copy为')
+        # print(segments_BIRADS_copy)
+        segments = segments_BIRADS_copy
+        return segments
+
+    segmentsc5left_breast = normalization5c_all(segmentsc5left_breast)
+    segmentsc5right_breast = normalization5c_all(segmentsc5right_breast)
+    segmentsc5left_axilla = normalization5c_all(segmentsc5left_axilla)
+    segmentsc5right_axilla = normalization5c_all(segmentsc5right_axilla)
+
+
+    def normalization5b(segmentsb4_breast,segmentsb5_breast):#这里是已经归一化的良恶性 和还未归一化的病理性质
+        segments=[]
+        if len(segmentsb4_breast)!=0:
+            if len(segmentsb5_breast) != 0:
+                #注意这里 良性或恶性待定 字符串要和前文写得保持一致 比如良恶性均可 就不会识别到
+                #医生逻辑：恶性和良恶性待定的病理性质 全部输出（这时有良性不需要输出良性），要是没有恶性和良恶性待定的 病理性质，就输出良性的，且只输出一个就可以
+                if segmentsb4_breast[0]=='恶性'or segmentsb4_breast[0]=='良性或恶性待定':
+                    if len(segmentsb5_breast)!=0:
+                        for i in range(len(segmentsb5_breast)):
+                            if segmentsb5_breast[i] in word_probexing.keys():
+                                segments.append(segmentsb5_breast[i])
+                            if segmentsb5_breast[i] in word_probliang_or_e.keys():
+                                segments.append(segmentsb5_breast[i])
+                if segmentsb4_breast[0] == '良性' :
+                    segments.append(segmentsb5_breast[0])
+        return segments
+    segmentsb5left_breast=normalization5b(segmentsb4left_breast,segmentsb5left_breast)
+    segmentsb5right_breast = normalization5b(segmentsb4right_breast, segmentsb5right_breast)
+
+
+    #因为最后都是拆开的 我要哪个就自己写就可以，比如这里不要实性囊性，就没加入segmentsb3left_breast这类的项
+    #下面都写了腋窝项，后来医生说乳腺项目里不谈腋窝，但下面那些也不用管它，改动这里的形式 后面的索引也需要跟着改，我在开始字典里删除了腋窝，腋窝这些不会提取到，不用管它
+    print("\n")
+    segmentsbfinal = [[['部位分割标志'], ['左乳'],  segmentsb4left_breast, segmentsb5left_breast],
+                      [['部位分割标志'], ['右乳'], segmentsb4right_breast, segmentsb5right_breast],
+                      [['部位分割标志'], ['左侧腋窝及锁骨区'],  segmentsb4left_axilla, segmentsb5left_axilla],
+                      [['部位分割标志'], ['右侧腋窝及锁骨区'], segmentsb4right_axilla,
+                       segmentsb5right_axilla]]
+
+    segmentscfinal = [[['部位分割标志'], ['左乳'],  segmentsc4left_breast, segmentsc5left_breast],
+                      [['部位分割标志'], ['右乳'], segmentsc4right_breast, segmentsc5right_breast],
+                      [['部位分割标志'], ['左侧腋窝及锁骨区'], segmentsc4left_axilla, segmentsc5left_axilla],
+                      [['部位分割标志'], ['右侧腋窝及锁骨区'],  segmentsc4right_axilla,
+                       segmentsc5right_axilla]]
+
+
+    def match(segmentsbfinal, segmentscfinal, m, n):
+        # m表示部位，0表示左乳，1表示右乳，2表示左腋窝锁骨，3表示右腋窝锁骨
+        # n表示哪一个性质，2是实性囊性，3是良恶性
+        # 第一个判断语句为零这个到底输出什么需要确认下 好像不应该输出为1（不符合） 应该细化到缺少哪边信息 这里看后续需求书确认 而且我应该都是有初始值的 不应该有空的存在
+        if len((segmentscfinal[m])[n]) == 0 or len((segmentsbfinal[m])[n]) == 0:
+            match = '1'
+        elif ((segmentscfinal[m])[n])[0] != ((segmentsbfinal[m])[n])[0]:
+            match = '1'
+        elif ((segmentscfinal[m])[n])[0] == ((segmentsbfinal[m])[n])[0]:
+            match = '0'
+        return match
+
+    matchleft3_breast = match(segmentsbfinal, segmentscfinal, 0, 2)
+    matchright3_breast = match(segmentsbfinal, segmentscfinal, 1, 2)
+    matchleft4_breast = match(segmentsbfinal, segmentscfinal, 0, 3)
+    matchright4_breast = match(segmentsbfinal, segmentscfinal, 1, 3)
+    matchleft3_axilla = match(segmentsbfinal, segmentscfinal, 2, 2)
+    matchright3_axilla = match(segmentsbfinal, segmentscfinal, 3, 2)
+    matchleft4_axilla = match(segmentsbfinal, segmentscfinal, 2, 3)
+    matchright4_axilla = match(segmentsbfinal, segmentscfinal, 3, 3)
+
+
+    matchleft_breast = ['部位分割标志', '左乳',  matchleft4_breast, matchleft4_breast]
+    matchright_breast = ['部位分割标志', '右乳',  matchright4_breast, matchleft4_breast]
+    matchleft_axilla = ['部位分割标志', '左侧腋窝及锁骨区', matchleft4_axilla, matchleft4_axilla]
+    matchright_axilla = ['部位分割标志', '右侧腋窝及锁骨区', matchright4_axilla, matchleft4_axilla]
+
+
+    # 这里没写错，病理性质确实他就是按照良性恶性来匹配的，都是良性可以，两边都出现恶性也可以，即按两边最恶性的来匹配，和良恶性方法是一样的
+    # 即我病理报告的病理性质没有做归一化，可能有多个，可能没有，我是直接去匹配的
+    matchresult = [matchleft_breast, matchright_breast, matchleft_axilla, matchright_axilla]
+
+    segmentsbfinal_output = []
+    if 0 in segmentsbnew_temp:
+        segmentsbfinal_output.append(segmentsbfinal[0])
+    if 1 in segmentsbnew_temp:
+        segmentsbfinal_output.append(segmentsbfinal[1])
+    if 2 in segmentsbnew_temp:
+        segmentsbfinal_output.append(segmentsbfinal[2])
+    if 3 in segmentsbnew_temp:
+        segmentsbfinal_output.append(segmentsbfinal[3])
+
+    segmentscfinal_output = []
+    # 超声不同 超声是左乳右乳有没有出现都要补全的
+    segmentscfinal_output.append(segmentscfinal[0])
+    segmentscfinal_output.append(segmentscfinal[1])
+    if 2 in segmentscnew_temp:
+        segmentscfinal_output.append(segmentscfinal[2])
+    if 3 in segmentscnew_temp:
+        segmentscfinal_output.append(segmentscfinal[3])
+
+    #病理谈到哪些侧别，匹配结果跟病理保持一致
+    matchresult_output = []
+    if 0 in segmentsbnew_temp:
+        matchresult_output.append(matchresult[0])
+    if 1 in segmentsbnew_temp:
+        matchresult_output.append(matchresult[1])
+    if 2 in segmentsbnew_temp:
+        matchresult_output.append(matchresult[2])
+    if 3 in segmentsbnew_temp:
+        matchresult_output.append(matchresult[3])
+    # print(segmentsbnew_copy_step1)
+    # print(segmentscnew_copy_step1)
+    # print(segmentsbnew_copy_step2)
+    # print(segmentscnew_copy_step2)
+    print('aaaaaa')
+    return segmentsbnew_copy_step1, segmentscnew_copy_step1,segmentsbnew_copy_step2,segmentscnew_copy_step2,segmentsbfinal_output, segmentscfinal_output, matchresult_output
