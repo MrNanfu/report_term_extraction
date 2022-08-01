@@ -34,9 +34,6 @@ ultrasound_report='双侧乳腺内实质性团块，BI-RADS 3类'
 匹配结果为
 [['部位分割标志', '左乳', '1', '1'], ['部位分割标志', '右乳', '1', '1']]
 
-Process finished with exit code 0
-
-
-Process finished with exit code 0
+print('this is a test')
 
 
