@@ -16,7 +16,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     lenstringc = len(ultrasound_report)
     pathologicalfuc(pathological_bodypart, pathological_report)
     ultrasoundfuc(ultrasound_bodypart, ultrasound_report)
-    from pathological import segmentsb1, segmentsb2, segmentsb3, segmentsb4, segmentsb5, leninputbingli, segmentsb2temp, \
+    from pathological import segmentsb1, segmentsb2, segmentsb3, segmentsb4, segmentsb5, segmentsb6, leninputbingli, segmentsb2temp, \
         segmentsb5bf  # 引入之前两个函数中得到的列表信息
     from ultrasound import segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5, leninputchaosheng, segmentsc2temp
     global segmentsb1, segmentsb2, segmentsb3, segmentsb4, segmentsb5, segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5, leninputbingli, leninputchaosheng, segmentsb5bf
@@ -77,6 +77,16 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     segmentsball, segmentsbnum = fuc1(segmentsb2, segmentsb3, segmentsb4, segmentsb5, lenstringb)
     segmentscall, segmentscnum = fuc1(segmentsc2, segmentsc3, segmentsc4, segmentsc5, lenstringc)
 
+    # 对于segmentsb6，利用segmentsbnum的位置信息按照部位进行分割操作
+    segmentsb6_sep = []
+    lenalldiv = int(len(segmentsb2) / 2)  # 带着位置信息，注意除以二
+    for ialldiv in range(lenalldiv):
+        segmentsb6_sep.append([])
+    for j6 in range((int)(len(segmentsb6) / 2)):
+        for jnum in range(len(segmentsbnum)):
+            if segmentsb6[2 * j6 + 1] in segmentsbnum[jnum]:
+                (segmentsb6_sep[jnum]).append(segmentsb6[2 * j6])
+                (segmentsb6_sep[jnum]).append(segmentsb6[2 * j6 + 1])
 
     # 出现双乳，需要展开，下面的字典需要根据数据里出现过什么不断补充，而且得注意需求是调整超声 病理 还是都调整
     def unfold(segmentsall, segments2, string1, string2, string3):
@@ -189,64 +199,218 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     for i in range(len(segmentscnew)):
         segmentscnew[i][3]=normalization4(segmentscnew[i][3])
 
-    #主要诊断次要诊断需要进行筛选，注意逻辑图中主要次要病分类有问题，后来医生将所有的良恶性待定（绿色的）都放入主要诊断里了，我下面的四个字典也是根据调整后的进行构建的
-    #找到对应的数值
-    def normalization_major_minor_temp(segments):
-        segments_temp=[]
+    # #主要诊断次要诊断需要进行筛选，注意逻辑图中主要次要病分类有问题，后来医生将所有的良恶性待定（绿色的）都放入主要诊断里了，我下面的四个字典也是根据调整后的进行构建的
+    # #找到对应的数值
+    # def normalization_major_minor_temp(segments):
+    #     segments_temp=[]
+    #     if len(segments)!=0:
+    #         for i in range(len(segments)):
+    #             if segments[i] in word_probexing_major:
+    #                 segments_temp.append(0.04)
+    #
+    #             elif segments[i] in word_probliang_or_e_major:
+    #                 segments_temp.append(0.03)
+    #
+    #             elif segments[i] in word_probliangxing_major:
+    #                 segments_temp.append(0.02)
+    #
+    #             elif segments[i] in word_probliangxing_minor:
+    #                 segments_temp.append(0.01)
+    #
+    #             else:
+    #                 break
+    #     return segments_temp
+    #
+    # #找到其中最大的数值，以及其对应的字典是哪个
+    # def get_temp_dictionary(segments_temp):
+    #     valuetemp = 0.01
+    #     for i in range(len(segments_temp)):
+    #         if segments_temp[i]>valuetemp:
+    #             valuetemp = segments_temp[i]
+    #
+    #     if valuetemp==0.04:
+    #         return word_probexing_major
+    #     if valuetemp==0.03:
+    #         return word_probliang_or_e_major
+    #     if valuetemp==0.02:
+    #         return word_probliangxing_major
+    #     if valuetemp==0.01:
+    #         return word_probliangxing_minor
+    #
+    # #归一化
+    # def normalization_major_minor(segments):
+    #     segments_temp = normalization_major_minor_temp(segments)
+    #     valuetemp_dictionary = get_temp_dictionary(segments_temp)
+    #     segments_normalization_major_minor=[]
+    #     for i in range(len(segments)):
+    #         if segments[i] in valuetemp_dictionary.keys():
+    #             segments_normalization_major_minor.append(segments[i])
+    #             break
+    #     return segments_normalization_major_minor
+
+    def find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, str_yuyi, flg): # 寻找某个语义词后最近的病理, flg = 0代表寻找的病理为良恶未知， flg = 1代表寻找的病理为良性
+        related_seg_idx = -1
+        segments_pos = segmentsball[idx][4]
+        print(segments_pos)
+        segmentsb6_pos = segmentsb6_sep[idx]
+        pos_yuyi = -1
+        for i in range (int(len(segmentsb6_pos) / 2)):
+            if segmentsb6_pos[2 * i] == str_yuyi:
+                pos_yuyi = segmentsb6_pos[2 * i + 1]
+        if pos_yuyi == -1:
+            return -1
+        for i in range(int(len(segments_pos) / 2)):
+            if flg == 0:
+                if segments_pos[2 * i] in word_probliang_or_e_major:
+                    related_seg_idx += 1
+                    if segments_pos[2 * i + 1] > pos_yuyi:
+                        # related_seg_idx = i
+                        return related_seg_idx
+            elif flg == 1:
+                if segments_pos[2 * i] in word_probliangxing_major:
+                    related_seg_idx += 1
+                    if segments_pos[2 * i + 1] > pos_yuyi:
+                        # related_seg_idx = i
+                        return related_seg_idx
+        return -1
+
+    def normalization_major_minor(segments, idx):
+        flg_mianyi = 0
+        cnt_list = [0, 0, 0, 0] # 主要诊断的恶性、良恶待定、良性、次要诊断的良性的计数数组
+        segments_normalization_major_minor = []
         if len(segments)!=0:
             for i in range(len(segments)):
                 if segments[i] in word_probexing_major:
-                    segments_temp.append(0.04)
+                    cnt_list[0] += 1
 
                 elif segments[i] in word_probliang_or_e_major:
-                    segments_temp.append(0.03)
+                    cnt_list[1] += 1
 
                 elif segments[i] in word_probliangxing_major:
-                    segments_temp.append(0.02)
+                    cnt_list[2] += 1
 
                 elif segments[i] in word_probliangxing_minor:
-                    segments_temp.append(0.01)
+                    cnt_list[3] += 1
 
                 else:
                     break
-        return segments_temp
-
-    #找到其中最大的数值，以及其对应的字典是哪个
-    def get_temp_dictionary(segments_temp):
-        valuetemp = 0.01
-        for i in range(len(segments_temp)):
-            if segments_temp[i]>valuetemp:
-                valuetemp = segments_temp[i]
-
-        if valuetemp==0.04:
-            return word_probexing_major
-        if valuetemp==0.03:
-            return word_probliang_or_e_major
-        if valuetemp==0.02:
-            return word_probliangxing_major
-        if valuetemp==0.01:
-            return word_probliangxing_minor
-
-    #归一化
-    def normalization_major_minor(segments):
-        segments_temp = normalization_major_minor_temp(segments)
-        valuetemp_dictionary = get_temp_dictionary(segments_temp)
-        segments_normalization_major_minor=[]
-        for i in range(len(segments)):
-            if segments[i] in valuetemp_dictionary.keys():
-                segments_normalization_major_minor.append(segments[i])
-                break
+        if cnt_list[0] + cnt_list[1] + cnt_list[2] == 0: # 没有主要诊断
+            if cnt_list[3] != 0:
+                for i in range(len(segments)):
+                    if segments[i] in word_probliangxing_minor:
+                        segments_normalization_major_minor.append(segments[i])
+                        break
+        else:  # 存在主要诊断，下面良恶性未定和良性的病理选择需要结合语义
+            if cnt_list[0] != 0:    # 存在恶性
+                for i in range(len(segments)):
+                    if segments[i] in word_probexing_major:
+                        segments_normalization_major_minor.append(segments[i])
+            else:   # 不存在恶性
+                if '免疫组化' in segmentsb6_sep[idx]: # 存在免疫组化关键词时，提取最近的后面一个病理
+                    idx_mianyi = -1
+                    for i in range(int(len(segmentsb6_sep[idx]) / 2)):
+                        if segmentsb6_sep[idx][2 * i] == '免疫组化':
+                            idx_mianyi = segmentsb6_sep[idx][2 * i + 1]
+                            break
+                    flg = 0
+                    for i in range(len(segments)):
+                        for j in range(int(len(segmentsball[idx][4]) / 2) ):
+                            if segments[i] == segmentsball[idx][4][2 * j]:
+                                if segmentsball[idx][4][2 * j + 1] > idx_mianyi:
+                                    segments_normalization_major_minor.append(segments[i])
+                                    flg_mianyi = 1
+                                    break
+                        if flg_mianyi:
+                            break
+                if flg_mianyi == 1:
+                    return segments_normalization_major_minor
+                if cnt_list[1] != 0:  # 不存在恶性但是存在良恶未知
+                    if cnt_list[1] == 1:    # 只存在一个良恶未知
+                        for i in range(len(segments)):
+                            if segments[i] in word_probliang_or_e_major:
+                                segments_normalization_major_minor.append(segments[i])
+                                return segments_normalization_major_minor
+                    else:   # 存在多个良恶未知，需要用语义信息去判断
+                        prio_list = [0 for _ in range(cnt_list[1])]
+                        # 首先对于在部分语义后面的病理的优先级进行扣分
+                        idx_ban = find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, '伴', 0)
+                        idx_gebie = find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, '个别', 0)
+                        idx_bufen = find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, '部分', 0)
+                        if idx_ban != -1:prio_list[idx_ban] -= 1
+                        if idx_gebie != -1: prio_list[idx_gebie] -= 1
+                        if idx_bufen != -1: prio_list[idx_bufen] -= 1
+                        # 然后对于出现在主体近后的病理加分
+                        idx_zhuti = find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, '主体', 0)
+                        if idx_zhuti != -1:prio_list[idx_zhuti] += 1
+                        # 查看优先级最大的病理
+                        max_val = max(prio_list)
+                        min_val = min(prio_list)
+                        if max_val == 0 and min_val == 0:   # 对于没有出现上下文语义信息的，选取最后一个良恶性未知病理即可
+                            for i in range(len(segments), -1, -1):
+                                if segments[i] in word_probliang_or_e_major:
+                                    segments_normalization_major_minor.append(segments[i])
+                        else:   # 对于出现了语义信息的，选取优先级最高的良恶性病理输出
+                            max_idx = list.index(max(prio_list))
+                            idx = -1
+                            for i in range(len(segments)):
+                                if(segments[i] in word_probliang_or_e_major):
+                                    idx += 1
+                                    if idx == max_idx:
+                                        segments_normalization_major_minor.append(segments[i])
+                elif cnt_list[2] != 0:
+                    if cnt_list[2] == 1:    # 只存在一个良性
+                        for i in range(len(segments)):
+                            if segments[i] in word_probliangxing_major:
+                                segments_normalization_major_minor.append(segments[i])
+                                return segments_normalization_major_minor
+                    else:   # 存在多个良性
+                        prio_list = [0 for _ in range(cnt_list[2])]
+                        # 首先对于在部分语义后面的病理的优先级进行扣分
+                        idx_ban = find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, '伴', 1)
+                        idx_gebie = find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, '个别', 1)
+                        idx_bufen = find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, '部分', 1)
+                        if idx_ban != -1:prio_list[idx_ban] -= 1
+                        if idx_gebie != -1: prio_list[idx_gebie] -= 1
+                        if idx_bufen != -1: prio_list[idx_bufen] -= 1
+                        # 然后对于出现在主体近后的病理加分
+                        idx_zhuti = find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, '主体', 1)
+                        if idx_zhuti != -1:prio_list[idx_zhuti] += 1
+                        # 查看优先级最大的病理
+                        max_val = max(prio_list)
+                        min_val = min(prio_list)
+                        if max_val == 0 and min_val == 0:   # 对于没有出现上下文语义信息的，选取最后一个良恶性未知病理即可
+                            for i in range(len(segments)):
+                                if segments[i] == '导管内乳头状瘤':
+                                    segments_normalization_major_minor.append(segments[i])
+                                    return segments_normalization_major_minor
+                            for i in range(len(segments) - 1, -1, -1):
+                                # print(i)
+                                if segments[i] in word_probliangxing_major:
+                                    segments_normalization_major_minor.append(segments[i])
+                        else:   # 对于出现了语义信息的，选取优先级最高的良恶性病理输出
+                            max_idx = prio_list.index(max(prio_list))
+                            idx = -1
+                            for i in range(len(segments)):
+                                if(segments[i] in word_probliangxing_major):
+                                    idx += 1
+                                    if idx == max_idx:
+                                        segments_normalization_major_minor.append(segments[i])
         return segments_normalization_major_minor
-
-
     for i in range(len(segmentsbnew)):
-        segmentsbnew[i][4]=normalization_major_minor(segmentsbnew[i][4])
+        segmentsbnew[i][4]=normalization_major_minor(segmentsbnew[i][4], i)
         #医生给的字典里只有病理性质，所以不知道超声要不要也这样提取，先不加，加上后可能需要调整代码
         # segmentscnew[i][4] = normalization_major_minor(segmentscnew[i][4])
 
     #拷贝一个作为输出，这里是根据主要次要诊断筛选后的信息
     segmentsbnew_copy_step2=copy.deepcopy(segmentsbnew)
     segmentscnew_copy_step2 =copy.deepcopy(segmentscnew)
+
+    # # 病理主次要诊断筛选后再利用筛选后的病理进行良恶性归一化
+    # for i in range(len(segmentsbnew)):
+    #     segmentsbnew[i][3]=normalization4(segmentsbnew[i][3])
+    # for i in range(len(segmentscnew)):
+    #     segmentscnew[i][3]=normalization4(segmentscnew[i][3])
+
 
     def get_key(dict, value):
         return [k for k, v in dict.items() if v == value]
