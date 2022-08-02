@@ -2,10 +2,9 @@
 from newmatch7 import parser
 
 pathological_bodypart='右乳肿物'
-pathological_report="“左乳肿物”叶状肿瘤，考虑为良性。需予随诊观察，监测有无复发。“右乳肿物”纤维腺瘤。"
-ultrasound_bodypart="浅表彩超：乳腺。"
-ultrasound_report='双侧乳腺内实质性团块，BI-RADS 3类。'
-
+pathological_report="“右乳”穿刺组织，初步考虑为乳腺纤维腺瘤，部分导管上皮增生活跃，建议免疫组化协诊。如同意做免疫组化请来病理科。"
+ultrasound_bodypart="浅表彩超：乳腺、腋窝及锁骨上下区"
+ultrasound_report="右侧乳腺10-2点方位实质性团块，考虑BI-RADS 4a类，建议密切随诊复查，必要时穿刺活检。双侧乳腺实质性结节，BI-RADS 3类，建议定期复查。"
 segmentsbnew_copy_step1, segmentscnew_copy_step1,segmentsbnew_copy_step2, segmentscnew_copy_step2,segmentsbfinal_output, segmentscfinal_output, matchresult_output=parser(pathological_bodypart,pathological_report,ultrasound_bodypart,ultrasound_report)
 # segmentsbwithloc=[]
 # segmentscwithloc=[]

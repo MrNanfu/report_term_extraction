@@ -8,6 +8,7 @@ def Merge(dict1, dict2, dict3, dict4):
     return res
 word_probchaoshengall = Merge(word_probchaoshengbuwei, word_probchaoshengwuli, word_probchaoshengliangexing,
                               word_probchaoshengbingli)
+word_reliability = {"建议": 0.01, "鉴别": 0.01, "排除": 0.01, "待": 0.01, "需": 0.01, "进一步": 0.01}
 
 def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
     global leninputchaosheng
@@ -18,15 +19,22 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
     global segmentsc_merge
     segmentsc_merge = []
     segmentsc_merge = findsegments(input_str,word_probchaoshengall)
+    reliability = findsegments(input_str, word_reliability)
     # print('segmentsc_merge为')
     # print(segmentsc_merge)
 
-    global segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5
+    global segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5, segmentsc6
     segmentsc1 = []  # 注意这里又加了b1，虽然这次任务用不上
     segmentsc2 = []
     segmentsc3 = []
     segmentsc4 = []
     segmentsc5 = []
+
+    if reliability is not None:
+        segmentsc6 = ["匹配结果可信度低"]
+    else:
+        segmentsc6 = ["匹配结果可信度高"]
+
     for i in range(int(len(segmentsc_merge) / 2)):
         if segmentsc_merge[2*i] in word_probbinglicebie:
             segmentsc1.append(segmentsc_merge[2 * i])

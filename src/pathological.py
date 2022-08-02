@@ -27,6 +27,9 @@ word_probbingliwulinangxing = {"囊肿": 0.01, "表皮样囊肿": 0.01, "皮样�
 word_probbingliliangexing = {"良": 0.01, "良性": 0.01, "恶": 0.01, "恶性": 0.01, "交界": 0.01, "交界性": 0.01, }#其实这里是重复的 但是开始时候文档给的是都带性的 后来发现实际里有不带性的 也应该识别上加上的
 word_probchaoshengliangexing =word_probbingliliangexing
 
+#病理匹配结果可信度问题
+word_reliability = {"建议": 0.01, "鉴别": 0.01, "排除": 0.01, "待": 0.01, "需": 0.01, "进一步": 0.01}
+
 #除了直接找良性恶性词汇外，还通过如下病理性质推断出良性
 
 #除了直接找良性恶性词汇外，还通过如下病理性质推断出恶性
@@ -56,7 +59,7 @@ word_probbinglibingli={**word_probexing, **word_probliang_or_e_major,**word_prob
 word_probchaoshengbingli = word_probbinglibingli
 
 
-# 接下来所有的12345分别对应着： 侧别1 部位2 物理性质3 良恶性4 病理性质5
+# 接下来所有的12345分别对应着： 侧别1 部位2 物理性质3 良恶性4 病理性质5 病理结果匹配可信度问题6
 #segments就是放这些找到的片段的列表，b是病理，c是超声，如segmentsb1就是病理侧别，segmentsc2就是超声部位
 def findsegments(input, word_prob):#最大匹配的那个函数
     max_len = max(len(w) for w in word_prob.keys())
@@ -95,18 +98,24 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
     global segmentsb_merge
     segmentsb_merge = []
     segmentsb_merge = findsegments(input_str,word_probbingliall)
+    reliability = findsegments(input_str, word_reliability)
+
     # print('segmentsb_merge为')
     # print(segmentsb_merge)
 
     # global segmentsb1
     # segmentsb1=[]
     # segmentsb1=findsegments(input_str, word_probbinglicebie)
-    global segmentsb1,segmentsb2,segmentsb3,segmentsb4,segmentsb5
+    global segmentsb1,segmentsb2,segmentsb3,segmentsb4,segmentsb5, segmentsb6
     segmentsb1=[]#注意这里又加了b1，虽然这次任务用不上
     segmentsb2=[]
     segmentsb3=[]
     segmentsb4=[]
     segmentsb5=[]
+    if reliability is not None:
+        segmentsb6=["匹配结果可信度低"]
+    else:
+        segmentsb6 = ["匹配结果可信度高"]
     #根据来源的字典分别将其放入每个列表
     for i in range(int(len(segmentsb_merge)/2)):
         if segmentsb_merge[2*i] in word_probbinglicebie:
