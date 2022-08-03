@@ -87,6 +87,19 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
             if segmentsb6[2 * j6 + 1] in segmentsbnum[jnum]:
                 (segmentsb6_sep[jnum]).append(segmentsb6[2 * j6])
                 (segmentsb6_sep[jnum]).append(segmentsb6[2 * j6 + 1])
+    # 对于出现双乳，语义segments6也需要展开,使其与segmentsall的索引保持一致
+    def unfold_yuyi(segmentsb6, segments2, string1):
+        for i in range(int(len(segments2) / 2)):
+            if segments2[2 * i] == string1:
+                r = segmentsb6[i].copy()
+                segmentsb6.insert(i + 1, r)
+    segmentsb6 = unfold_yuyi(segmentsb6, segmentsb2, '双侧乳腺')
+    segmentsb6 = unfold_yuyi(segmentsb6, segmentsb2, '双乳')
+    segmentsb6 = unfold_yuyi(segmentsb6, segmentsb2, '双侧乳房')
+    segmentsb6 = unfold_yuyi(segmentsb6, segmentsb2, '双侧乳头')
+    segmentsb6 = unfold_yuyi(segmentsb6, segmentsb2, '双侧腋窝及锁骨区')
+
+
 
     # 出现双乳，需要展开，下面的字典需要根据数据里出现过什么不断补充，而且得注意需求是调整超声 病理 还是都调整
     def unfold(segmentsall, segments2, string1, string2, string3):
@@ -248,10 +261,11 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     #             break
     #     return segments_normalization_major_minor
 
-    def find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, str_yuyi, flg): # 寻找某个语义词后最近的病理, flg = 0代表寻找的病理为良恶未知， flg = 1代表寻找的病理为良性
+    # 寻找某个语义词后最近的病理, flg = 0代表寻找的病理为良恶未知， flg = 1代表寻找的病理为良性
+    def find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, str_yuyi, flg):
         related_seg_idx = -1
         segments_pos = segmentsball[idx][4]
-        print(segments_pos)
+        # print(segments_pos)
         segmentsb6_pos = segmentsb6_sep[idx]
         pos_yuyi = -1
         for i in range (int(len(segmentsb6_pos) / 2)):
@@ -274,6 +288,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                         return related_seg_idx
         return -1
 
+    # 对病理进行主次要筛选
     def normalization_major_minor(segments, idx):
         flg_mianyi = 0
         cnt_list = [0, 0, 0, 0] # 主要诊断的恶性、良恶待定、良性、次要诊断的良性的计数数组
@@ -294,19 +309,19 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
 
                 else:
                     break
-        if cnt_list[0] + cnt_list[1] + cnt_list[2] == 0: # 没有主要诊断
+        if cnt_list[0] + cnt_list[1] + cnt_list[2] == 0:    # 没有主要诊断
             if cnt_list[3] != 0:
                 for i in range(len(segments)):
                     if segments[i] in word_probliangxing_minor:
                         segments_normalization_major_minor.append(segments[i])
                         break
-        else:  # 存在主要诊断，下面良恶性未定和良性的病理选择需要结合语义
-            if cnt_list[0] != 0:    # 存在恶性
+        else:  # 存在主要诊断，下面良恶性未定和良性的病理的筛选需要结合语义
+            if cnt_list[0] != 0:    # 存在恶性输出所有恶性
                 for i in range(len(segments)):
                     if segments[i] in word_probexing_major:
                         segments_normalization_major_minor.append(segments[i])
             else:   # 不存在恶性
-                if '免疫组化' in segmentsb6_sep[idx]: # 存在免疫组化关键词时，提取最近的后面一个病理
+                if '免疫组化' in segmentsb6_sep[idx]:   # 存在免疫组化关键词时，提取最近的后面一个病理
                     idx_mianyi = -1
                     for i in range(int(len(segmentsb6_sep[idx]) / 2)):
                         if segmentsb6_sep[idx][2 * i] == '免疫组化':
@@ -322,7 +337,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                                     break
                         if flg_mianyi:
                             break
-                if flg_mianyi == 1:
+                if flg_mianyi == 1: # 有‘免疫组化’语义字段，但是其后没有病理，因此需要特判
                     return segments_normalization_major_minor
                 if cnt_list[1] != 0:  # 不存在恶性但是存在良恶未知
                     if cnt_list[1] == 1:    # 只存在一个良恶未知
@@ -350,7 +365,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                                 if segments[i] in word_probliang_or_e_major:
                                     segments_normalization_major_minor.append(segments[i])
                         else:   # 对于出现了语义信息的，选取优先级最高的良恶性病理输出
-                            max_idx = list.index(max(prio_list))
+                            print(prio_list)
+                            max_idx = prio_list.index(max(prio_list))
                             idx = -1
                             for i in range(len(segments)):
                                 if(segments[i] in word_probliang_or_e_major):
@@ -558,6 +574,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                                 segments.append(segmentsb5_breast[i])
                             if segmentsb5_breast[i] in word_probliang_or_e.keys():
                                 segments.append(segmentsb5_breast[i])
+                            if len(segments) == 0:  # 此情况为特殊情况，即出现了‘免疫组化’后的良性病理，它优先级比良恶未知病理还高
+                                segments.append(segmentsb5_breast[i])
                 if segmentsb4_breast[0] == '良性' :
                     segments.append(segmentsb5_breast[0])
         return segments
@@ -603,10 +621,10 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     matchright4_axilla = match(segmentsbfinal, segmentscfinal, 3, 3)
 
 
-    matchleft_breast = ['部位分割标志', '左乳',  matchleft4_breast, matchleft4_breast]
-    matchright_breast = ['部位分割标志', '右乳',  matchright4_breast, matchleft4_breast]
-    matchleft_axilla = ['部位分割标志', '左侧腋窝及锁骨区', matchleft4_axilla, matchleft4_axilla]
-    matchright_axilla = ['部位分割标志', '右侧腋窝及锁骨区', matchright4_axilla, matchleft4_axilla]
+    matchleft_breast = ['部位分割标志', '左乳',  matchleft3_breast, matchleft4_breast]
+    matchright_breast = ['部位分割标志', '右乳',  matchright3_breast, matchleft4_breast]
+    matchleft_axilla = ['部位分割标志', '左侧腋窝及锁骨区', matchleft3_axilla, matchleft4_axilla]
+    matchright_axilla = ['部位分割标志', '右侧腋窝及锁骨区', matchright3_axilla, matchleft4_axilla]
 
 
     # 这里没写错，病理性质确实他就是按照良性恶性来匹配的，都是良性可以，两边都出现恶性也可以，即按两边最恶性的来匹配，和良恶性方法是一样的
@@ -646,5 +664,5 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     # print(segmentscnew_copy_step1)
     # print(segmentsbnew_copy_step2)
     # print(segmentscnew_copy_step2)
-    print('aaaaaa')
+    # print('aaaaaa')
     return segmentsbnew_copy_step1, segmentscnew_copy_step1,segmentsbnew_copy_step2,segmentscnew_copy_step2,segmentsbfinal_output, segmentscfinal_output, matchresult_output
