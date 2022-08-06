@@ -61,13 +61,23 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
     if int(len(reliability)) != 0:
         for i in range(int(len(reliability)/2)):
             for j in range(int(len(segmentsc2)/2)):
-                if segmentsc2[2*j + 1] < reliability[2*i + 1] < segmentsc2[2*j + 3]:
-                    segmentsc6.append("匹配结果可信度低")
-                else:
-                    segmentsc6.append("匹配结果可信度高")
+                if( j < int(len(segmentsc2)/2) - 1):
+                    if segmentsc2[2 * j + 1] < reliability[2 * i + 1] < segmentsc2[2 * j + 3]:
+                        segmentsc6.append("匹配结果可信度低")
+                    else:
+                        segmentsc6.append("匹配结果可信度高")
+                else :
+                    if segmentsc2[2 * j + 1] < reliability[2 * i + 1]:
+                        segmentsc6.append("匹配结果可信度低")
+                    else:
+                        segmentsc6.append("匹配结果可信度高")
+
     elif int(len(reliability)) == 0:
-        for j in range(int(len(segmentsc2) / 2)):
-            segmentsc6.append("匹配结果可信度高")
+        if int(len(segmentsc2) / 2) != 0:
+            for j in range(int(len(segmentsc2) / 2)):
+                segmentsc6.append("匹配结果可信度高")
+        else:
+                segmentsc6.append("匹配结果可信度高")
 
     # global segmentsc1
     # segmentsc1 = findsegments(input_str, word_probchaoshengcebie)

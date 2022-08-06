@@ -415,13 +415,16 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         return segments_BIRADS, segments_others
     #超声的病理性质信息中BIRADS归一化函数
     def normalization5_BIRADS(segments):
-        valueside = 0.01
-        for i in range(len(segments)):
-            valuesidetemp = word_prob5[segments[i]]
-            if valuesidetemp > valueside:
-                valueside = valuesidetemp
-        segments = get_key(word_prob5, valueside)
-        return segments
+        if int(len(segments))==0:
+            return segments
+        else:
+            valueside = 0.01
+            for i in range(len(segments)):
+                valuesidetemp = word_prob5[segments[i]]
+                if valuesidetemp > valueside:
+                    valueside = valuesidetemp
+            segments = get_key(word_prob5, valueside)
+            return segments
 
     # 超声的病理性质信息整体归一化函数
     def normalization5c_all(segments):
@@ -498,7 +501,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
 
     def match(segmentsbfinal, segmentscfinal, m, n):
         # m表示部位，0表示左乳，1表示右乳，2表示左腋窝锁骨，3表示右腋窝锁骨
-        # n表示哪一个性质，2是良恶性
+        # n表示哪一个性质，2是良恶性,3是物理性质
         # 第一个判断语句为零这个到底输出什么需要确认下 好像不应该输出为1（不符合） 应该细化到缺少哪边信息 这里看后续需求书确认 而且我应该都是有初始值的 不应该有空的存在
         # 0: 符合  1: 不符合  2: 超声不明确  3: 病理不明确  4: 无法判断
 
@@ -515,9 +518,9 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
 
         return match
 
-    matchleft3_breast = match(segmentsbfinal, segmentscfinal, 0, 2)
+    matchleft3_breast = match(segmentsbfinal, segmentscfinal, 0, 2)      ##左乳良恶性匹配
     matchright3_breast = match(segmentsbfinal, segmentscfinal, 1, 2)
-    matchleft4_breast = match(segmentsbfinal, segmentscfinal, 0, 3)
+    matchleft4_breast = match(segmentsbfinal, segmentscfinal, 0, 3)      ##左乳物理性质匹配
     matchright4_breast = match(segmentsbfinal, segmentscfinal, 1, 3)
     # matchleft3_axilla = match(segmentsbfinal, segmentscfinal, 2, 2)
     # matchright3_axilla = match(segmentsbfinal, segmentscfinal, 3, 2)
@@ -525,8 +528,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     # matchright4_axilla = match(segmentsbfinal, segmentscfinal, 3, 3)
 
 
-    matchleft_breast = ['部位分割标志', '左乳',  matchleft4_breast, matchleft4_breast]
-    matchright_breast = ['部位分割标志', '右乳',  matchright4_breast, matchleft4_breast]
+    matchleft_breast = ['部位分割标志', '左乳',  matchleft3_breast, matchleft4_breast]
+    matchright_breast = ['部位分割标志', '右乳',  matchright3_breast, matchright4_breast]
     # matchleft_axilla = ['部位分割标志', '左侧腋窝及锁骨区', matchleft4_axilla, matchleft4_axilla]
     # matchright_axilla = ['部位分割标志', '右侧腋窝及锁骨区', matchright4_axilla, matchleft4_axilla]
 
@@ -548,8 +551,10 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
 
     segmentscfinal_output = []
     # 超声不同 超声是左乳右乳有没有出现都要补全的
-    segmentscfinal_output.append(segmentscfinal[0])
-    segmentscfinal_output.append(segmentscfinal[1])
+    if 0 in segmentsbnew_temp:
+        segmentscfinal_output.append(segmentscfinal[0])
+    if 1 in segmentsbnew_temp:
+        segmentscfinal_output.append(segmentscfinal[1])
     if 2 in segmentscnew_temp:
         segmentscfinal_output.append(segmentscfinal[2])
     if 3 in segmentscnew_temp:
