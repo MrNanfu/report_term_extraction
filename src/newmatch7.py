@@ -62,20 +62,31 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                 if segments5[2 * j5 + 1] in segmentsnum[jnum]:
                     (segmentsall[jnum])[4].append(segments5[2 * j5])
                     (segmentsall[jnum])[4].append(segments5[2 * j5 + 1])
+                else:    ##无效语句的情况
+                    (segmentsall[jnum])[4].append(segments5[2 * j5])
+                    (segmentsall[jnum])[4].append(segments5[2 * j5 + 1])
+
         for j4 in range(int(len(segments4) / 2)):
             for jnum in range(len(segmentsnum)):
                 if segments4[2 * j4 + 1] in segmentsnum[jnum]:
                     (segmentsall[jnum])[3].append(segments4[2 * j4])
                     (segmentsall[jnum])[3].append(segments4[2 * j4 + 1])
+                else:  ##无效语句的情况
+                    (segmentsall[jnum])[3].append(segments5[2 * j4])
+                    (segmentsall[jnum])[3].append(segments5[2 * j4 + 1])
+
         for j3 in range(int(len(segments3) / 2)):
             for jnum in range(len(segmentsnum)):
                 if segments3[2 * j3 + 1] in segmentsnum[jnum]:
                     (segmentsall[jnum])[2].append(segments3[2 * j3])
                     (segmentsall[jnum])[2].append(segments3[2 * j3 + 1])
+                else:
+                    (segmentsall[jnum])[2].append(segments3[2 * j3])
+                    (segmentsall[jnum])[2].append(segments3[2 * j3 + 1])
 
-        for j6 in range(int(len(segments6))):
-            for jnum in range(len(segmentsnum)):
-                (segmentsall[jnum])[5].append(segments6[j6])
+        for jnum in range(len(segmentsnum)):
+            (segmentsall[jnum])[5].append(segments6[jnum])
+
 
 
         return (segmentsall, segmentsnum)
@@ -122,7 +133,16 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
 
 
 
+    ## 输出segmentsall语句时，存在某些句子只有部位，因此需要进行删除
+    def remove(segmentstall):
+        segmentall_new = []
+        for j in range(int(len(segmentstall))):
+            if len((segmentstall[j])[2]) != 0 :
+                segmentall_new.append((segmentstall[j]))
+        return segmentall_new
 
+    segmentsball = remove(segmentsball);
+    segmentscall = remove(segmentscall)
 
     # 去掉位置信息
     def new(segmentsall):
@@ -140,7 +160,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
             (segmentsnew[inewdiv])[0].append('部位分割标志')
 
         for inewdiv in range(lennewdiv):
-            segmentsnew[inewdiv].append((segmentsall[0])[5])
+            segmentsnew[inewdiv].append((segmentsall[inewdiv])[5])
 
 
         for i in range(len(segmentsall)):
@@ -172,13 +192,21 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
 
     #多个实性囊性出现时进行归一化
     def normalization3(segments):
-        valueside = 0.01
+        mark = 0
         for i in range(len(segments)):
-            valuesidetemp = word_prob3[segments[i]]
-            if valuesidetemp > valueside:
-                valueside = valuesidetemp
-        segments = get_key(word_prob3, valueside)
-        return segments
+            if segments[i] == '无效语句':
+                mark = 1
+        if mark :
+            new_s = ['无效语句']
+            return new_s
+        else:
+            valueside = 0.01
+            for i in range(len(segments)):
+                valuesidetemp = word_prob3[segments[i]]
+                if valuesidetemp > valueside:
+                    valueside = valuesidetemp
+            segments = get_key(word_prob3, valueside)
+            return segments
 
     for i in range(len(segmentsbnew)):
         segmentsbnew[i][2]=normalization3(segmentsbnew[i][2])
@@ -187,14 +215,23 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
 
     #多个良性恶性出现时进行归一化
     def normalization4(segments):
-        valueside = 0.01
+        mark = 0
         for i in range(len(segments)):
-            if segments[i] in word_prob4:
-                valuesidetemp = word_prob4[segments[i]]
-                if valuesidetemp > valueside:
-                    valueside = valuesidetemp
-        segments = get_key(word_prob4, valueside)
-        return segments
+            if segments[i] == '无效语句':
+                mark = 1
+        if mark :
+            new_s = ['无效语句']
+            return new_s
+        else:
+            valueside = 0.01
+            for i in range(len(segments)):
+                if segments[i] in word_prob4:
+                    valuesidetemp = word_prob4[segments[i]]
+                    if valuesidetemp > valueside:
+                        valueside = valuesidetemp
+            segments = get_key(word_prob4, valueside)
+            return segments
+
     for i in range(len(segmentsbnew)):
         segmentsbnew[i][3]=normalization4(segmentsbnew[i][3])
     for i in range(len(segmentscnew)):
@@ -240,14 +277,22 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
 
     #归一化
     def normalization_major_minor(segments):
-        segments_temp = normalization_major_minor_temp(segments)
-        valuetemp_dictionary = get_temp_dictionary(segments_temp)
-        segments_normalization_major_minor=[]
+        mark = 0
         for i in range(len(segments)):
-            if segments[i] in valuetemp_dictionary.keys():
-                segments_normalization_major_minor.append(segments[i])
-                break
-        return segments_normalization_major_minor
+            if segments[i] == '无效语句':
+                mark = 1
+        if mark :
+            new_s = ['无效语句']
+            return new_s
+        else:
+            segments_temp = normalization_major_minor_temp(segments)
+            valuetemp_dictionary = get_temp_dictionary(segments_temp)
+            segments_normalization_major_minor = []
+            for i in range(len(segments)):
+                if segments[i] in valuetemp_dictionary.keys():
+                    segments_normalization_major_minor.append(segments[i])
+                    break
+            return segments_normalization_major_minor
 
 
     for i in range(len(segmentsbnew)):
@@ -297,13 +342,13 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         return segments3left, segments3right, segments4left, segments4right, segments5left, segments5right, segments6left, segments6right
 
     segmentsb3left_breast, segmentsb3right_breast, segmentsb4left_breast, segmentsb4right_breast, segmentsb5left_breast, segmentsb5right_breast, segmentsb6left_breast, segmentsb6right_breast = combine(
-        {"左乳": 0.01, "左侧乳头": 0.01, "左侧乳房": 0.01, "左侧乳腺": 0.01}, {"右乳": 0.01, "右侧乳头": 0.01, "右侧乳房": 0.01, "右侧乳腺": 0.01},
+        {"左乳": 0.01, "左侧乳头": 0.01, "左侧乳房": 0.01, "左侧乳腺": 0.01,"左侧副乳": 0.01 }, {"右乳": 0.01, "右侧乳头": 0.01, "右侧乳房": 0.01, "右侧乳腺": 0.01, "右侧副乳": 0.01},
         segmentsbnew)
     segmentsb3left_axilla, segmentsb3right_axilla, segmentsb4left_axilla, segmentsb4right_axilla, segmentsb5left_axilla, segmentsb5right_axilla, segmentsb6left_axilla, segmentsb6right_axilla  = combine(
         {"左侧腋窝": 0.01, "左侧锁骨": 0.01, "左腋窝": 0.01, "左锁骨": 0.01, "左侧腋窝及锁骨区": 0.01},
         {"右侧腋窝": 0.01, "右侧锁骨": 0.01, "右腋窝": 0.01, "右锁骨": 0.01, "右侧腋窝及锁骨区": 0.01}, segmentsbnew)
     segmentsc3left_breast, segmentsc3right_breast, segmentsc4left_breast, segmentsc4right_breast, segmentsc5left_breast, segmentsc5right_breast, segmentsc6left_breast, segmentsc6right_breast= combine(
-        {"左乳": 0.01, "左侧乳头": 0.01, "左侧乳房": 0.01, "左侧乳腺": 0.01}, {"右乳": 0.01, "右侧乳头": 0.01, "右侧乳房": 0.01, "右侧乳腺": 0.01},
+        {"左乳": 0.01, "左侧乳头": 0.01, "左侧乳房": 0.01, "左侧乳腺": 0.01,"左侧副乳": 0.01 }, {"右乳": 0.01, "右侧乳头": 0.01, "右侧乳房": 0.01, "右侧乳腺": 0.01, "右侧副乳": 0.01},
         segmentscnew)
     segmentsc3left_axilla, segmentsc3right_axilla, segmentsc4left_axilla, segmentsc4right_axilla, segmentsc5left_axilla, segmentsc5right_axilla, segmentsc6left_axilla, segmentsc6right_axilla = combine(
         {"左侧腋窝": 0.01, "左侧锁骨": 0.01, "左腋窝": 0.01, "左锁骨": 0.01, "左侧腋窝及锁骨区": 0.01},
@@ -313,9 +358,9 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     def findnotnone(segmentsnew):
         segmentsnew_temp = []
         for i in range(len(segmentsnew)):
-            if ((segmentsnew[i])[1])[0] in {"左乳": 0.01, "左侧乳头": 0.01, "左侧乳房": 0.01, "左侧乳腺": 0.01}:
+            if ((segmentsnew[i])[1])[0] in {"左乳": 0.01, "左侧乳头": 0.01, "左侧乳房": 0.01, "左侧乳腺": 0.01,  "左侧副乳": 0.01}:
                 segmentsnew_temp.append(0)
-            if ((segmentsnew[i])[1])[0] in {"右乳": 0.01, "右侧乳头": 0.01, "右侧乳房": 0.01, "右侧乳腺": 0.01}:
+            if ((segmentsnew[i])[1])[0] in {"右乳": 0.01, "右侧乳头": 0.01, "右侧乳房": 0.01, "右侧乳腺": 0.01,  "右侧副乳": 0.01}:
                 segmentsnew_temp.append(1)
             if ((segmentsnew[i])[1])[0] in {"左侧腋窝": 0.01, "左侧锁骨": 0.01, "左腋窝": 0.01, "左锁骨": 0.01, "左侧腋窝及锁骨区": 0.01}:
                 segmentsnew_temp.append(2)
@@ -396,21 +441,29 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
 
 
     def normalization5b(segmentsb4_breast,segmentsb5_breast):#这里是已经归一化的良恶性 和还未归一化的病理性质
-        segments=[]
-        if len(segmentsb4_breast)!=0:
-            if len(segmentsb5_breast) != 0:
-                #注意这里 良性或恶性待定 字符串要和前文写得保持一致 比如良恶性均可 就不会识别到
-                #医生逻辑：恶性和良恶性待定的病理性质 全部输出（这时有良性不需要输出良性），要是没有恶性和良恶性待定的 病理性质，就输出良性的，且只输出一个就可以
-                if segmentsb4_breast[0]=='恶性'or segmentsb4_breast[0]=='良性或恶性待定':
-                    if len(segmentsb5_breast)!=0:
-                        for i in range(len(segmentsb5_breast)):
-                            if segmentsb5_breast[i] in word_probexing.keys():
-                                segments.append(segmentsb5_breast[i])
-                            if segmentsb5_breast[i] in word_probliang_or_e.keys():
-                                segments.append(segmentsb5_breast[i])
-                if segmentsb4_breast[0] == '良性' :
-                    segments.append(segmentsb5_breast[0])
-        return segments
+        mark = 0
+        for i in range(len(segmentsb5_breast)):
+            if segmentsb5_breast[i] == '无效语句':
+                mark = 1
+        if mark :
+            new_s = ['无效语句']
+            return new_s
+        else:
+            segments = []
+            if len(segmentsb4_breast) != 0:
+                if len(segmentsb5_breast) != 0:
+                    # 注意这里 良性或恶性待定 字符串要和前文写得保持一致 比如良恶性均可 就不会识别到
+                    # 医生逻辑：恶性和良恶性待定的病理性质 全部输出（这时有良性不需要输出良性），要是没有恶性和良恶性待定的 病理性质，就输出良性的，且只输出一个就可以
+                    if segmentsb4_breast[0] == '恶性' or segmentsb4_breast[0] == '良性或恶性待定':
+                        if len(segmentsb5_breast) != 0:
+                            for i in range(len(segmentsb5_breast)):
+                                if segmentsb5_breast[i] in word_probexing.keys():
+                                    segments.append(segmentsb5_breast[i])
+                                if segmentsb5_breast[i] in word_probliang_or_e.keys():
+                                    segments.append(segmentsb5_breast[i])
+                    if segmentsb4_breast[0] == '良性':
+                        segments.append(segmentsb5_breast[0])
+            return segments
     segmentsb5left_breast=normalization5b(segmentsb4left_breast,segmentsb5left_breast)
     segmentsb5right_breast = normalization5b(segmentsb4right_breast, segmentsb5right_breast)
 

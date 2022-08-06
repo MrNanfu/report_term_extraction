@@ -85,9 +85,15 @@ def findsegments(input, word_prob):#最大匹配的那个函数
                 break
     return segments
 
+
+word_prob_invalid = {'切缘': 0.01, '皮缘': 0.01, '新辅': 0.01, '化疗': 0.01, '副乳': 0.01}
+
 #合并成一个大字典，用这个字典进去一起找，找完之后再区分开是部位还是性质等等
-word_probbingliall={**word_probbinglibuwei,**word_probbingliwuli,**word_probbingliliangexing,**word_probbinglibingli}
+word_probbingliall={**word_probbinglibuwei,**word_probbingliwuli,**word_probbingliliangexing,**word_probbinglibingli, **word_prob_invalid}
 # print(word_probbingliall)
+
+## 切缘、皮缘等词的出现，定义为无效病理语句
+
 
 def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入的四个参数里的前两个有关病理的参数赋值给该函数
     global leninputbingli #输入字符串长度
@@ -99,6 +105,8 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
     segmentsb_merge = []
     segmentsb_merge = findsegments(input_str,word_probbingliall)
     reliability = findsegments(input_str, word_reliability)
+    invalid_b = findsegments(input_str, word_prob_invalid)
+
 
     # print('segmentsb_merge为')
     # print(segmentsb_merge)
@@ -107,15 +115,16 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
     # segmentsb1=[]
     # segmentsb1=findsegments(input_str, word_probbinglicebie)
     global segmentsb1,segmentsb2,segmentsb3,segmentsb4,segmentsb5, segmentsb6
+    #1代表侧别、2代表部位、3代表物理性质、4代表良恶性
     segmentsb1=[]#注意这里又加了b1，虽然这次任务用不上
     segmentsb2=[]
     segmentsb3=[]
+    segmentsb3_raw = []
     segmentsb4=[]
+    segmentsb4_raw=[]
     segmentsb5=[]
-    if reliability is not None:
-        segmentsb6=["匹配结果可信度低"]
-    else:
-        segmentsb6 = ["匹配结果可信度高"]
+    segmentsb6=[]
+
     #根据来源的字典分别将其放入每个列表
     for i in range(int(len(segmentsb_merge)/2)):
         if segmentsb_merge[2*i] in word_probbinglicebie:
@@ -125,14 +134,41 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
             segmentsb2.append(segmentsb_merge[2*i])
             segmentsb2.append(segmentsb_merge[2*i+1])
         if segmentsb_merge[2*i] in word_probbingliwuli:
-            segmentsb3.append(segmentsb_merge[2*i])
-            segmentsb3.append(segmentsb_merge[2*i+1])
+            segmentsb3_raw.append(segmentsb_merge[2*i])
+            segmentsb3_raw.append(segmentsb_merge[2*i+1])
         if segmentsb_merge[2*i] in word_probbingliliangexing:
-            segmentsb4.append(segmentsb_merge[2*i])
-            segmentsb4.append(segmentsb_merge[2*i+1])
+            segmentsb4_raw.append(segmentsb_merge[2*i])
+            segmentsb4_raw.append(segmentsb_merge[2*i+1])
         if segmentsb_merge[2*i] in word_probbinglibingli:
             segmentsb5.append(segmentsb_merge[2*i])
             segmentsb5.append(segmentsb_merge[2*i+1])
+
+        if segmentsb_merge[2 * i] in word_prob_invalid:
+            segmentsb5.append("无效语句")
+            segmentsb5.append(0)
+
+
+    if int(len(reliability)) != 0:
+        for i in range(int(len(reliability)/2)):
+            for j in range(int(len(segmentsb2)/2)):
+                if( j < int(len(segmentsb2)/2) - 1):
+                    if segmentsb2[2 * j + 1] < reliability[2 * i + 1] < segmentsb2[2 * j + 3]:
+                        segmentsb6.append("匹配结果可信度低")
+                    else:
+                        segmentsb6.append("匹配结果可信度高")
+                else :
+                    if segmentsb2[2 * j + 1] < reliability[2 * i + 1]:
+                        segmentsb6.append("匹配结果可信度低")
+                    else:
+                        segmentsb6.append("匹配结果可信度高")
+
+    elif int(len(reliability)) == 0:
+        if int(len(segmentsb2) / 2) != 0:
+            for j in range(int(len(segmentsb2) / 2)):
+                segmentsb6.append("匹配结果可信度高")
+        else:
+                segmentsb6.append("匹配结果可信度高")
+
     # print('segmentsb5为')
     # print(segmentsb5)
 
@@ -214,6 +250,12 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
                 segmentsb2[ibgy2] = '左侧乳腺'
             if segmentsb2[ibgy2]=='双侧乳房腺体':
                 segmentsb2[ibgy2] = '双侧乳腺'
+            if segmentsb2[ibgy2]=='右侧副乳腺肿物':
+                segmentsb2[ibgy2] = '右侧副乳'
+            if segmentsb2[ibgy2]=='左侧副乳腺肿物':
+                segmentsb2[ibgy2] = '左侧副乳'
+            if segmentsb2[ibgy2]=='双侧副乳腺肿物':
+                segmentsb2[ibgy2] = '双侧副乳'
             if segmentsb2[ibgy2] in word_probb2yewosuogu.keys():
                 segmentsb2[ibgy2] = '腋窝及锁骨区'
             if segmentsb2[ibgy2] in word_probb2yewosuoguleft.keys():
@@ -240,6 +282,69 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
         if not visit[idx]:
             new_list.append(segmentsb2[idx])
     segmentsb2 = new_list
+
+
+
+    #否定词 出现否定词的时候 它形容的那些病理性质需要排除掉或者取反，下面列出了一些需要排除的
+
+    word_prob_negative_word_all={'排除':0.01,'鉴别':0.01,'不完全除外':0.01,'不能除外':0.01,'不除外':0.01,'除外':0.01,'未见': 0.01, '疑' : 0.01}
+    #带未见的先注释掉 未见的那个句子里有时候会报错
+
+    #word_prob_negative_word_all = {'排除': 0.01, '鉴别': 0.01, '不完全除外': 0.01, '不能除外': 0.01, '不除外': 0.01, '除外': 0.01}
+    word_prob_negative_word1 = {'排除': 0.01, '鉴别': 0.01,'除外': 0.01, '未见': 0.01}
+    # word_prob_negative_word1 = {'排除': 0.01, '鉴别': 0.01,'除外': 0.01,'未见': 0.01}
+    #和上面切面那个问题同理，都是利用最大匹配的算法，这里由于不除外不能除外虽然表达肯定意思，但是如果不把这些词放里，就会提取到除外这样的否定词
+    word_prob_negative_word2 = {'不完全除外': 0.01, '不能除外': 0.01, '不除外': 0.01 , '疑' : 0.01}
+    word_prob_comma={'，':0.01,'；':0.01,'、':0.01}#注意打字时候这里是中文标点
+    word_prob_full_stop={'。':0.01}#中文句号
+    #就是通过表格数据找寻规律，比如出现排除这种词，它前面第一个逗号到后面第一个句号里的词可能都需要排除掉，具体看表格里不同医生的写法去总结共性，然后这里也可以以后用NLP
+
+    segmentsb_negative_word_all = findsegments(input_str, word_prob_negative_word_all)
+    segmentsb_negative_word1=[]
+    segmentsb_negative_word2=[]
+    for i in range(int(len(segmentsb_negative_word_all)/2)):
+        if segmentsb_negative_word_all[2*i] in word_prob_negative_word1:
+            segmentsb_negative_word1.append(segmentsb_negative_word_all[2*i])
+            segmentsb_negative_word1.append(segmentsb_negative_word_all[2*i+1])
+        if segmentsb_negative_word_all[2*i] in word_prob_negative_word2:
+            segmentsb_negative_word2.append(segmentsb_negative_word_all[2*i])
+            segmentsb_negative_word2.append(segmentsb_negative_word_all[2*i+1])
+    segmentsb_comma=findsegments(input_str, word_prob_comma)
+    segmentsb_full_stop=findsegments(input_str, word_prob_full_stop)
+    # print('segmentsb_negative_word,segmentsb_comma,segmentsb_full_stop为')
+    # print(segmentsb_negative_word,segmentsb_comma,segmentsb_full_stop)
+    if len(segmentsb_negative_word1)!=0:
+        #先按只有一个否定词来处理
+        loc_negative_word=segmentsb_negative_word1[1]
+        for i in range(int(len(segmentsb_full_stop)/2)):
+            if segmentsb_full_stop[2*i+1]>loc_negative_word:
+                loc_full_stop=segmentsb_full_stop[2*i+1]
+                break
+        # print('句号位置为')
+        # print(loc_full_stop)
+
+        for j in range(int(len(segmentsb_comma)/2)):
+            if j<int(len(segmentsb_comma)/2-1):
+                if (segmentsb_comma[2*j+1]<loc_negative_word) and (segmentsb_comma[2*j+3]>loc_negative_word):
+                    loc_comma=segmentsb_comma[2*j+1]
+                    break
+            if j==int(len(segmentsb_comma)/2-1):
+                if (segmentsb_comma[2*j+1]<loc_negative_word):
+                    loc_comma =segmentsb_comma[2*j+1]
+                    break
+        # print('逗号位置为')
+        # print(loc_comma)
+        #还没写 2*j+3超出去的情况
+
+        segmentsb5new = []
+        for i in range(int(len(segmentsb5)/2)):
+            if segmentsb5[2*i+1]<loc_comma or segmentsb5[2*i+1]>loc_full_stop:
+                segmentsb5new.append(segmentsb5[2*i])
+                segmentsb5new.append(segmentsb5[2*i+1])
+        segmentsb5=segmentsb5new
+        # print('segmentsb5new为')
+        # print(segmentsb5new)
+
 
     global segmentsb5bf
     segmentsb5bf = segmentsb5.copy()  # 归一化前的segmentsb5 用来后续判断良恶性和物理性质，因为判断病理性质对应的良恶性和物理性质的字典是按照病理性质归一化前的名称来写的，所以必须保存一个没有归一化的病理信息
@@ -311,66 +416,6 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
         if segmentsb5[ibgy5] in word_probb5rouyazhong.keys():
             segmentsb5[ibgy5] = '肉芽肿'
 
-    #否定词 出现否定词的时候 它形容的那些病理性质需要排除掉或者取反，下面列出了一些需要排除的
-
-    # word_prob_negative_word_all={'排除':0.01,'鉴别':0.01,'不完全除外':0.01,'不能除外':0.01,'不除外':0.01,'除外':0.01,'未见': 0.01}
-    #带未见的先注释掉 未见的那个句子里有时候会报错
-
-    word_prob_negative_word_all = {'排除': 0.01, '鉴别': 0.01, '不完全除外': 0.01, '不能除外': 0.01, '不除外': 0.01, '除外': 0.01}
-    word_prob_negative_word1 = {'排除': 0.01, '鉴别': 0.01,'除外': 0.01}
-    # word_prob_negative_word1 = {'排除': 0.01, '鉴别': 0.01,'除外': 0.01,'未见': 0.01}
-    #和上面切面那个问题同理，都是利用最大匹配的算法，这里由于不除外不能除外虽然表达肯定意思，但是如果不把这些词放里，就会提取到除外这样的否定词
-    word_prob_negative_word2 = {'不完全除外': 0.01, '不能除外': 0.01, '不除外': 0.01}
-    word_prob_comma={'，':0.01,'；':0.01,'、':0.01}#注意打字时候这里是中文标点
-    word_prob_full_stop={'。':0.01}#中文句号
-    #就是通过表格数据找寻规律，比如出现排除这种词，它前面第一个逗号到后面第一个句号里的词可能都需要排除掉，具体看表格里不同医生的写法去总结共性，然后这里也可以以后用NLP
-
-    segmentsb_negative_word_all = findsegments(input_str, word_prob_negative_word_all)
-    segmentsb_negative_word1=[]
-    segmentsb_negative_word2=[]
-    for i in range(int(len(segmentsb_negative_word_all)/2)):
-        if segmentsb_negative_word_all[2*i] in word_prob_negative_word1:
-            segmentsb_negative_word1.append(segmentsb_negative_word_all[2*i])
-            segmentsb_negative_word1.append(segmentsb_negative_word_all[2*i+1])
-        if segmentsb_negative_word_all[2*i] in word_prob_negative_word2:
-            segmentsb_negative_word2.append(segmentsb_negative_word_all[2*i])
-            segmentsb_negative_word2.append(segmentsb_negative_word_all[2*i+1])
-    segmentsb_comma=findsegments(input_str, word_prob_comma)
-    segmentsb_full_stop=findsegments(input_str, word_prob_full_stop)
-    # print('segmentsb_negative_word,segmentsb_comma,segmentsb_full_stop为')
-    # print(segmentsb_negative_word,segmentsb_comma,segmentsb_full_stop)
-    if len(segmentsb_negative_word1)!=0:
-        #先按只有一个否定词来处理
-        loc_negative_word=segmentsb_negative_word1[1]
-        for i in range(int(len(segmentsb_full_stop)/2)):
-            if segmentsb_full_stop[2*i+1]>loc_negative_word:
-                loc_full_stop=segmentsb_full_stop[2*i+1]
-                break
-        # print('句号位置为')
-        # print(loc_full_stop)
-
-        for j in range(int(len(segmentsb_comma)/2)):
-            if j<int(len(segmentsb_comma)/2-1):
-                if (segmentsb_comma[2*j+1]<loc_negative_word) and (segmentsb_comma[2*j+3]>loc_negative_word):
-                    loc_comma=segmentsb_comma[2*j+1]
-                    break
-            if j==int(len(segmentsb_comma)/2-1):
-                if (segmentsb_comma[2*j+1]<loc_negative_word):
-                    loc_comma =segmentsb_comma[2*j+1]
-                    break
-        # print('逗号位置为')
-        # print(loc_comma)
-        #还没写 2*j+3超出去的情况
-
-        segmentsb5new = []
-        for i in range(int(len(segmentsb5)/2)):
-            if segmentsb5[2*i+1]<loc_comma or segmentsb5[2*i+1]>loc_full_stop:
-                segmentsb5new.append(segmentsb5[2*i])
-                segmentsb5new.append(segmentsb5[2 * i+1])
-        segmentsb5=segmentsb5new
-        # print('segmentsb5new为')
-        # print(segmentsb5new)
-
 
 
     #根据病理性质所对应的实性囊性来给出实性囊性信息
@@ -379,18 +424,28 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
     while (1):
         if lencldivb5 == 0:
             break
+
+        elif segmentsb5bf[2 * icldivb5 - 2] == '无效语句':
+            segmentsb3.append('无效语句')
+            segmentsb3.append(segmentsb5bf[2 * icldivb5 - 1])
+            icldivb5 += 1
+            if icldivb5 > lencldivb5:
+                break
+
         elif segmentsb5bf[2 * icldivb5 - 2] in word_probbingliwulinangxing.keys():#注意这段里有时候角标是5有时候是3，因为是根据5病理信息列表里的某一项的信息，来在3实性囊性里添加
             segmentsb3.append('囊性')
-            segmentsb3.append(segmentsb5[2 * icldivb5 - 1])
+            segmentsb3.append(segmentsb5bf[2 * icldivb5 - 1])
             icldivb5 += 1
             if icldivb5 > lencldivb5:
                 break
+
         else:
             segmentsb3.append('实性')
-            segmentsb3.append(segmentsb5[2 * icldivb5 - 1])
+            segmentsb3.append(segmentsb5bf[2 * icldivb5 - 1])
             icldivb5 += 1
             if icldivb5 > lencldivb5:
                 break
+
 
 
     #根据病理性质所对应的良恶性来给出良恶性信息
@@ -399,6 +454,18 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
     while (1):
         if lencldivb5 == 0:
             break
+        if len(segmentsb4_raw) != 0:
+            for j in range(int(len(segmentsb4_raw)/2)):
+                if segmentsb4_raw[2 * j + 1] - segmentsb5bf[2 * icldivb5 - 1] <= 10 or  segmentsb5bf[2 * icldivb5 - 1] - segmentsb4_raw[2 * j + 1] <= 10:
+                    segmentsb4.append(segmentsb4_raw[2 * j])
+                    segmentsb4.append(segmentsb4_raw[2 * j + 1])
+                    segmentsb4_raw.pop()
+                    segmentsb4_raw.pop()
+
+            icldivb5 += 1
+            if icldivb5 > lencldivb5:
+                break
+
         elif segmentsb5bf[2 * icldivb5 - 2] in word_probliangxing.keys():
             segmentsb4.append('良性')
             segmentsb4.append(segmentsb5bf[2 * icldivb5 - 1])
@@ -418,6 +485,8 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
             if icldivb5 > lencldivb5:
                 break
         else:
+            segmentsb4.append('无效语句')
+            segmentsb4.append(segmentsb5bf[2 * icldivb5 - 1])
             icldivb5 += 1
             if icldivb5 > lencldivb5:
                 break
