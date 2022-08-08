@@ -18,7 +18,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     lenstringc = len(ultrasound_report)
     pathologicalfuc(pathological_bodypart, pathological_report)
     ultrasoundfuc(ultrasound_bodypart, ultrasound_report)
-    from pathological import segmentsb1, segmentsb2, segmentsb3, segmentsb4, segmentsb5, segmentsb6, leninputbingli, \
+    from pathological import segmentsb1, segmentsb2, segmentsb3, segmentsb4, segmentsb5, segmentsb6, segmentsb_yuyi, leninputbingli, \
         segmentsb2temp, \
         segmentsb5bf  # 引入之前两个函数中得到的列表信息
     from ultrasound import segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5, leninputchaosheng, segmentsc2temp
@@ -81,29 +81,29 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     segmentsball, segmentsbnum = fuc1(segmentsb2, segmentsb3, segmentsb4, segmentsb5, lenstringb)
     segmentscall, segmentscnum = fuc1(segmentsc2, segmentsc3, segmentsc4, segmentsc5, lenstringc)
 
-    # 对于segmentsb6，利用segmentsbnum的位置信息按照部位进行分割操作
-    segmentsb6_sep = []
+    # 对于segmentsb_yuyi，利用segmentsbnum的位置信息按照部位进行分割操作
+    segmentsb_yuyi_sep = []
     lenalldiv = int(len(segmentsb2) / 2)  # 带着位置信息，注意除以二
     for ialldiv in range(lenalldiv):
-        segmentsb6_sep.append([])
-    for j6 in range((int)(len(segmentsb6) / 2)):
+        segmentsb_yuyi_sep.append([])
+    for j6 in range((int)(len(segmentsb_yuyi) / 2)):
         for jnum in range(len(segmentsbnum)):
-            if segmentsb6[2 * j6 + 1] in segmentsbnum[jnum]:
-                (segmentsb6_sep[jnum]).append(segmentsb6[2 * j6])
-                (segmentsb6_sep[jnum]).append(segmentsb6[2 * j6 + 1])
+            if segmentsb_yuyi[2 * j6 + 1] in segmentsbnum[jnum]:
+                (segmentsb_yuyi_sep[jnum]).append(segmentsb_yuyi[2 * j6])
+                (segmentsb_yuyi_sep[jnum]).append(segmentsb_yuyi[2 * j6 + 1])
 
     # 对于出现双乳，语义segments6也需要展开,使其与segmentsall的索引保持一致
-    def unfold_yuyi(segmentsb6, segments2, string1):
+    def unfold_yuyi(segmentsb_yuyi, segments2, string1):
         for i in range(int(len(segments2) / 2)):
             if segments2[2 * i] == string1:
-                r = segmentsb6[i].copy()
-                segmentsb6.insert(i + 1, r)
+                r = segmentsb_yuyi[i].copy()
+                segmentsb_yuyi.insert(i + 1, r)
 
-    segmentsb6 = unfold_yuyi(segmentsb6, segmentsb2, '双侧乳腺')
-    segmentsb6 = unfold_yuyi(segmentsb6, segmentsb2, '双乳')
-    segmentsb6 = unfold_yuyi(segmentsb6, segmentsb2, '双侧乳房')
-    segmentsb6 = unfold_yuyi(segmentsb6, segmentsb2, '双侧乳头')
-    segmentsb6 = unfold_yuyi(segmentsb6, segmentsb2, '双侧腋窝及锁骨区')
+    segmentsb_yuyi = unfold_yuyi(segmentsb_yuyi, segmentsb2, '双侧乳腺')
+    segmentsb_yuyi = unfold_yuyi(segmentsb_yuyi, segmentsb2, '双乳')
+    segmentsb_yuyi = unfold_yuyi(segmentsb_yuyi, segmentsb2, '双侧乳房')
+    segmentsb_yuyi = unfold_yuyi(segmentsb_yuyi, segmentsb2, '双侧乳头')
+    segmentsb_yuyi = unfold_yuyi(segmentsb_yuyi, segmentsb2, '双侧腋窝及锁骨区')
 
     # 出现双乳，需要展开，下面的字典需要根据数据里出现过什么不断补充，而且得注意需求是调整超声 病理 还是都调整
     def unfold(segmentsall, segments2, string1, string2, string3):
@@ -264,15 +264,15 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     #     return segments_normalization_major_minor
 
     # 寻找某个语义词后最近的病理, flg = 0代表寻找的病理为良恶未知， flg = 1代表寻找的病理为良性
-    def find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, str_yuyi, flg):
+    def find_related_bl_by_yuyi(segments, segmentsb_yuyi_sep, idx, str_yuyi, flg):
         related_seg_idx = -1
         segments_pos = segmentsball[idx][4]
         # print(segments_pos)
-        segmentsb6_pos = segmentsb6_sep[idx]
+        segmentsb_yuyi_pos = segmentsb_yuyi_sep[idx]
         pos_yuyi = -1
-        for i in range(int(len(segmentsb6_pos) / 2)):
-            if segmentsb6_pos[2 * i] == str_yuyi:
-                pos_yuyi = segmentsb6_pos[2 * i + 1]
+        for i in range(int(len(segmentsb_yuyi_pos) / 2)):
+            if segmentsb_yuyi_pos[2 * i] == str_yuyi:
+                pos_yuyi = segmentsb_yuyi_pos[2 * i + 1]
         if pos_yuyi == -1:
             return -1
         for i in range(int(len(segments_pos) / 2)):
@@ -323,11 +323,11 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                     if segments[i] in word_probexing_major:
                         segments_normalization_major_minor.append(segments[i])
             else:  # 不存在恶性
-                if '免疫组化' in segmentsb6_sep[idx]:  # 存在免疫组化关键词时，提取最近的后面一个病理
+                if '免疫组化' in segmentsb_yuyi_sep[idx]:  # 存在免疫组化关键词时，提取最近的后面一个病理
                     idx_mianyi = -1
-                    for i in range(int(len(segmentsb6_sep[idx]) / 2)):
-                        if segmentsb6_sep[idx][2 * i] == '免疫组化':
-                            idx_mianyi = segmentsb6_sep[idx][2 * i + 1]
+                    for i in range(int(len(segmentsb_yuyi_sep[idx]) / 2)):
+                        if segmentsb_yuyi_sep[idx][2 * i] == '免疫组化':
+                            idx_mianyi = segmentsb_yuyi_sep[idx][2 * i + 1]
                             break
                     flg = 0
                     for i in range(len(segments)):
@@ -350,14 +350,14 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                     else:  # 存在多个良恶未知，需要用语义信息去判断
                         prio_list = [0 for _ in range(cnt_list[1])]
                         # 首先对于在部分语义后面的病理的优先级进行扣分
-                        idx_ban = find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, '伴', 0)
-                        idx_gebie = find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, '个别', 0)
-                        idx_bufen = find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, '部分', 0)
+                        idx_ban = find_related_bl_by_yuyi(segments, segmentsb_yuyi_sep, idx, '伴', 0)
+                        idx_gebie = find_related_bl_by_yuyi(segments, segmentsb_yuyi_sep, idx, '个别', 0)
+                        idx_bufen = find_related_bl_by_yuyi(segments, segmentsb_yuyi_sep, idx, '部分', 0)
                         if idx_ban != -1: prio_list[idx_ban] -= 1
                         if idx_gebie != -1: prio_list[idx_gebie] -= 1
                         if idx_bufen != -1: prio_list[idx_bufen] -= 1
                         # 然后对于出现在主体近后的病理加分
-                        idx_zhuti = find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, '主体', 0)
+                        idx_zhuti = find_related_bl_by_yuyi(segments, segmentsb_yuyi_sep, idx, '主体', 0)
                         if idx_zhuti != -1: prio_list[idx_zhuti] += 1
                         # 查看优先级最大的病理
                         max_val = max(prio_list)
@@ -384,14 +384,14 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                     else:  # 存在多个良性
                         prio_list = [0 for _ in range(cnt_list[2])]
                         # 首先对于在部分语义后面的病理的优先级进行扣分
-                        idx_ban = find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, '伴', 1)
-                        idx_gebie = find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, '个别', 1)
-                        idx_bufen = find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, '部分', 1)
+                        idx_ban = find_related_bl_by_yuyi(segments, segmentsb_yuyi_sep, idx, '伴', 1)
+                        idx_gebie = find_related_bl_by_yuyi(segments, segmentsb_yuyi_sep, idx, '个别', 1)
+                        idx_bufen = find_related_bl_by_yuyi(segments, segmentsb_yuyi_sep, idx, '部分', 1)
                         if idx_ban != -1: prio_list[idx_ban] -= 1
                         if idx_gebie != -1: prio_list[idx_gebie] -= 1
                         if idx_bufen != -1: prio_list[idx_bufen] -= 1
                         # 然后对于出现在主体近后的病理加分
-                        idx_zhuti = find_related_bl_by_yuyi(segments, segmentsb6_sep, idx, '主体', 1)
+                        idx_zhuti = find_related_bl_by_yuyi(segments, segmentsb_yuyi_sep, idx, '主体', 1)
                         if idx_zhuti != -1: prio_list[idx_zhuti] += 1
                         # 查看优先级最大的病理
                         max_val = max(prio_list)

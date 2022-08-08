@@ -110,16 +110,17 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
 
 
 
-    global segmentsb1,segmentsb2,segmentsb3,segmentsb4,segmentsb5, segmentsb6
+    global segmentsb1,segmentsb2,segmentsb3,segmentsb4,segmentsb5, segmentsb6, segmentsb_yuyi
     segmentsb1=[]#注意这里又加了b1，虽然这次任务用不上
     segmentsb2=[]
     segmentsb3=[]
     segmentsb4=[]
     segmentsb5=[]
-    segmentsb6 = [] # 存放语义信息
+    segmentsb6 = []
+    segmentsb_yuyi = [] # 存放语义信息
 
     # 提取语义关键词
-    segmentsb6 = findsegments(input_str, word_prob_yuyi)
+    segmentsb_yuyi = findsegments(input_str, word_prob_yuyi)
 
 
 
