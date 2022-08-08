@@ -6,8 +6,10 @@ from pathological import findsegments
 def Merge(dict1, dict2, dict3, dict4):
     res = {**dict1, **dict2, **dict3, **dict4}
     return res
-word_probchaoshengall = Merge(word_probchaoshengbuwei, word_probchaoshengwuli, word_probchaoshengliangexing,
-                              word_probchaoshengbingli)
+word_reliability = {"建议": 0.01, "鉴别": 0.01, "排除": 0.01, "待": 0.01, "需": 0.01, "进一步": 0.01}
+word_prob_invalid = {'切缘': 0.01, '皮缘': 0.01, '新辅': 0.01, '化疗': 0.01, '副乳': 0.01}
+word_probchaoshengall ={**word_probchaoshengbuwei, **word_probchaoshengwuli, **word_probchaoshengliangexing,**word_probchaoshengbingli,**word_prob_invalid}
+
 
 def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
     global leninputchaosheng
@@ -18,15 +20,22 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
     global segmentsc_merge
     segmentsc_merge = []
     segmentsc_merge = findsegments(input_str,word_probchaoshengall)
+    reliability = findsegments(input_str, word_reliability)
+    invalid_c = findsegments(input_str, word_prob_invalid)
     # print('segmentsc_merge为')
     # print(segmentsc_merge)
 
-    global segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5
-    segmentsc1 = []  # 注意这里又加了b1，虽然这次任务用不上
-    segmentsc2 = []
-    segmentsc3 = []
-    segmentsc4 = []
-    segmentsc5 = []
+    global segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5, segmentsc6
+    segmentsc1=[]#注意这里又加了b1，虽然这次任务用不上
+    segmentsc2=[]
+    segmentsc3=[]
+    segmentsc3_raw = []
+    segmentsc4=[]
+    segmentsc4_raw=[]
+    segmentsc5=[]
+    segmentsc6=[]
+
+
     for i in range(int(len(segmentsc_merge) / 2)):
         if segmentsc_merge[2*i] in word_probbinglicebie:
             segmentsc1.append(segmentsc_merge[2 * i])
@@ -43,6 +52,32 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
         if segmentsc_merge[2*i] in word_probbinglibingli:
             segmentsc5.append(segmentsc_merge[2 * i])
             segmentsc5.append(segmentsc_merge[2 * i + 1])
+
+        if segmentsc_merge[2 * i] in word_prob_invalid:
+            segmentsc5.append("无效语句")
+            segmentsc5.append(0)
+
+
+    if int(len(reliability)) != 0:
+        for i in range(int(len(reliability)/2)):
+            for j in range(int(len(segmentsc2)/2)):
+                if( j < int(len(segmentsc2)/2) - 1):
+                    if segmentsc2[2 * j + 1] < reliability[2 * i + 1] < segmentsc2[2 * j + 3]:
+                        segmentsc6.append("匹配结果可信度低")
+                    else:
+                        segmentsc6.append("匹配结果可信度高")
+                else :
+                    if segmentsc2[2 * j + 1] < reliability[2 * i + 1]:
+                        segmentsc6.append("匹配结果可信度低")
+                    else:
+                        segmentsc6.append("匹配结果可信度高")
+
+    elif int(len(reliability)) == 0:
+        if int(len(segmentsc2) / 2) != 0:
+            for j in range(int(len(segmentsc2) / 2)):
+                segmentsc6.append("匹配结果可信度高")
+        else:
+                segmentsc6.append("匹配结果可信度高")
 
     # global segmentsc1
     # segmentsc1 = findsegments(input_str, word_probchaoshengcebie)
@@ -85,6 +120,8 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
     word_probc2yewosuoguleft={"左侧腋窝": 0.01,"左侧锁骨": 0.01,"左腋窝": 0.01,"左锁骨": 0.01}
     word_probc2yewosuoguright = {"右侧腋窝": 0.01,"右侧锁骨": 0.01,"右腋窝": 0.01,"右锁骨": 0.01}
     word_probc2yewosuogudouble= {"双侧腋窝": 0.01,"双侧锁骨": 0.01,"双腋窝": 0.01,"双锁骨": 0.01}
+
+    ## 部位归一化操作
     for ibgy2 in range(len(segmentsc2)):
         if segmentsc2[ibgy2] in word_probc2zhoubu.keys():
             segmentsc2[ibgy2] = '肘部'
@@ -120,6 +157,12 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
             segmentsc2[ibgy2] = '左侧乳腺'
         if segmentsc2[ibgy2] == '双侧乳房腺体':
             segmentsc2[ibgy2] = '双侧乳腺'
+        if segmentsc2[ibgy2] == '右侧副乳腺肿物':
+            segmentsc2[ibgy2] = '右侧副乳'
+        if segmentsc2[ibgy2] == '左侧副乳腺肿物':
+            segmentsc2[ibgy2] = '左侧副乳'
+        if segmentsc2[ibgy2] == '双侧副乳腺肿物':
+            segmentsc2[ibgy2] = '双侧副乳'
         if segmentsc2[ibgy2] in word_probc2yewosuogu.keys():
             segmentsc2[ibgy2] = '腋窝及锁骨区'
         if segmentsc2[ibgy2] in word_probc2yewosuoguleft.keys():
@@ -137,10 +180,71 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
     # global segmentsc5
     # segmentsc5 = findsegments(input_str, word_probchaoshengbingli)
 
+    # 否定词 出现否定词的时候 它形容的那些病理性质需要排除掉或者取反，下面列出了一些需要排除的
+
+    word_prob_negative_word_all = {'排除': 0.01, '鉴别': 0.01, '不完全除外': 0.01, '不能除外': 0.01, '不除外': 0.01, '除外': 0.01,
+                                   '未见': 0.01, '疑': 0.01}
+    # 带未见的先注释掉 未见的那个句子里有时候会报错
+
+    # word_prob_negative_word_all = {'排除': 0.01, '鉴别': 0.01, '不完全除外': 0.01, '不能除外': 0.01, '不除外': 0.01, '除外': 0.01}
+    word_prob_negative_word1 = {'排除': 0.01, '鉴别': 0.01, '除外': 0.01, '未见': 0.01}
+    # word_prob_negative_word1 = {'排除': 0.01, '鉴别': 0.01,'除外': 0.01,'未见': 0.01}
+    # 和上面切面那个问题同理，都是利用最大匹配的算法，这里由于不除外不能除外虽然表达肯定意思，但是如果不把这些词放里，就会提取到除外这样的否定词
+    word_prob_negative_word2 = {'不完全除外': 0.01, '不能除外': 0.01, '不除外': 0.01, '疑': 0.01}
+    word_prob_comma = {'，': 0.01, '；': 0.01, '、': 0.01}  # 注意打字时候这里是中文标点
+    word_prob_full_stop = {'。': 0.01}  # 中文句号
+    # 就是通过表格数据找寻规律，比如出现排除这种词，它前面第一个逗号到后面第一个句号里的词可能都需要排除掉，具体看表格里不同医生的写法去总结共性，然后这里也可以以后用NLP
+
+    segmentsc_negative_word_all = findsegments(input_str, word_prob_negative_word_all)
+    segmentsc_negative_word1 = []
+    segmentsc_negative_word2 = []
+    for i in range(int(len(segmentsc_negative_word_all) / 2)):
+        if segmentsc_negative_word_all[2 * i] in word_prob_negative_word1:
+            segmentsc_negative_word1.append(segmentsc_negative_word_all[2 * i])
+            segmentsc_negative_word1.append(segmentsc_negative_word_all[2 * i + 1])
+        if segmentsc_negative_word_all[2 * i] in word_prob_negative_word2:
+            segmentsc_negative_word2.append(segmentsc_negative_word_all[2 * i])
+            segmentsc_negative_word2.append(segmentsc_negative_word_all[2 * i + 1])
+    segmentsc_comma = findsegments(input_str, word_prob_comma)
+    segmentsc_full_stop = findsegments(input_str, word_prob_full_stop)
+    # print('segmentsb_negative_word,segmentsb_comma,segmentsb_full_stop为')
+    # print(segmentsb_negative_word,segmentsb_comma,segmentsb_full_stop)
+    if len(segmentsc_negative_word1) != 0:
+        # 先按只有一个否定词来处理
+        loc_negative_word = segmentsc_negative_word1[1]
+        for i in range(int(len(segmentsc_full_stop) / 2)):
+            if segmentsc_full_stop[2 * i + 1] > loc_negative_word:
+                loc_full_stop = segmentsc_full_stop[2 * i + 1]
+                break
+        # print('句号位置为')
+        # print(loc_full_stop)
+
+        for j in range(int(len(segmentsc_comma) / 2)):
+            if j < int(len(segmentsc_comma) / 2 - 1):
+                if (segmentsc_comma[2 * j + 1] < loc_negative_word) and (
+                        segmentsc_comma[2 * j + 3] > loc_negative_word):
+                    loc_comma = segmentsc_comma[2 * j + 1]
+                    break
+            if j == int(len(segmentsc_comma) / 2 - 1):
+                if (segmentsc_comma[2 * j + 1] < loc_negative_word):
+                    loc_comma = segmentsc_comma[2 * j + 1]
+                    break
+        # print('逗号位置为')
+        # print(loc_comma)
+        # 还没写 2*j+3超出去的情况
+
+        segmentsb5new = []
+        for i in range(int(len(segmentsc5) / 2)):
+            if segmentsc5[2 * i + 1] < loc_comma or segmentsc5[2 * i + 1] > loc_full_stop:
+                segmentsb5new.append(segmentsc5[2 * i])
+                segmentsb5new.append(segmentsc5[2 * i + 1])
+        segmentsb5 = segmentsb5new
+        # print('segmentsb5new为')
+        # print(segmentsb5new)
+
+
     global segmentsc5bf
     segmentsc5bf=segmentsc5.copy()
-
-
 
 
     word_probb5zhifangliu = {"脂肪瘤": 0.01, "血管脂肪瘤": 0.01, "肌内脂肪瘤": 0.01, "软骨样脂肪瘤": 0.01, "梭形细胞脂肪瘤": 0.01,
@@ -232,6 +336,14 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
     while (1):
      if lencldivc5 == 0:
          break
+
+     elif segmentsc5bf[2 * icldivc5 - 2] == '无效语句':
+         segmentsc3.append('无效语句')
+         segmentsc3.append(segmentsc5bf[2 * icldivc5 - 1])
+         icldivc5 += 1
+         if icldivc5 > lencldivc5:
+             break
+
      elif segmentsc5bf[2 * icldivc5 - 2] in word_probbingliwulinangxing.keys():
          segmentsc3.append('囊性')
          segmentsc3.append(segmentsc5[2 * icldivc5 - 1])
@@ -253,26 +365,29 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
          break
      elif segmentsc5bf[2 * icldivc5 - 2] in word_probliangxing.keys():
          segmentsc4.append('良性')
-         segmentsc4.append(segmentsc5[2 * icldivc5 - 1])
+         segmentsc4.append(segmentsc5bf[2 * icldivc5 - 1])
          icldivc5 += 1
          if icldivc5 > lencldivc5:
              break
      elif segmentsc5bf[2 * icldivc5 - 2] in word_probexing.keys():
          segmentsc4.append('恶性')
-         segmentsc4.append(segmentsc5[2 * icldivc5 - 1])
+         segmentsc4.append(segmentsc5bf[2 * icldivc5 - 1])
          icldivc5 += 1
          if icldivc5 > lencldivc5:
              break
      elif segmentsc5bf[2 * icldivc5 - 2] in word_probliang_or_e.keys():
          segmentsc4.append('良性或恶性待定')
-         segmentsc4.append(segmentsc5[2 * icldivc5 - 1])
+         segmentsc4.append(segmentsc5bf[2 * icldivc5 - 1])
          icldivc5 += 1
          if icldivc5 > lencldivc5:
              break
      else:
-         icldivc5 += 1
-         if icldivc5 > lencldivc5:
-             break
+        segmentsc4.append('无效语句')
+        segmentsc4.append(segmentsc5bf[2 * icldivc5 - 1])
+        icldivc5 += 1
+        if icldivc5 > lencldivc5:
+            break
+
     word_probc4liangxing = {"良性": 0.01, "良": 0.01}
     word_probc4exing = {"恶性": 0.01, "恶": 0.01}
     for icgy4 in range(len(segmentsc4)):
