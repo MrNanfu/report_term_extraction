@@ -218,7 +218,8 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
                 break
         # print('句号位置为')
         # print(loc_full_stop)
-
+        loc_comma = -1
+        loc_full_stop = -1
         for j in range(int(len(segmentsc_comma) / 2)):
             if j < int(len(segmentsc_comma) / 2 - 1):
                 if (segmentsc_comma[2 * j + 1] < loc_negative_word) and (
@@ -234,7 +235,10 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
         # 还没写 2*j+3超出去的情况
 
         segmentsb5new = []
+
         for i in range(int(len(segmentsc5) / 2)):
+            # print(loc_comma)
+            # print(loc_full_stop)
             if segmentsc5[2 * i + 1] < loc_comma or segmentsc5[2 * i + 1] > loc_full_stop:
                 segmentsb5new.append(segmentsc5[2 * i])
                 segmentsb5new.append(segmentsc5[2 * i + 1])
