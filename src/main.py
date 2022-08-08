@@ -2,6 +2,7 @@
 #这里用于自己调试代码时试验，调整Input的值，看各个情况下结果是否满足。用于单独的试验。批量跑excel数据批量试验用的是main_excel脚本
 from newmatch7 import parser
 
+
 pathological_bodypart="左乳肿物2"
 pathological_report="“左乳肿物2，穿刺组织”疑为肿瘤病变，需免疫组化检查，以明确诊断。※如同意做免疫组化请来病理科。"
 ultrasound_bodypart="介入会诊：乳腺、腋窝及锁骨上下区（加弹性成像）"
