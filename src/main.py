@@ -4,7 +4,7 @@ from newmatch7 import parser
 
 
 pathological_bodypart="左乳肿物2"
-pathological_report="“左乳肿物2，穿刺组织”疑为肿瘤病变，需免疫组化检查，以明确诊断。※如同意做免疫组化请来病理科。"
+pathological_report="“右乳肿物”纤维上皮性肿瘤，主体呈纤维腺瘤，局部呈良性叶状肿瘤结构。需予随诊观察，监测有无复发。"
 ultrasound_bodypart="介入会诊：乳腺、腋窝及锁骨上下区（加弹性成像）"
 ultrasound_report="右侧乳腺切除术后：右侧胸壁未见明显肿块声像。左侧乳腺2点钟及6点钟方向低回声结节，BI-RADS 4a类。左侧乳腺囊性回声结节，BI-RADS 2类。"
 segmentsbnew_copy_step1, segmentscnew_copy_step1,segmentsbnew_copy_step2, segmentscnew_copy_step2,segmentsbfinal_output, segmentscfinal_output, matchresult_output=parser(pathological_bodypart,pathological_report,ultrasound_bodypart,ultrasound_report)

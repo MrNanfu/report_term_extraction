@@ -365,7 +365,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
             new_s = ['无效语句']
             return new_s
         else:
-          flg_mianyi = 0
+            flg_mianyi = 0
             cnt_list = [0, 0, 0, 0]  # 主要诊断的恶性、良恶待定、良性、次要诊断的良性的计数数组
             segments_normalization_major_minor = []
             if len(segments) != 0:
@@ -729,7 +729,6 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                       [['部位分割标志'], ['右侧腋窝及锁骨区'], segmentsb4right_axilla,
                        segmentsb5right_axilla, segmentsb6right_axilla]]
 
-           segmentsc5right_axilla]]
     segmentscfinal = [[['部位分割标志'], ['左乳'],  segmentsc4left_breast, segmentsc5left_breast, segmentsc6left_breast],
                       [['部位分割标志'], ['右乳'], segmentsc4right_breast, segmentsc5right_breast, segmentsc6right_breast],
                       [['部位分割标志'], ['左侧腋窝及锁骨区'], segmentsc4left_axilla, segmentsc5left_axilla, segmentsc6left_axilla],
