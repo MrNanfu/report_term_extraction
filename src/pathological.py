@@ -12,7 +12,7 @@ word_probchaoshengcebie=word_probbinglicebie
 word_probbinglibuwei={'左乳': 0.01,'右乳': 0.01,'双乳': 0.01,"左侧乳腺": 0.01,"右侧乳腺": 0.01,"双侧乳腺": 0.01,
                       "左侧乳房腺体": 0.01,"右侧乳房腺体": 0.01,"双侧乳房腺体": 0.01,"左侧乳头": 0.01,"右侧乳头": 0.01,
                       "左侧乳房": 0.01,"右侧乳房": 0.01,"双侧乳房": 0.01,
-                      "切面": 0.01,"面": 0.01}#因为出现过 左乳乳房腺体这种事情的存在 导致提取了 左乳 病理空白 然后是 乳房腺体 加病 ，所以删除了单独的乳头、乳腺这类词汇
+                      "切面": 0.01,"面": 0.01, "左":0.01}#因为出现过 左乳乳房腺体这种事情的存在 导致提取了 左乳 病理空白 然后是 乳房腺体 加病 ，所以删除了单独的乳头、乳腺这类词汇
 word_probchaoshengbuwei =word_probbinglibuwei
 
 #物理性质
@@ -63,6 +63,9 @@ word_probbinglibingli={"浸润性导管癌":0.01,"浸润性癌":0.01,"导管原�
 word_probbinglibingli={**word_probexing, **word_probliang_or_e_major,**word_probliangxing}
 word_probchaoshengbingli = word_probbinglibingli
 
+## 无效语句词典
+word_prob_invalid = {'切缘': 0.01, '皮缘': 0.01, '新辅': 0.01, '化疗': 0.01, '副乳': 0.01}
+
 
 # 接下来所有的12345分别对应着： 侧别1 部位2 物理性质3 良恶性4 病理性质5 病理结果匹配可信度问题6
 #segments就是放这些找到的片段的列表，b是病理，c是超声，如segmentsb1就是病理侧别，segmentsc2就是超声部位
@@ -91,7 +94,6 @@ def findsegments(input, word_prob):#最大匹配的那个函数
     return segments
 
 
-word_prob_invalid = {'切缘': 0.01, '皮缘': 0.01, '新辅': 0.01, '化疗': 0.01, '副乳': 0.01}
 
 #合并成一个大字典，用这个字典进去一起找，找完之后再区分开是部位还是性质等等
 word_probbingliall={**word_probbinglibuwei,**word_probbingliwuli,**word_probbingliliangexing,**word_probbinglibingli, **word_prob_invalid}
@@ -309,6 +311,7 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
     word_prob_negative_word2 = {'不完全除外': 0.01, '不能除外': 0.01, '不除外': 0.01 , '疑' : 0.01}
     word_prob_comma={'，':0.01,'；':0.01,'、':0.01}#注意打字时候这里是中文标点
     word_prob_full_stop={'。':0.01}#中文句号
+
     #就是通过表格数据找寻规律，比如出现排除这种词，它前面第一个逗号到后面第一个句号里的词可能都需要排除掉，具体看表格里不同医生的写法去总结共性，然后这里也可以以后用NLP
 
     segmentsb_negative_word_all = findsegments(input_str, word_prob_negative_word_all)
@@ -326,6 +329,8 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
     # print('segmentsb_negative_word,segmentsb_comma,segmentsb_full_stop为')
     # print(segmentsb_negative_word,segmentsb_comma,segmentsb_full_stop)
     if len(segmentsb_negative_word1)!=0:
+        loc_comma = 0
+        loc_full_stop = 0
         #先按只有一个否定词来处理
         loc_negative_word=segmentsb_negative_word1[1]
         for i in range(int(len(segmentsb_full_stop)/2)):
@@ -350,12 +355,24 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
 
         segmentsb5new = []
         for i in range(int(len(segmentsb5)/2)):
-            if segmentsb5[2*i+1]<loc_comma or segmentsb5[2*i+1]>loc_full_stop:
+            if segmentsb5[2*i+1] < loc_comma or segmentsb5[2*i+1]>loc_full_stop :
                 segmentsb5new.append(segmentsb5[2*i])
                 segmentsb5new.append(segmentsb5[2*i+1])
         segmentsb5=segmentsb5new
         # print('segmentsb5new为')
         # print(segmentsb5new)
+
+        ## 良恶性也要依据否定词进行修改
+        def remove_liange(segmentsb4_raw, segmentsb_negative_word1):
+            segmentsb4_after=[]
+            if int(len(segmentsb_negative_word1)) != 0:
+                for i in range(int(len(segmentsb4_raw)/2)):
+                    for j in range(int(len(segmentsb_negative_word1)/2)):
+                        if segmentsb4_raw[2*i+1]-segmentsb_negative_word1[2*j+1] >3 or segmentsb_negative_word1[2*j+1]-segmentsb4_raw[2*i+1] >3:
+                            segmentsb4_after.append(segmentsb4_raw[2 * i ])
+                            segmentsb4_after.append(segmentsb4_raw[2 * i + 1])
+            return segmentsb4_after
+        segmentsb4_raw = remove_liange(segmentsb4_raw, segmentsb_negative_word1)
 
 
     global segmentsb5bf
@@ -455,7 +472,7 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
             segmentsb3.append('实性')
             segmentsb3.append(segmentsb5bf[2 * icldivb5 - 1])
             icldivb5 += 1
-            if icldivb5 >= lencldivb5:
+            if icldivb5 > lencldivb5:
                 break
 
 
@@ -468,9 +485,13 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
             break
         if len(segmentsb4_raw) != 0:
             for j in range(int(len(segmentsb4_raw)/2)):
-                if segmentsb4_raw[2 * j + 1] - segmentsb5bf[2 * icldivb5 - 1] <= 10 or  segmentsb5bf[2 * icldivb5 - 1] - segmentsb4_raw[2 * j + 1] <= 10:
-                    segmentsb4.append(segmentsb4_raw[2 * j])
-                    segmentsb4.append(segmentsb4_raw[2 * j + 1])
+                if segmentsb4_raw[2 * j + 1] - segmentsb5bf[2 * icldivb5 - 1] <= 10 or segmentsb5bf[2 * icldivb5 - 1] - segmentsb4_raw[2 * j + 1] <= 10:
+                    if segmentsb4_raw[2 * j]=='交界性':
+                        segmentsb4.append('良性或恶性待定')
+                        segmentsb4.append(segmentsb4_raw[2 * j + 1])
+                    else:
+                        segmentsb4.append(segmentsb4_raw[2 * j])
+                        segmentsb4.append(segmentsb4_raw[2 * j + 1])
                     segmentsb4_raw.pop()
                     segmentsb4_raw.pop()
 
