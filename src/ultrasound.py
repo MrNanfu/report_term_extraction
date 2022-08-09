@@ -16,10 +16,25 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
     input_str = ultrasound_report
     leninputchaosheng = len(input_str)
 
-
+    word_prob_combine = {"及": 0.01}
     global segmentsc_merge
     segmentsc_merge = []
     segmentsc_merge = findsegments(input_str,word_probchaoshengall)
+    segmentsc_combine = findsegments(input_str, word_prob_combine)
+    # 对于类似于“左乳8-9点方位及右乳2点方位”这样的部位要进行预处理，将其转化为双乳
+    cnt = 0
+    for i in range(int(len(segmentsc_merge) / 2) - 1):
+        if segmentsc_merge[2 * i] in word_probchaoshengbuwei and segmentsc_merge[2 * (i + 1)] in word_probchaoshengbuwei:
+            if len(segmentsc_combine) != 0:
+                for j in range(int(len(segmentsc_combine) / 2)):
+                    if segmentsc_merge[2 * i + 1] < segmentsc_combine[2 * j + 1] < segmentsc_merge[2 * (i + 1) + 1]:
+                        cnt += 2
+                        segmentsc_merge[2 * (i + 1)] = -1
+                        segmentsc_merge[2 * (i + 1) + 1] = -1
+                        segmentsc_merge[2 * i] = '双乳'
+    for i in range(cnt):
+        segmentsc_merge.remove(-1)
+
     reliability = findsegments(input_str, word_reliability)
     invalid_c = findsegments(input_str, word_prob_invalid)
     # print('segmentsc_merge为')
