@@ -4,9 +4,10 @@ from newmatch7 import parser
 
 
 pathological_bodypart="左乳肿物2"
-pathological_report="“右乳肿物”纤维上皮性肿瘤，主体呈纤维腺瘤，局部呈良性叶状肿瘤结构。需予随诊观察，监测有无复发。"
+pathological_report="“二次补充报告：“左侧乳腺及肿物”见高级别导管原位癌（共3张切片见原位癌 X 4mm = 12mm,估记原位癌范围约12mm），部分乳腺间质见组织细胞，多核巨细胞及炎细胞浸润，未见浸润癌残留，基底切缘未见癌。"
 ultrasound_bodypart="介入会诊：乳腺、腋窝及锁骨上下区（加弹性成像）"
-ultrasound_report="右侧乳腺切除术后：右侧胸壁未见明显肿块声像。左侧乳腺2点钟及6点钟方向低回声结节，BI-RADS 4a类。左侧乳腺囊性回声结节，BI-RADS 2类。"
+ultrasound_report="左侧乳头深方导管局部扩张伴导管内异常回声：沉积物？左侧乳腺囊性结节，考虑BI-RADS 2类。右侧乳腺导管局部扩张，BI-RADS 2类。"
+# ultrasound_report="左乳8-9点方位及右乳2点方位实性结节，BI-RADS 4a类，建议穿刺活检或密切动态观察。其余双侧乳腺内多发实质性团块：BI-RADS 3类。右侧乳腺内囊性结节，BI-RADS 2类。"
 segmentsbnew_copy_step1, segmentscnew_copy_step1,segmentsbnew_copy_step2, segmentscnew_copy_step2,segmentsbfinal_output, segmentscfinal_output, matchresult_output=parser(pathological_bodypart,pathological_report,ultrasound_bodypart,ultrasound_report)
 # segmentsbwithloc=[]
 # segmentscwithloc=[]
