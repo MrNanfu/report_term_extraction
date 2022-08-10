@@ -65,30 +65,37 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                 if segments5[2 * j5 + 1] in segmentsnum[jnum] :
                     (segmentsall[jnum])[4].append(segments5[2 * j5])
                     (segmentsall[jnum])[4].append(segments5[2 * j5 + 1])
+
                 elif segments5[2 * j5] == "无效语句":    ##无效语句的情况
                     (segmentsall[jnum])[4].append(segments5[2 * j5])
                     (segmentsall[jnum])[4].append(segments5[2 * j5 + 1])
+
 
         for j4 in range(int(len(segments4) / 2)):
             for jnum in range(len(segmentsnum)):
                 if segments4[2 * j4 + 1] in segmentsnum[jnum]:
                     (segmentsall[jnum])[3].append(segments4[2 * j4])
                     (segmentsall[jnum])[3].append(segments4[2 * j4 + 1])
+
                 elif segments4[2 * j4] == "无效语句":  ##无效语句的情况
                     (segmentsall[jnum])[3].append(segments4[2 * j4])
                     (segmentsall[jnum])[3].append(segments4[2 * j4 + 1])
+
+
 
         for j3 in range(int(len(segments3) / 2)):
             for jnum in range(len(segmentsnum)):
                 if segments3[2 * j3 + 1] in segmentsnum[jnum]:
                     (segmentsall[jnum])[2].append(segments3[2 * j3])
                     (segmentsall[jnum])[2].append(segments3[2 * j3 + 1])
+
                 elif segments3[2 * j3] == "无效语句":
                     (segmentsall[jnum])[2].append(segments3[2 * j3])
                     (segmentsall[jnum])[2].append(segments3[2 * j3 + 1])
 
-        for jnum in range(len(segmentsnum)):
-            (segmentsall[jnum])[5].append(segments6[jnum])
+
+        # for jnum in range(len(segmentsnum)):
+        #     (segmentsall[jnum])[5].append(segments6[jnum])
 
 
 
@@ -158,16 +165,27 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     segmentsball = unfold(segmentsball, segmentsb2, '双侧腋窝及锁骨区', '左侧腋窝及锁骨区', '右侧腋窝及锁骨区')  # 注意要填归一化后的，即不能让它检测双侧腋窝
 
 
-    ## 输出segmentsall语句时，存在某些句子只有部位，没有其他的病理信息，因此需要进行删除
-    def remove(segmentstall):
+
+    ## 输出segmentsall语句时，存在某些句子只有部位，因此需要进行删除。当时超声报告有时候会出现"左侧乳头深方导管局部扩张伴导管内异常回声：沉积物？"类似的语句，对于这样的不能删除，应该对其病理加上BI-RADS 6
+    def remove(segmentstall, flg):
         segmentall_new = []
-        for j in range(int(len(segmentstall))):
-            if len((segmentstall[j])[2]) != 0 :
+        if flg == 0:    # 病理报告的remove方法
+            for j in range(int(len(segmentstall))):
+                if len((segmentstall[j])[2]) != 0 :
+                    segmentall_new.append((segmentstall[j]))
+        elif flg == 1:  # 超声报告的remove方法
+            for j in range(int(len(segmentstall))):
+                if len((segmentstall[j])[4]) == 0 :
+                    segmentstall[j][4].append('BI-RADS 6')
+                    if j < len(segmentstall) - 1:
+                        segmentstall[j][4].append(segmentstall[j + 1][1][1] - 1)    # 由于BI-RADS 6没有出现在语句中，假设其位置为下一个句子的钱一个位置
+                    else:
+                        segmentstall[j][4].append(segmentstall[j][1][1] + 1)    # 句子为最后一个句子时，假设其位置为当前句首加一
                 segmentall_new.append((segmentstall[j]))
         return segmentall_new
 
-    segmentsball = remove(segmentsball);
-    segmentscall = remove(segmentscall)
+    segmentsball = remove(segmentsball, 0);
+    segmentscall = remove(segmentscall, 1)
 
     # 去掉位置信息
     def new(segmentsall):
@@ -599,7 +617,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     segmentsc4right_axilla = normalization4(segmentsc4right_axilla)
 
     # 这个不删除 这个是有用的
-    word_prob5 = {"BI-RADS 0": 0.005, "BI-RADS 1": 0.01, "BI-RADS 2": 0.02, "BI-RADS 3": 0.03, "BI-RADS 4a": 0.041,
+    word_prob5 = {"BI-RADS 0": 0.005, "BI-RADS 1": 0.01, "BI-RADS 2": 0.02, "BI-RADS 3": 0.03, 'BI-RADSⅢ':0.03, "BI-RADS 4a": 0.041,
                   "BI-RADS 4b": 0.042, "BI-RADS 4c": 0.043, "BI-RADS 5": 0.05, "BI-RADS 6": 0.06}
 
     # 有时候超声报告里不全是BIRADS，偶尔因为过去的病史可以推断出具体的疾病，过去超声的逻辑是按BIRADS写的，包括它们之间归一化的比较，这里需要加一个区分开的函数，BIRADS和BIRADS之间归一化，不能混到一起
@@ -624,6 +642,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                 if valuesidetemp > valueside:
                     valueside = valuesidetemp
             segments = get_key(word_prob5, valueside)
+            if len(segments) > 0:
+                return [segments[0]]
             return segments
 
     # 超声的病理性质信息整体归一化函数
@@ -642,7 +662,32 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     segmentsc5left_axilla = normalization5c_all(segmentsc5left_axilla)
     segmentsc5right_axilla = normalization5c_all(segmentsc5right_axilla)
 
+    # 超声报告的良恶性需要以BIRADS为依据，因此在进行病理归一化后需要重新对良恶性进行归一化
+    def normalization4c(segmentsc5_breast):
+        segmentsc4 = []
+        mark = 0
+        for i in range(len(segmentsc5_breast)):
+            if segmentsc5_breast[i] == '无效语句':
+                mark += 1
+        if mark == 1 and len(segmentsc5_breast) == mark:
+            new_s = ['无效语句']
+            return new_s
+        else:
+            for i in range(len(segmentsc5_breast)):
+                if segmentsc5_breast[i] in word_prob5:
+                    if segmentsc5_breast[i] in word_probliangxing:
+                        segmentsc4.append('良性')
+                    elif segmentsc5_breast[i] in word_probliang_or_e:
+                        segmentsc4.append('良性或恶性待定')
+                    elif segmentsc5_breast[i] in word_probexing:
+                        segmentsc4.append('恶性')
+            segmentsc4 = normalization4(segmentsc4)
+        return segmentsc4
 
+    segmentsc4left_breast = normalization4c(segmentsc5left_breast)
+    segmentsc4right_breast = normalization4c(segmentsc5right_breast)
+    segmentsc4left_axilla = normalization4c(segmentsc5left_axilla)
+    segmentsc4right_axilla = normalization4c(segmentsc5right_axilla)
 
     def normalization5b(segmentsb4_breast,segmentsb5_breast):#这里是已经归一化的良恶性 和还未归一化的病理性质
         mark = 0
