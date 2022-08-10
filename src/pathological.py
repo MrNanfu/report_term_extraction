@@ -368,7 +368,7 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
             if int(len(segmentsb_negative_word1)) != 0:
                 for i in range(int(len(segmentsb4_raw)/2)):
                     for j in range(int(len(segmentsb_negative_word1)/2)):
-                        if segmentsb4_raw[2*i+1]-segmentsb_negative_word1[2*j+1] >3 or segmentsb_negative_word1[2*j+1]-segmentsb4_raw[2*i+1] >3:
+                        if -5< segmentsb4_raw[2*i+1]-segmentsb_negative_word1[2*j+1] < 5:
                             segmentsb4_after.append(segmentsb4_raw[2 * i ])
                             segmentsb4_after.append(segmentsb4_raw[2 * i + 1])
             return segmentsb4_after
@@ -484,14 +484,15 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
         if lencldivb5 == 0:
             break
         if len(segmentsb4_raw) != 0:
-            for j in range(int(len(segmentsb4_raw)/2)):
-                if segmentsb4_raw[2 * j + 1] - segmentsb5bf[2 * icldivb5 - 1] <= 10 or segmentsb5bf[2 * icldivb5 - 1] - segmentsb4_raw[2 * j + 1] <= 10:
-                    if segmentsb4_raw[2 * j]=='交界性':
+            segmentsb4_raw_temp = segmentsb4_raw
+            for j in range(int(len(segmentsb4_raw_temp)/2)):
+                if -5<= segmentsb4_raw_temp[2 * j + 1] - segmentsb5bf[2 * icldivb5 - 1] <= 5 :
+                    if segmentsb4_raw_temp[2 * j]=='交界性':
                         segmentsb4.append('良性或恶性待定')
-                        segmentsb4.append(segmentsb4_raw[2 * j + 1])
+                        segmentsb4.append(segmentsb4_raw_temp[2 * j + 1])
                     else:
-                        segmentsb4.append(segmentsb4_raw[2 * j])
-                        segmentsb4.append(segmentsb4_raw[2 * j + 1])
+                        segmentsb4.append(segmentsb4_raw_temp[2 * j])
+                        segmentsb4.append(segmentsb4_raw_temp[2 * j + 1])
                     segmentsb4_raw.pop()
                     segmentsb4_raw.pop()
 

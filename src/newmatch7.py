@@ -21,7 +21,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     from pathological import segmentsb1, segmentsb2, segmentsb3, segmentsb4, segmentsb5, segmentsb6, segmentsb_yuyi, leninputbingli, segmentsb2temp, \
         segmentsb5bf  # 引入之前两个函数中得到的列表信息
     from ultrasound import segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5, segmentsc6, leninputchaosheng, segmentsc2temp
-    global segmentsb1, segmentsb2, segmentsb3, segmentsb4, segmentsb5, segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5, leninputbingli, leninputchaosheng, segmentsb5bf
+    global segmentsb1, segmentsb2, segmentsb3, segmentsb4, segmentsb5,segmentsb6, segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5,segmentsc6,leninputbingli, leninputchaosheng, segmentsb5bf
 
     #生成一个整体列表的形式
     def fuc1(segments2, segments3, segments4, segments5, segments6, lenstring):
@@ -184,7 +184,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                 segmentall_new.append((segmentstall[j]))
         return segmentall_new
 
-    segmentsball = remove(segmentsball, 0);
+    segmentsball = remove(segmentsball, 0)
     segmentscall = remove(segmentscall, 1)
 
     # 去掉位置信息
@@ -731,6 +731,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                         for i in range(len(segmentsb5_breast)):
                             if segmentsb5_breast[i] not in word_probliangxing.keys() and segmentsb4_breast[i] == '良性':
                                 segments.append(segmentsb5_breast[i])
+                                break
                             elif segmentsb5_breast[i] in word_probliangxing.keys():
                                 segments.append(segmentsb5_breast[i])
                                 break
@@ -754,6 +755,11 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                     # len_e = len(segmentsb5_breast)
                     len_e = 1  # 为了便于后面的match，对于多个恶性只输出一个即可
                     segments = ['恶性' for i in range(len_e)]
+                elif segmentsb5_breast[0] in word_probexing:
+                    if segmentsb4_breast[0]=='良性':
+                        segments = ['良性']
+                    else:
+                        segments = ['恶性']
                 else:
                     if segmentsb5_breast[0] in word_probliang_or_e_major:
                         if segmentsb4_breast[0] == '良性':  ## 虽然某些病理性质在词典中属于良恶性不定，但是如果语句中明确是良性了，则需要输出良性
