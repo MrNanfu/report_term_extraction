@@ -3,12 +3,11 @@
 from newmatch7 import parser
 
 
-pathological_bodypart="左乳肿物2"
-pathological_report="“二次补充报告：“左侧乳腺及肿物”见高级别导管原位癌（共3张切片见原位癌 X 4mm = 12mm,估记原位癌范围约12mm），部分乳腺间质见组织细胞，多核巨细胞及炎细胞浸润，未见浸润癌残留，基底切缘未见癌。"
-ultrasound_bodypart="介入会诊：乳腺、腋窝及锁骨上下区（加弹性成像）"
-ultrasound_report="左侧乳头深方导管局部扩张伴导管内异常回声：沉积物？左侧乳腺囊性结节，考虑BI-RADS 2类。右侧乳腺导管局部扩张，BI-RADS 2类。"
-# ultrasound_report="左乳8-9点方位及右乳2点方位实性结节，BI-RADS 4a类，建议穿刺活检或密切动态观察。其余双侧乳腺内多发实质性团块：BI-RADS 3类。右侧乳腺内囊性结节，BI-RADS 2类。"
-segmentsbnew_copy_step1, segmentscnew_copy_step1,segmentsbnew_copy_step2, segmentscnew_copy_step2,segmentsbfinal_output, segmentscfinal_output, matchresult_output=parser(pathological_bodypart,pathological_report,ultrasound_bodypart,ultrasound_report)
+pathological_bodypart="左乳肿物"
+pathological_report="“左”乳腺导管乳头状瘤，伴大汗腺化生。"
+ultrasound_bodypart="浅表彩超：乳腺"
+ultrasound_report="左侧乳腺内混合性结节，BI-RADS 4a类，导管来源可能。右侧乳腺内实质性结节，BI-RADS 3类。右侧乳腺囊性结节声像，考虑BI-RADS 2类。"
+segmentsbnew_copy_step1, segmentscnew_copy_step1,segmentsbnew_copy_step2, segmentscnew_copy_step2,pathological_results, ultrasound_results, matching_results=parser(pathological_bodypart,pathological_report,ultrasound_bodypart,ultrasound_report)
 # segmentsbwithloc=[]
 # segmentscwithloc=[]
 # for i in range(len(pathological_report)):
@@ -36,9 +35,9 @@ print('根据主要次要诊断筛选后的超声报告信息为')
 print(segmentscnew_copy_step2)
 print('\n')
 print('归一化后的病理结果为')
-print(segmentsbfinal_output)
+print(pathological_results)
 print('归一化后的超声结果为')
-print(segmentscfinal_output)
+print(ultrasound_results)
 # print('\n')
 print('匹配结果为')
-print(matchresult_output)
+print(matching_results)
