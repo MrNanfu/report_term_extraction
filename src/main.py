@@ -4,9 +4,9 @@ from newmatch7 import parser
 
 
 pathological_bodypart="左乳肿物"
-pathological_report="“左”乳腺导管乳头状瘤，伴大汗腺化生。"
+pathological_report="“左乳肿物，穿刺组织”考虑为乳腺腺病。"
 ultrasound_bodypart="浅表彩超：乳腺"
-ultrasound_report="左侧乳腺内混合性结节，BI-RADS 4a类，导管来源可能。右侧乳腺内实质性结节，BI-RADS 3类。右侧乳腺囊性结节声像，考虑BI-RADS 2类。"
+ultrasound_report="右侧乳腺4点、5点、10点及左侧乳腺5点、6点实性结节，BI-RADS 4a类。余双侧乳腺内多发实质性团块，BI-RADS 3类。右侧乳腺簇状囊性结节，BI-RADS 3类。"
 segmentsbnew_copy_step1, segmentscnew_copy_step1,segmentsbnew_copy_step2, segmentscnew_copy_step2,pathological_results, ultrasound_results, matching_results=parser(pathological_bodypart,pathological_report,ultrasound_bodypart,ultrasound_report)
 # segmentsbwithloc=[]
 # segmentscwithloc=[]
