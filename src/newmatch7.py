@@ -588,15 +588,15 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     segmentsbnew_temp = findnotnone(segmentsbnew)
     segmentscnew_temp = findnotnone(segmentscnew)
 
-    segmentsbfinal = [[['部位分割标志'], ['左乳'], segmentsb3left_breast, segmentsb4left_breast, segmentsb5left_breast,segmentsb6left_breast ],
-                      [['部位分割标志'], ['右乳'], segmentsb3right_breast, segmentsb4right_breast, segmentsb5right_breast, segmentsb6right_breast],
-                      [['部位分割标志'], ['左侧腋窝及锁骨区'], segmentsb3left_axilla, segmentsb4left_axilla, segmentsb5left_axilla, segmentsb6left_axilla],
-                      [['部位分割标志'], ['右侧腋窝及锁骨区'], segmentsb3right_axilla, segmentsb4right_axilla,segmentsb5right_axilla,segmentsb6right_axilla]]
+    segmentsbfinal = [[['部位分割标志'], ['左乳'],['左'],segmentsb5left_breast,segmentsb3left_breast, segmentsb4left_breast],
+                      [['部位分割标志'], ['右乳'], ['右'],segmentsb5right_breast, segmentsb3right_breast, segmentsb4right_breast],
+                      [['部位分割标志'], ['左侧腋窝及锁骨区'],['左'], segmentsb5left_axilla,segmentsb3left_axilla, segmentsb4left_axilla],
+                      [['部位分割标志'], ['右侧腋窝及锁骨区'], ['右'],segmentsb5right_axilla,segmentsb3right_axilla, segmentsb4right_axilla]]
 
-    segmentscfinal = [[['部位分割标志'], ['左乳'], segmentsc3left_breast, segmentsc4left_breast, segmentsc5left_breast, segmentsc6left_breast],
-                      [['部位分割标志'], ['右乳'], segmentsc3right_breast, segmentsc4right_breast, segmentsc5right_breast, segmentsc6right_breast],
-                      [['部位分割标志'], ['左侧腋窝及锁骨区'], segmentsc3left_axilla, segmentsc4left_axilla, segmentsc5left_axilla, segmentsc6left_axilla],
-                      [['部位分割标志'], ['右侧腋窝及锁骨区'], segmentsc3right_axilla, segmentsc4right_axilla, segmentsc5right_axilla, segmentsc6right_axilla]]
+    segmentscfinal = [[['部位分割标志'], ['左乳'], ['左'], segmentsc5left_breast,segmentsc3left_breast, segmentsc4left_breast],
+                      [['部位分割标志'], ['右乳'], ['右'], segmentsc5right_breast,segmentsc3right_breast, segmentsc4right_breast],
+                      [['部位分割标志'], ['左侧腋窝及锁骨区'], ['左'],segmentsc5left_axilla,segmentsc3left_axilla, segmentsc4left_axilla],
+                      [['部位分割标志'], ['右侧腋窝及锁骨区'],['右'], segmentsc5right_axilla,segmentsc3right_axilla, segmentsc4right_axilla]]
 
     segmentsb3right_breast = normalization3(segmentsb3right_breast)
     segmentsc3right_breast = normalization3(segmentsc3right_breast)
@@ -790,21 +790,21 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     # 下面都写了腋窝项，后来医生说乳腺项目里不谈腋窝，但下面那些也不用管它，改动这里的形式 后面的索引也需要跟着改，我在开始字典里删除了腋窝，腋窝这些不会提取到，不用管它
     print("\n")
 
-    segmentsbfinal = [[['部位分割标志'], ['左乳'],segmentsb3left_breast,  segmentsb4left_breast, segmentsb5left_breast, segmentsb6left_breast],
-                      [['部位分割标志'], ['右乳'],segmentsb3right_breast, segmentsb4right_breast, segmentsb5right_breast, segmentsb6right_breast],
-                      [['部位分割标志'], ['左侧腋窝及锁骨区'],segmentsb3left_axilla,  segmentsb4left_axilla, segmentsb5left_axilla, segmentsb6left_axilla],
-                      [['部位分割标志'], ['右侧腋窝及锁骨区'],segmentsb3right_axilla, segmentsb4right_axilla,
-                       segmentsb5right_axilla, segmentsb6right_axilla]]
+    segmentsbfinal = [[['左乳'],['左'],segmentsb5left_breast,  segmentsb3left_breast, segmentsb4left_breast],
+                      [['右乳'],['右'],segmentsb5right_breast, segmentsb3right_breast, segmentsb4right_breast],
+                      [['左侧腋窝及锁骨区'],['左'],segmentsb5left_axilla,  segmentsb3left_axilla, segmentsb4left_axilla],
+                      [['右侧腋窝及锁骨区'],['右'],segmentsb5right_axilla, segmentsb3right_axilla,
+                       segmentsb4right_axilla]]
 
-    segmentscfinal = [[['部位分割标志'], ['左乳'],segmentsc3left_breast,  segmentsc4left_breast, segmentsc5left_breast, segmentsc6left_breast],
-                      [['部位分割标志'], ['右乳'], segmentsc3right_breast, segmentsc4right_breast, segmentsc5right_breast, segmentsc6right_breast],
-                      [['部位分割标志'], ['左侧腋窝及锁骨区'],segmentsc3left_axilla, segmentsc4left_axilla, segmentsc5left_axilla, segmentsc6left_axilla],
-                      [['部位分割标志'], ['右侧腋窝及锁骨区'], segmentsc3right_axilla,segmentsc4right_axilla,
-                       segmentsc5right_axilla, segmentsc6right_axilla]]
+    segmentscfinal = [[['左乳'],['左'],segmentsc5left_breast,  segmentsc3left_breast, segmentsc4left_breast],
+                      [['右乳'],['右'], segmentsc5right_breast, segmentsc3right_breast, segmentsc4right_breast],
+                      [['左侧腋窝及锁骨区'],['左'],segmentsc5left_axilla, segmentsc3left_axilla, segmentsc4left_axilla],
+                      [['右侧腋窝及锁骨区'], ['右'],segmentsc5right_axilla,segmentsc3right_axilla,
+                       segmentsc4right_axilla]]
 
     def match(segmentsbfinal, segmentscfinal, m, n):
         # m表示部位，0表示左乳，1表示右乳，2表示左腋窝锁骨，3表示右腋窝锁骨
-        # n表示哪一个性质，2是良恶性,3是物理性质
+        # n表示哪一个性质，0表示部位，1是侧别，2是病理性质，3是物理性质，4是良恶性（重新修改顺序了，按照需求改了一下顺序）
         # 第一个判断语句为零这个到底输出什么需要确认下 好像不应该输出为1（不符合） 应该细化到缺少哪边信息 这里看后续需求书确认 而且我应该都是有初始值的 不应该有空的存在
         # 0: 符合  1: 不符合  2: 超声不明确  3: 病理不明确  4: 无法判断
 
@@ -821,19 +821,24 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
 
         return match
 
-    matchleft3_breast = match(segmentsbfinal, segmentscfinal, 0, 2)      ##左乳良恶性匹配
-    matchright3_breast = match(segmentsbfinal, segmentscfinal, 1, 2)
-    matchleft4_breast = match(segmentsbfinal, segmentscfinal, 0, 3)      ##左乳物理性质匹配
-    matchright4_breast = match(segmentsbfinal, segmentscfinal, 1, 3)
-    matchleft5_breast = match(segmentsbfinal, segmentscfinal, 0, 4)  ##左乳物理性质匹配
-    matchright5_breast = match(segmentsbfinal, segmentscfinal, 1, 4)
+
+    matchleft1_bu_breast = match(segmentsbfinal, segmentscfinal, 0, 0)  ##左乳进行部位匹配
+    matchright1_bu_breast = match(segmentsbfinal, segmentscfinal, 1, 0)
+    matchleft2_ce_breast = match(segmentsbfinal, segmentscfinal, 0, 1)  ##侧别进行匹配
+    matchright2_ce_breast = match(segmentsbfinal, segmentscfinal, 1, 1)
+    matchleft3_bing_breast = match(segmentsbfinal, segmentscfinal, 0, 2)      ##左乳病理匹配
+    matchright3_bing_breast = match(segmentsbfinal, segmentscfinal, 1, 2)
+    matchleft4_wu_breast = match(segmentsbfinal, segmentscfinal, 0, 3)      ##左乳物理匹配
+    matchright4_wu_breast = match(segmentsbfinal, segmentscfinal, 1, 3)
+    matchleft5_liang_breast = match(segmentsbfinal, segmentscfinal, 0, 4)  ##左乳良恶匹配
+    matchright5_liang_breast = match(segmentsbfinal, segmentscfinal, 1, 4)
     # matchleft3_axilla = match(segmentsbfinal, segmentscfinal, 2, 2)
     # matchright3_axilla = match(segmentsbfinal, segmentscfinal, 3, 2)
     # matchleft4_axilla = match(segmentsbfinal, segmentscfinal, 2, 3)
     # matchright4_axilla = match(segmentsbfinal, segmentscfinal, 3, 3)
 
-    matchleft_breast = ['部位分割标志', '左乳',  matchleft3_breast, matchleft4_breast, matchleft5_breast]
-    matchright_breast = ['部位分割标志', '右乳',  matchright3_breast, matchright4_breast, matchright5_breast]
+    matchleft_breast = [matchleft1_bu_breast,  matchleft2_ce_breast, matchleft3_bing_breast, matchleft4_wu_breast, matchleft5_liang_breast]
+    matchright_breast = [matchright1_bu_breast, matchright2_ce_breast, matchright3_bing_breast, matchright4_wu_breast, matchright5_liang_breast]
     # matchleft_axilla = ['部位分割标志', '左侧腋窝及锁骨区', matchleft4_axilla, matchleft4_axilla]
     # matchright_axilla = ['部位分割标志', '右侧腋窝及锁骨区', matchright4_axilla, matchleft4_axilla]
 
