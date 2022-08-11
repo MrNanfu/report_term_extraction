@@ -3,10 +3,10 @@
 from newmatch7 import parser
 
 
-pathological_bodypart="左乳肿物"
-pathological_report="“左乳肿物，穿刺组织”考虑为乳腺腺病。"
-ultrasound_bodypart="浅表彩超：乳腺"
-ultrasound_report="右侧乳腺4点、5点、10点及左侧乳腺5点、6点实性结节，BI-RADS 4a类。余双侧乳腺内多发实质性团块，BI-RADS 3类。右侧乳腺簇状囊性结节，BI-RADS 3类。"
+pathological_bodypart = "左乳肿物"
+pathological_report = "结果：镜下计数细胞40个；HER2信号总数88个，HER2信号均值2.73/细胞，CEP17信号总数79个，CEP17信号均值1.98/细胞，HER2/CEP17比值：1.11。肿瘤异质性：不明显。信号分布情况：点状分布。参考标准：乳腺癌HER2检测指南（2019版），中华病理学杂志，2019年3月。"
+ultrasound_bodypart = "乳腺|甲状腺|子宫附件|(女)肾输尿管膀胱|肝胆脾胰"
+ultrasound_report = ""
 segmentsbnew_copy_step1, segmentscnew_copy_step1,segmentsbnew_copy_step2, segmentscnew_copy_step2,pathological_results, ultrasound_results, matching_results=parser(pathological_bodypart,pathological_report,ultrasound_bodypart,ultrasound_report)
 # segmentsbwithloc=[]
 # segmentscwithloc=[]
