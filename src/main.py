@@ -3,10 +3,10 @@
 from newmatch7 import parser
 
 
-pathological_bodypart="右腋窝淋巴结;右乳腺肿物及周围组织"
-pathological_report="1、“右乳”恶性肿瘤，见结节两枚，初步考虑为浸润性癌，伴导管原位癌，待免疫组化补充报告。2、“右腋窝淋巴结”（0/28）。"
-ultrasound_bodypart="介入会诊：乳腺、腋窝及锁骨上下区（加弹性成像）"
-ultrasound_report="右侧乳腺6点实性结节，BI-RADS 6类。右侧乳腺7点实性结节，BI-RADS 4c类。"
+pathological_bodypart = "左乳肿物"
+pathological_report = "结果：镜下计数细胞40个；HER2信号总数88个，HER2信号均值2.73/细胞，CEP17信号总数79个，CEP17信号均值1.98/细胞，HER2/CEP17比值：1.11。肿瘤异质性：不明显。信号分布情况：点状分布。参考标准：乳腺癌HER2检测指南（2019版），中华病理学杂志，2019年3月。"
+ultrasound_bodypart = "乳腺|甲状腺|子宫附件|(女)肾输尿管膀胱|肝胆脾胰"
+ultrasound_report = ""
 segmentsbnew_copy_step1, segmentscnew_copy_step1,segmentsbnew_copy_step2, segmentscnew_copy_step2,pathological_results, ultrasound_results, matching_results=parser(pathological_bodypart,pathological_report,ultrasound_bodypart,ultrasound_report)
 # segmentsbwithloc=[]
 # segmentscwithloc=[]
