@@ -160,7 +160,9 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
         if segmentsb_merge[2 * i] in word_prob_invalid:
             segmentsb5.append("无效语句")
             segmentsb5.append(0)
-
+    # if len(segmentsb2) == 0:
+    #     segmentsb2.append(pathological_bodypart)
+    #     segmentsb2.append(1)
 
     if int(len(reliability)) != 0:
         for i in range(int(len(reliability)/2)):

@@ -802,6 +802,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                       [['右侧腋窝及锁骨区'], ['右'],segmentsc5right_axilla,segmentsc3right_axilla,
                        segmentsc4right_axilla]]
 
+
+
     def match(segmentsbfinal, segmentscfinal, m, n):
         # m表示部位，0表示左乳，1表示右乳，2表示左腋窝锁骨，3表示右腋窝锁骨
         # n表示哪一个性质，0表示部位，1是侧别，2是病理性质，3是物理性质，4是良恶性（重新修改顺序了，按照需求改了一下顺序）
@@ -858,6 +860,11 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     if 3 in segmentsbnew_temp:
         segmentsbfinal_output.append(segmentsbfinal[3])
 
+    if len(segmentsbfinal_output) == 0:
+        segmentsbfinal_output = [[[pathological_bodypart], ['null'], ['null'], ['null'], ['null']]]
+
+
+
     segmentscfinal_output = []
     # 超声不同 超声是左乳右乳有没有出现都要补全的
     if 0 in segmentsbnew_temp:
@@ -869,6 +876,9 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     if 3 in segmentscnew_temp:
         segmentscfinal_output.append(segmentscfinal[3])
 
+    if len(segmentscfinal_output) == 0:
+        segmentscfinal_output = [[[ultrasound_bodypart], ['null'], ['null'], ['null'], ['null']]]
+
     # 病理谈到哪些侧别，匹配结果跟病理保持一致
     matchresult_output = []
     if 0 in segmentsbnew_temp:
@@ -879,6 +889,31 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         matchresult_output.append(matchresult[2])
     if 3 in segmentsbnew_temp:
         matchresult_output.append(matchresult[3])
+
+    flg_match = 0
+    if len(matchresult_output) == 0:
+        matchresult_output = [[pathological_bodypart, 4, 4, 4, 4]]
+        flg_match = 1
+
+
+    if flg_match == 0:
+        for i in range(len(matchresult_output)):
+            for j in range(len(matchresult_output[i])):
+                    res_list = []
+                    res = matchresult_output[i][j]
+                    if len(segmentsbfinal_output[i][j]) != 0:
+                        res_list.append(segmentsbfinal_output[i][j][0])
+                    else:
+                        res_list.append(None)
+                    if len(segmentscfinal_output[i][j]) != 0:
+                        res_list.append(segmentscfinal_output[i][j][0])
+                    else:
+                        res_list.append(None)
+                    res_list.append(res)
+                    matchresult_output[i][j] = res_list
+
+
+
     # print(segmentsbnew_copy_step1)
     # print(segmentscnew_copy_step1)
     # print(segmentsbnew_copy_step2)
