@@ -10,7 +10,7 @@ from pathological import word_probbinglicebie, word_probbinglibuwei, word_probbi
 # 顺序 侧别1 部位2 bp 物理性质3 pp 良恶性4 bm 病理性质5
 from pathological import pathologicalfuc
 from ultrasound import ultrasoundfuc
-
+import json
 
 # 主函数
 def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultrasound_report):
@@ -824,8 +824,11 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         return match
 
 
+
+    ## 修改为json形式
+
     matchleft1_bu_breast = match(segmentsbfinal, segmentscfinal, 0, 0)  ##左乳进行部位匹配
-    matchright1_bu_breast = match(segmentsbfinal, segmentscfinal, 1, 0)
+    matchright1_bu_breast =match(segmentsbfinal, segmentscfinal, 1, 0)
     matchleft2_ce_breast = match(segmentsbfinal, segmentscfinal, 0, 1)  ##侧别进行匹配
     matchright2_ce_breast = match(segmentsbfinal, segmentscfinal, 1, 1)
     matchleft3_bing_breast = match(segmentsbfinal, segmentscfinal, 0, 2)      ##左乳病理匹配
@@ -919,4 +922,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     # print(segmentsbnew_copy_step2)
     # print(segmentscnew_copy_step2)
     # print('aaaaaa')
+
+
+
     return segmentsbnew_copy_step1, segmentscnew_copy_step1, segmentsbnew_copy_step2, segmentscnew_copy_step2, segmentsbfinal_output, segmentscfinal_output, matchresult_output
