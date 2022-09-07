@@ -8,10 +8,10 @@ from newmatch7 import parser
 # ultrasound_bodypart = "乳腺|甲状腺|子宫附件|(女)肾输尿管膀胱|肝胆脾胰"
 # ultrasound_report = ""
 
-pathological_bodypart = "左乳肿物"
-pathological_report = "“二次报告：“左乳”乳腺间质胶原增生，乳腺小叶上皮柱状细胞变，结合免疫组化，未见癌。"
-ultrasound_bodypart = "乳腺"
-ultrasound_report = ""
+# pathological_bodypart = "左乳肿物"
+# pathological_report = "“右乳”穿刺组织，符合腺病改变，伴囊肿形成。"
+# ultrasound_bodypart = "乳腺"
+# ultrasound_report = "右侧乳腺内实质性结节，BI-RADS 4a类。左侧乳腺局部导管扩张，BI-RADS 2类。"
 
 segmentsbnew_copy_step1, segmentscnew_copy_step1,segmentsbnew_copy_step2, segmentscnew_copy_step2,pathological_results, ultrasound_results, matching_results=parser(pathological_bodypart,pathological_report,ultrasound_bodypart,ultrasound_report)
 # segmentsbwithloc=[]
