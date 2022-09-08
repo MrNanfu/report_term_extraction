@@ -681,6 +681,10 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                         segmentsc4.append('良性或恶性待定')
                     elif segmentsc5_breast[i] in word_probexing:
                         segmentsc4.append('恶性')
+                    elif segmentsc5_breast[i] == "BI-RADS 1":
+                        segmentsc4.append('没有发现病灶')
+                    elif segmentsc5_breast[i] == "BI-RADS 6":
+                        segmentsc4.append('已有病理结果')
             segmentsc4 = normalization4(segmentsc4)
         return segmentsc4
 
@@ -736,10 +740,10 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                                 segments.append(segmentsb5_breast[i])
                                 break
             return segments
-    segmentsb5left_breast=normalization5b(segmentsb4left_breast,segmentsb5left_breast)
+    segmentsb5left_breast = normalization5b(segmentsb4left_breast,segmentsb5left_breast)
     segmentsb5right_breast = normalization5b(segmentsb4right_breast, segmentsb5right_breast)
-    
-    
+
+
     def normalization4b(segmentsb4_breast, segmentsb5_breast):  # 为了解决良恶性和病理不一致问题，这里需要根据病理来对良恶性重新进行归一化
         mark = 0
         for i in range(len(segmentsb5_breast)):
@@ -772,6 +776,21 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
 
     segmentsb4left_breast = normalization4b(segmentsb4left_breast, segmentsb5left_breast)
     segmentsb4right_breast = normalization4b(segmentsb4right_breast, segmentsb5right_breast)
+
+    ## 对于超声语句中，出现包含"BI-RAD"语句的病理性质，直接置空为'null'
+    def ul_deal(segmentsc):
+        segmentsc_new = []
+        for i in range(len(segmentsc)):
+            if segmentsc[i] in word_prob5.keys():
+                segmentsc_new.append('null')
+                return segmentsc_new
+        return segmentsc
+
+
+
+    segmentsc5left_breast = ul_deal(segmentsc5left_breast)
+    segmentsc5right_breast = ul_deal(segmentsc5right_breast)
+
 
     def normalization6(segments6_breast):  # 这里是已经归一化的良恶性 和还未归一化的病理性质
         if len(segments6_breast) == 0:
@@ -808,18 +827,31 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         # m表示部位，0表示左乳，1表示右乳，2表示左腋窝锁骨，3表示右腋窝锁骨
         # n表示哪一个性质，0表示部位，1是侧别，2是病理性质，3是物理性质，4是良恶性（重新修改顺序了，按照需求改了一下顺序）
         # 第一个判断语句为零这个到底输出什么需要确认下 好像不应该输出为1（不符合） 应该细化到缺少哪边信息 这里看后续需求书确认 而且我应该都是有初始值的 不应该有空的存在
-        # 0: 符合  1: 不符合  2: 超声不明确  3: 病理不明确  4: 无法判断
+        # 0: 符合  1: 不符合  2: 超声良恶性漏诊  4: 病理良恶性不明确   5:超声良恶性不明确  6：已有病理结果 7：未进行BIA RADS分类
 
-        if (segmentscfinal[m])[n] == (segmentsbfinal[m])[n]:
-            match = '0'
-        if len((segmentscfinal[m])[n]) == 0 and len((segmentsbfinal[m])[n]) != 0:
-            match = '2'
-        if len((segmentscfinal[m])[n]) != 0 and len((segmentsbfinal[m])[n]) == 0:
-            match = '3'
-        if len((segmentscfinal[m])[n]) == 0 and len((segmentsbfinal[m])[n]) == 0:
-            match = '4'
-        elif (segmentscfinal[m])[n] != (segmentsbfinal[m])[n]:
-            match = '1'
+         ## 病理的良恶性不为null
+        if segmentsbfinal[m][n] == 'null':
+            return
+        else:
+            if segmentscfinal[m][n][0] == 'null':
+                match = '7'
+                return match
+
+            elif segmentsbfinal[m][n][0] == '良性或恶性待定':
+                match = '4'
+                return match
+            if segmentscfinal[m][n][0] == '良性或恶性待定':
+                match = '5'
+                return match
+            if segmentscfinal[m][n][0] == '已有病理结果':
+                match = '6'
+                return match
+            if segmentscfinal[m][n][0] == '没有发现病灶':
+                match = '2'
+                return match
+            if segmentscfinal[m][n][0] == segmentsbfinal[m][n][0]:
+                match = '0'
+            else: match = '1'
 
         return match
 

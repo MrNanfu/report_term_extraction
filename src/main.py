@@ -5,86 +5,96 @@ from newmatch7 import parser
 import json
 
 
-pathological_bodypart = "右乳肿物"
-pathological_report ="“右乳肿物”穿刺组织，炎症性病变，考虑为小叶性肉芽肿性乳腺炎，请结合临床。"
-ultrasound_bodypart = "介入会诊：乳腺、腋窝及锁骨上下区（加弹性成像）"
-ultrasound_report ="右侧乳腺内实质性结节，BI-RADS 4a类，建议穿刺活检。左侧乳腺内实质性结节，BI-RADS 3类。"
+pathological_bodypart = "左乳肿物;右乳肿物"
+pathological_report ="1、“左乳肿物”叶状肿瘤，考虑为良性。需予随诊观察，监测有无复发。2、“右乳肿物”纤维腺瘤。"
+ultrasound_bodypart = "浅表彩超：乳腺"
+ultrasound_report ="双侧乳腺内实质性团块，BI-RADS 3类。"
 
-# 将匹配结果转成字典数组
-def convert_matching_results_dict_list(result_list):
-    result_dict_list = []
-    result_dict = {}
+# # 将匹配结果转成字典数组
+# def convert_matching_results_dict_list(result_list):
+#     result_dict_list = []
+#     result_dict = {}
+#
+#     bodypart_index = 0
+#     side_index = 1
+#     pathological_index = 2
+#     physical_property_index = 3
+#     benign_or_malignant_index = 4
+#
+#     for i in range(len(result_list)):
+#         bodypart_dict = {
+#             "pathological": result_list[i][bodypart_index][0],
+#             "ultrasound": result_list[i][bodypart_index][1],
+#             "matching_degree": result_list[i][bodypart_index][2]
+#         }
+#         side_dict = {
+#             "pathological": result_list[i][side_index][0],
+#             "ultrasound": result_list[i][side_index][1],
+#             "matching_degree": result_list[i][side_index][2]
+#         }
+#         pathological_dict = {
+#             "pathological": result_list[i][pathological_index][0],
+#             "ultrasound": result_list[i][pathological_index][1],
+#             "matching_degree": result_list[i][pathological_index][2]
+#         }
+#         physical_property_dict = {
+#             "pathological": result_list[i][physical_property_index][0],
+#             "ultrasound": result_list[i][physical_property_index][1],
+#             "matching_degree": result_list[i][physical_property_index][2]
+#         }
+#         benign_or_malignant_dict = {
+#             "pathological": result_list[i][benign_or_malignant_index][0],
+#             "ultrasound": result_list[i][benign_or_malignant_index][1],
+#             "matching_degree": result_list[i][benign_or_malignant_index][2]
+#         }
+#         result_dict['bodypart'] = bodypart_dict
+#         result_dict['side'] = side_dict
+#         result_dict['results'] = {}
+#         result_dict['results']['pathological'] = pathological_dict
+#         result_dict['results']['physical_property'] = physical_property_dict
+#         result_dict['results']['benign_or_malignant'] = benign_or_malignant_dict
+#
+#         result_dict_list.append(result_dict)
+#
+#     return result_dict_list
+#
+# # 将转成字典数组
+# def convert_pathological_or_ultrasound_results_dict_list(results):
+#     result_dict_list = []
+#     for i in range(len(results)):
+#         result_dict = {
+#             "bodypart": results[i][0][0],
+#             "side": results[i][1][0],
+#             "pathological": results[i][2][0],
+#             "physical_property": results[i][3][0],
+#             "benign_or_malignant": results[i][4][0]}
+#         result_dict_list.append(result_dict)
+#     return result_dict_list
+#
+# def json_file(pathological_bodypart,pathological_report,ultrasound_bodypart,ultrasound_report):
+#     _, _, _,_,  pathological_results, ultrasound_results, matching_results = parser(pathological_bodypart,pathological_report,ultrasound_bodypart,ultrasound_report)
+#     matching_results_dict_list = convert_matching_results_dict_list(matching_results)
+#
+#     # 字典类型
+#     result_dict = {}
+#     result_dict['pathological_results'] = convert_pathological_or_ultrasound_results_dict_list(pathological_results)
+#     result_dict['ultrasound_results'] = convert_pathological_or_ultrasound_results_dict_list(ultrasound_results)
+#     result_dict['matching_results'] = matching_results_dict_list
+#
+#     # 返回json字符串
+#     return json.dumps(result_dict)
+#
+# result_json_str= json_file(pathological_bodypart, pathological_report, ultrasound_bodypart, ultrasound_report)
+#
+# print('result_json_str: ')
+# print(result_json_str)
 
-    bodypart_index = 0
-    side_index = 1
-    pathological_index = 2
-    physical_property_index = 3
-    benign_or_malignant_index = 4
+_, _, _,_, segmentsbfinal_output, segmentscfinal_output, matchresult_output = parser(pathological_bodypart,pathological_report,  ultrasound_bodypart,ultrasound_report)
+print("病理归一化结果：")
+print(segmentsbfinal_output)
 
-    for i in range(len(result_list)):
-        bodypart_dict = {
-            "pathological": result_list[i][bodypart_index][0],
-            "ultrasound": result_list[i][bodypart_index][1],
-            "matching_degree": result_list[i][bodypart_index][2]
-        }
-        side_dict = {
-            "pathological": result_list[i][side_index][0],
-            "ultrasound": result_list[i][side_index][1],
-            "matching_degree": result_list[i][side_index][2]
-        }
-        pathological_dict = {
-            "pathological": result_list[i][pathological_index][0],
-            "ultrasound": result_list[i][pathological_index][1],
-            "matching_degree": result_list[i][pathological_index][2]
-        }
-        physical_property_dict = {
-            "pathological": result_list[i][physical_property_index][0],
-            "ultrasound": result_list[i][physical_property_index][1],
-            "matching_degree": result_list[i][physical_property_index][2]
-        }
-        benign_or_malignant_dict = {
-            "pathological": result_list[i][benign_or_malignant_index][0],
-            "ultrasound": result_list[i][benign_or_malignant_index][1],
-            "matching_degree": result_list[i][benign_or_malignant_index][2]
-        }
-        result_dict['bodypart'] = bodypart_dict
-        result_dict['side'] = side_dict
-        result_dict['results'] = {}
-        result_dict['results']['pathological'] = pathological_dict
-        result_dict['results']['physical_property'] = physical_property_dict
-        result_dict['results']['benign_or_malignant'] = benign_or_malignant_dict
+print("超声归一化结果：")
+print(segmentscfinal_output)
 
-        result_dict_list.append(result_dict)
-
-    return result_dict_list
-
-# 将转成字典数组
-def convert_pathological_or_ultrasound_results_dict_list(results):
-    result_dict_list = []
-    for i in range(len(results)):
-        result_dict = {
-            "bodypart": results[i][0][0],
-            "side": results[i][1][0],
-            "pathological": results[i][2][0],
-            "physical_property": results[i][3][0],
-            "benign_or_malignant": results[i][4][0]}
-        result_dict_list.append(result_dict)
-    return result_dict_list
-
-def json_file(pathological_bodypart,pathological_report,ultrasound_bodypart,ultrasound_report):
-    _, _, _,_,  pathological_results, ultrasound_results, matching_results = parser(pathological_bodypart,pathological_report,ultrasound_bodypart,ultrasound_report)
-    matching_results_dict_list = convert_matching_results_dict_list(matching_results)
-
-    # 字典类型
-    result_dict = {}
-    result_dict['pathological_results'] = convert_pathological_or_ultrasound_results_dict_list(pathological_results)
-    result_dict['ultrasound_results'] = convert_pathological_or_ultrasound_results_dict_list(ultrasound_results)
-    result_dict['matching_results'] = matching_results_dict_list
-
-    # 返回json字符串
-    return json.dumps(result_dict)
-
-result_json_str= json_file(pathological_bodypart, pathological_report, ultrasound_bodypart, ultrasound_report)
-
-print('result_json_str: ')
-print(result_json_str)
+print("匹配结果：")
+print(matchresult_output)
