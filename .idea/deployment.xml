@@ -1,8 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" createEmptyFolders="true" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="wxz@219.223.179.31:22">
+      <paths name="cxin@219.223.178.166:22 password">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="root@10.103.9.40:21544 password">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/pycharm_project_758" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="root@10.103.9.40:21544 password (1)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/pycharm_project_282" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="root@10.103.9.40:21544 password (2)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/private" local="$PROJECT_DIR$/../../../../medical_ai" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="root@10.103.9.40:21544 password (3)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/pycharm_project_466" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="root@10.103.9.40:21544 password (4)">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
@@ -10,5 +45,6 @@
         </serverdata>
       </paths>
     </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
   </component>
 </project>

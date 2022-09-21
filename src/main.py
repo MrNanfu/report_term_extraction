@@ -5,10 +5,10 @@ from newmatch7 import parser
 import json
 
 
-pathological_bodypart = "左乳肿物;右乳肿物"
-pathological_report ="1、“左乳肿物”叶状肿瘤，考虑为良性。需予随诊观察，监测有无复发。2、“右乳肿物”纤维腺瘤。"
+pathological_bodypart = "“左乳”乳腺纤维腺瘤。"
+pathological_report ="“左乳”乳腺纤维腺瘤。"
 ultrasound_bodypart = "浅表彩超：乳腺"
-ultrasound_report ="双侧乳腺内实质性团块，BI-RADS 3类。"
+ultrasound_report ="左侧乳腺2点方位实质性结节，BI-RADS 4a类，建议穿刺活检。左侧乳腺12点方位实质性结节，BI-RADS 3类。"
 
 # # 将匹配结果转成字典数组
 # def convert_matching_results_dict_list(result_list):

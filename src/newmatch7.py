@@ -617,8 +617,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     segmentsc4right_axilla = normalization4(segmentsc4right_axilla)
 
     # 这个不删除 这个是有用的
-    word_prob5 = {"BI-RADS 0": 0.005, "BI-RADS 1": 0.01, "BI-RADS 2": 0.02, "BI-RADS 3": 0.03, 'BI-RADSⅢ':0.03, "BI-RADS 4a": 0.041,
-                  "BI-RADS 4b": 0.042, "BI-RADS 4c": 0.043, "BI-RADS 5": 0.05, "BI-RADS 6": 0.06}
+    word_prob5 = {"BI-RADS 0": 0.042, "BI-RADS 1": 0.01, "BI-RADS 2": 0.02, "BI-RADS 3": 0.03, 'BI-RADSⅢ':0.03, "BI-RADS 4a": 0.041,
+                  "BI-RADS 4b": 0.043, "BI-RADS 4c": 0.044, "BI-RADS 5": 0.05, "BI-RADS 6": 0.04}
 
     # 有时候超声报告里不全是BIRADS，偶尔因为过去的病史可以推断出具体的疾病，过去超声的逻辑是按BIRADS写的，包括它们之间归一化的比较，这里需要加一个区分开的函数，BIRADS和BIRADS之间归一化，不能混到一起
     def divide5(segments):
@@ -662,6 +662,17 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     segmentsc5left_axilla = normalization5c_all(segmentsc5left_axilla)
     segmentsc5right_axilla = normalization5c_all(segmentsc5right_axilla)
 
+
+    word_prob_birads_to_liang_e = {"BI-RADS 0": '良性或恶性待定', "BI-RADS 1": '没有发现病灶', "BI-RADS 2": '良性', "BI-RADS 3": '良性', 'BI-RADSⅢ':'良性', "BI-RADS 4a": '良性',
+                  "BI-RADS 4b": '良性', "BI-RADS 4c": '恶性', "BI-RADS 5": '恶性', "BI-RADS 6": '已有病理结果'}
+
+    def birads_to_liang_e(segments_birads):
+        segments_new = []
+        for i in range(len(segments_birads)):
+            if segments_birads[i] in word_prob_birads_to_liang_e:
+                segments_new.append(word_prob_birads_to_liang_e[segments_birads[i]])
+        return segments_new
+
     # 超声报告的良恶性需要以BIRADS为依据，因此在进行病理归一化后需要重新对良恶性进行归一化
     def normalization4c(segmentsc5_breast):
         segmentsc4 = []
@@ -673,19 +684,19 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
             new_s = ['无效语句']
             return new_s
         else:
-            for i in range(len(segmentsc5_breast)):
-                if segmentsc5_breast[i] in word_prob5:
-                    if segmentsc5_breast[i] in word_probliangxing:
-                        segmentsc4.append('良性')
-                    elif segmentsc5_breast[i] in word_probliang_or_e:
-                        segmentsc4.append('良性或恶性待定')
-                    elif segmentsc5_breast[i] in word_probexing:
-                        segmentsc4.append('恶性')
-                    elif segmentsc5_breast[i] == "BI-RADS 1":
-                        segmentsc4.append('没有发现病灶')
-                    elif segmentsc5_breast[i] == "BI-RADS 6":
-                        segmentsc4.append('已有病理结果')
-            segmentsc4 = normalization4(segmentsc4)
+            # for i in range(len(segmentsc5_breast)):
+            #     if segmentsc5_breast[i] in word_prob5:
+            #         if segmentsc5_breast[i] in word_probliangxing:
+            #             segmentsc4.append('良性')
+            #         elif segmentsc5_breast[i] in word_probliang_or_e:
+            #             segmentsc4.append('良性或恶性待定')
+            #         elif segmentsc5_breast[i] in word_probexing:
+            #             segmentsc4.append('恶性')
+            #         elif segmentsc5_breast[i] == "BI-RADS 1":
+            #             segmentsc4.append('没有发现病灶')
+            #         elif segmentsc5_breast[i] == "BI-RADS 6":
+            #             segmentsc4.append('已有病理结果')
+            segmentsc4 = normalization5_BIRADS(segmentsc5_breast)
         return segmentsc4
 
     segmentsc4left_breast = normalization4c(segmentsc5left_breast)
@@ -694,6 +705,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     segmentsc4right_axilla = normalization4c(segmentsc5right_axilla)
 
     def normalization5b(segmentsb4_breast,segmentsb5_breast):#这里是已经归一化的良恶性 和还未归一化的病理性质
+        # segmentsb4_breast = birads_to_liang_e(segmentsb4_breast)
         mark = 0
         for i in range(len(segmentsb5_breast)):
             if segmentsb5_breast[i] == '无效语句':
@@ -744,38 +756,38 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     segmentsb5right_breast = normalization5b(segmentsb4right_breast, segmentsb5right_breast)
 
 
-    def normalization4b(segmentsb4_breast, segmentsb5_breast):  # 为了解决良恶性和病理不一致问题，这里需要根据病理来对良恶性重新进行归一化
-        mark = 0
-        for i in range(len(segmentsb5_breast)):
-            if segmentsb5_breast[i] == '无效语句':
-                mark = 1
-        if mark :
-            new_s = ['无效语句']
-            return new_s
-        else:
-            segments = []
-            if len(segmentsb4_breast) != 0 and len(segmentsb5_breast) != 0:
-                if segmentsb4_breast[0] == '恶性':
-                    # len_e = len(segmentsb5_breast)
-                    len_e = 1  # 为了便于后面的match，对于多个恶性只输出一个即可
-                    segments = ['恶性' for i in range(len_e)]
-                elif segmentsb5_breast[0] in word_probexing:
-                    if segmentsb4_breast[0]=='良性':
-                        segments = ['良性']
-                    else:
-                        segments = ['恶性']
-                else:
-                    if segmentsb5_breast[0] in word_probliang_or_e_major:
-                        if segmentsb4_breast[0] == '良性':  ## 虽然某些病理性质在词典中属于良恶性不定，但是如果语句中明确是良性了，则需要输出良性
-                            segments = ['良性']
-                        else:
-                            segments = ['良性或恶性待定']
-                    elif segmentsb5_breast[0] in word_probliangxing:
-                        segments = ['良性']
-            return segments
-
-    segmentsb4left_breast = normalization4b(segmentsb4left_breast, segmentsb5left_breast)
-    segmentsb4right_breast = normalization4b(segmentsb4right_breast, segmentsb5right_breast)
+    # def normalization4b(segmentsb4_breast, segmentsb5_breast):  # 为了解决良恶性和病理不一致问题，这里需要根据病理来对良恶性重新进行归一化
+    #     mark = 0
+    #     for i in range(len(segmentsb5_breast)):
+    #         if segmentsb5_breast[i] == '无效语句':
+    #             mark = 1
+    #     if mark :
+    #         new_s = ['无效语句']
+    #         return new_s
+    #     else:
+    #         segments = []
+    #         if len(segmentsb4_breast) != 0 and len(segmentsb5_breast) != 0:
+    #             if segmentsb4_breast[0] == '恶性':
+    #                 # len_e = len(segmentsb5_breast)
+    #                 len_e = 1  # 为了便于后面的match，对于多个恶性只输出一个即可
+    #                 segments = ['恶性' for i in range(len_e)]
+    #             elif segmentsb5_breast[0] in word_probexing:
+    #                 if segmentsb4_breast[0]=='良性':
+    #                     segments = ['良性']
+    #                 else:
+    #                     segments = ['恶性']
+    #             else:
+    #                 if segmentsb5_breast[0] in word_probliang_or_e_major:
+    #                     if segmentsb4_breast[0] == '良性':  ## 虽然某些病理性质在词典中属于良恶性不定，但是如果语句中明确是良性了，则需要输出良性
+    #                         segments = ['良性']
+    #                     else:
+    #                         segments = ['良性或恶性待定']
+    #                 elif segmentsb5_breast[0] in word_probliangxing:
+    #                     segments = ['良性']
+    #         return segments
+    #
+    # segmentsb4left_breast = normalization4b(segmentsb4left_breast, segmentsb5left_breast)
+    # segmentsb4right_breast = normalization4b(segmentsb4right_breast, segmentsb5right_breast)
 
     ## 对于超声语句中，出现包含"BI-RAD"语句的病理性质，直接置空为'null'
     def ul_deal(segmentsc):
@@ -830,26 +842,29 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         # 0: 符合  1: 不符合  2: 超声良恶性漏诊  4: 病理良恶性不明确   5:超声良恶性不明确  6：已有病理结果 7：未进行BIA RADS分类
 
          ## 病理的良恶性不为null
-        if segmentsbfinal[m][n] == 'null':
+        if len(segmentsbfinal[m][n]) == 0 or len(segmentscfinal[m][n]) == 0:
             return
         else:
-            if segmentscfinal[m][n][0] == 'null':
+            segmentscfinal_new = copy.deepcopy(segmentscfinal)
+            if n == 4:
+                segmentscfinal_new[m][n] = birads_to_liang_e(segmentscfinal_new[m][n])
+            if segmentscfinal_new[m][n][0] == 'null':
                 match = '7'
                 return match
 
             elif segmentsbfinal[m][n][0] == '良性或恶性待定':
                 match = '4'
                 return match
-            if segmentscfinal[m][n][0] == '良性或恶性待定':
+            if segmentscfinal_new[m][n][0] == '良性或恶性待定':
                 match = '5'
                 return match
-            if segmentscfinal[m][n][0] == '已有病理结果':
+            if segmentscfinal_new[m][n][0] == '已有病理结果':
                 match = '6'
                 return match
-            if segmentscfinal[m][n][0] == '没有发现病灶':
+            if segmentscfinal_new[m][n][0] == '没有发现病灶':
                 match = '2'
                 return match
-            if segmentscfinal[m][n][0] == segmentsbfinal[m][n][0]:
+            if segmentscfinal_new[m][n][0] == segmentsbfinal[m][n][0]:
                 match = '0'
             else: match = '1'
 
