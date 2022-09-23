@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 #有一些demo只在pathological那边做了，比如否定词的处理，超声这边没加，主要否定词也是主要出现在病理那边，后续应该加上
-from pathological import word_probbinglicebie,word_probbinglibuwei,word_probbingliwuli,word_probchaoshengwuli,word_probbingliwulinangxing,word_probbingliliangexing,word_probchaoshengliangexing,word_probliangxing,word_probexing,word_probliang_or_e,word_probbinglibingli,word_probchaoshengcebie,word_probchaoshengbuwei,word_probchaoshengbingli,word_probexing_major,word_probliang_or_e_major,word_probliangxing_major,word_probliangxing_minor
+from pathological import word_probbinglicebie,word_probbinglibuwei,word_probbingliwuli,word_probchaoshengwuli,word_probbingliwulinangxing,word_probbingliliangexing,word_probchaoshengliangexing,word_probliangxing,word_probexing,word_probliang_or_e,word_probbinglibingli,word_probchaoshengcebie,word_probchaoshengbuwei,word_probchaoshengbingli,word_probjiaojie_major,word_probexing_major,word_probliang_or_e_major,word_probliangxing_major,word_probliangxing_minor
 
 from pathological import findsegments
 def Merge(dict1, dict2, dict3, dict4):
@@ -350,31 +350,31 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
             segmentsc5[icgy5] = "BI-RADS 4b"
        if segmentsc5[icgy5] =="4c":
             segmentsc5[icgy5] = "BI-RADS 4c"
-    lencldivc5 = int(len(segmentsc5) / 2)
-    icldivc5 = 1
-    while (1):
-     if lencldivc5 == 0:
-         break
-
-     elif segmentsc5bf[2 * icldivc5 - 2] == '无效语句':
-         segmentsc3.append('无效语句')
-         segmentsc3.append(segmentsc5bf[2 * icldivc5 - 1])
-         icldivc5 += 1
-         if icldivc5 > lencldivc5:
-             break
-
-     elif segmentsc5bf[2 * icldivc5 - 2] in word_probbingliwulinangxing.keys():
-         segmentsc3.append('囊性')
-         segmentsc3.append(segmentsc5[2 * icldivc5 - 1])
-         icldivc5 += 1
-         if icldivc5 > lencldivc5:
-             break
-     else:
-         segmentsc3.append('实性')
-         segmentsc3.append(segmentsc5[2 * icldivc5 - 1])
-         icldivc5 += 1
-         if icldivc5 > lencldivc5:
-             break
+    # lencldivc5 = int(len(segmentsc5) / 2)
+    # icldivc5 = 1
+    # while (1):
+    #  if lencldivc5 == 0:
+    #      break
+    #
+    #  elif segmentsc5bf[2 * icldivc5 - 2] == '无效语句':
+    #      segmentsc3.append('无效语句')
+    #      segmentsc3.append(segmentsc5bf[2 * icldivc5 - 1])
+    #      icldivc5 += 1
+    #      if icldivc5 > lencldivc5:
+    #          break
+    #
+    #  elif segmentsc5bf[2 * icldivc5 - 2] in word_probbingliwulinangxing.keys():
+    #      segmentsc3.append('囊性')
+    #      segmentsc3.append(segmentsc5[2 * icldivc5 - 1])
+    #      icldivc5 += 1
+    #      if icldivc5 > lencldivc5:
+    #          break
+    #  else:
+    #      segmentsc3.append('实性')
+    #      segmentsc3.append(segmentsc5[2 * icldivc5 - 1])
+    #      icldivc5 += 1
+    #      if icldivc5 > lencldivc5:
+    #          break
 
 
     lencldivc5 = int(len(segmentsc5) / 2)
