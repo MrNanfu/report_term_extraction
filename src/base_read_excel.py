@@ -26,10 +26,6 @@ def findsegmentswithloc(report):
     return segmentswithloc
 def get_final_data(data_all):
     result2 = []
-    pathological_bodypart = []
-    pathological_report = []
-    ultrasound_bodypart = []
-    ultrasound_report = []
     for i in data_all:
         #print(i)
         if len(i) == 0 or i[0]==None or i[1]==None or  i[2]==None or  i[3]==None or  i[4]==None or  i[5]==None:
@@ -39,19 +35,12 @@ def get_final_data(data_all):
                     pass
         else:
             pathological_bodypart= str(i[0])
-            c = str(i[1])
-            d = str(i[2])
-            # pathological_report = c + d
-            pathological_report = d
+            pathological_report = str(i[2])
             ultrasound_bodypart= str(i[3])
-            a = str(i[4])
-            b = str(i[5])
-            # ultrasound_report = a + b
-            ultrasound_report = b
-            # ultrasound_report.append(i[11])
+            ultrasound_report = str(i[5])
 
             print(ultrasound_report)
-            segmentsbnew_copy_step1, segmentscnew_copy_step1,segmentsbnew_copy_step2, segmentscnew_copy_step2, segmentsbfinal_output, segmentscfinal_output, matchresult_output = parser(pathological_bodypart,
+            _, _,_, _, segmentsbfinal_output, segmentscfinal_output, matchresult_output = parser(pathological_bodypart,
                                                                                              pathological_report,
                                                                                              ultrasound_bodypart,
                                                                                              ultrasound_report)
