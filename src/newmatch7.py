@@ -252,6 +252,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                 if valuesidetemp > valueside:
                     valueside = valuesidetemp
             segments = get_key(word_prob3, valueside)
+            if segments[0] == "实质性":
+                segments[0] = "实性"
             return segments
 
     for i in range(len(segmentsbnew)):
@@ -388,9 +390,13 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
             new_s = ['无效语句']
             return new_s
         else:
-            flg_mianyi = 0
-            cnt_list = [0, 0, 0, 0]  # 主要诊断的恶性、良恶待定、良性、次要诊断的良性的计数数组
             segments_normalization_major_minor = []
+            if len(segmentsb5) == 2:
+                segments_normalization_major_minor.append(segments[0])
+                return segments_normalization_major_minor
+            flg_mianyi = 0
+            cnt_list = [0, 0, 0, 0, 0]  # 主要诊断的恶性、良恶待定、良性、次要诊断的良性、主要诊断的交界性的计数数组
+
             if len(segments) != 0:
                 for i in range(len(segments)):
                     if segments[i] in word_probexing_major:
@@ -404,7 +410,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
 
                     elif segments[i] in word_probliangxing_minor:
                         cnt_list[3] += 1
-
+                    elif segments[i] in word_probjiaojie_major:
+                        cnt_list[4] += 1
                     else:
                         break
             if cnt_list[0] + cnt_list[1] + cnt_list[2] == 0:  # 没有主要诊断
@@ -494,6 +501,11 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                                         idx += 1
                                         if idx == max_idx:
                                             segments_normalization_major_minor.append(segments[i])
+                    elif cnt_list[4] != 0:
+                        for i in range(len(segments)):
+                            if segments[i] in word_probjiaojie_major:
+                                segments_normalization_major_minor.append(segments[i])
+                                return segments_normalization_major_minor
                     elif cnt_list[2] != 0:
                         if cnt_list[2] == 1:  # 只存在一个良性
                             for i in range(len(segments)):
@@ -771,6 +783,9 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
             return new_s
         else:
             segments = []
+            if len(segmentsb5_breast) == 1:
+                segments.append(segmentsb5_breast[i])
+                return  segments
             if len(segmentsb4_breast) != 0:
                 if len(segmentsb5_breast) != 0:
                     # 注意这里 良性或恶性待定 字符串要和前文写得保持一致 比如良恶性均可 就不会识别到
