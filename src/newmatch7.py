@@ -919,9 +919,14 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
             segmentscfinal_new = copy.deepcopy(segmentscfinal)
 
             if n == 4:
+
                 segmentscfinal_new[m][n] = birads_to_liang_e(segmentscfinal_new[m][n])
             if (segmentscfinal_new[m][n][0] == 'null' or segmentscfinal_new[m][n][0] == "无效语句"):
                 match = '7'
+                if  n == 4:
+                    tmp_list = []
+                    tmp_list.append('未进行bi-rads分类')
+                    segmentscfinal[m][n] = tmp_list
                 return match
             elif segmentsbfinal[m][n][0] == '无效语句':
                 match = '8'

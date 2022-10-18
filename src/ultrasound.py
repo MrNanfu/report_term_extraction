@@ -68,9 +68,9 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
             segmentsc5.append(segmentsc_merge[2 * i])
             segmentsc5.append(segmentsc_merge[2 * i + 1])
 
-        if segmentsc_merge[2 * i] in word_prob_invalid:
-            segmentsc5.append("无效语句")
-            segmentsc5.append(0)
+        # if segmentsc_merge[2 * i] in word_prob_invalid:
+        #     segmentsc5.append("无效语句")
+        #     segmentsc5.append(0)
 
 
     if int(len(reliability)) != 0:
