@@ -562,9 +562,10 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
             segmentsb4 = ['无效语句']
             return segmentsb4
 
-        if  len(b4_raw_dict)!= 0:
+        if  b4_raw_dict:
             if segmentsb_5[0] in b4_raw_dict:
                 segmentsb4.append(b4_raw_dict[segmentsb_5[0]])
+                b4_raw_dict.pop(segmentsb_5[0])
             else:
                 if segmentsb_5[0] in word_probexing:
                     segmentsb4 = ['恶性']

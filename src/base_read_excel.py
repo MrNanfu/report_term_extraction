@@ -26,6 +26,7 @@ def findsegmentswithloc(report):
     return segmentswithloc
 def get_final_data(data_all):
     result2 = []
+    cnt = 0
     for i in data_all:
         #print(i)
         if len(i) == 0 or i[0]==None or i[1]==None or  i[2]==None or  i[3]==None or  i[4]==None or  i[5]==None:
@@ -40,6 +41,9 @@ def get_final_data(data_all):
             ultrasound_report = str(i[5])
 
             print(ultrasound_report)
+            if cnt == 133:
+                print
+
             _, _,_, _, segmentsbfinal_output, segmentscfinal_output, matchresult_output = parser(pathological_bodypart,
                                                                                              pathological_report,
                                                                                              ultrasound_bodypart,
@@ -64,6 +68,7 @@ def get_final_data(data_all):
                      *R7, *matchresult_output ,"\n"]
             r2=",".join(str(v) for v in results)
             result2.append(r2)
+            cnt +=1
             print("语义匹配结束")
     return result2
 
