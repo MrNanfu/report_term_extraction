@@ -6,9 +6,9 @@ import json
 
 
 pathological_bodypart = "左乳肿物"
-pathological_report ="术中冰冻报告：“右乳头下切缘”未见癌，局灶导管上皮增生。"
+pathological_report ="“左乳肿物①”考虑乳腺纤维腺瘤。"
 ultrasound_bodypart = "介入会诊：乳腺、腋窝及锁骨上下区（加弹性成像）"
-ultrasound_report ="右侧乳腺1点方位结构稍紊乱，目前未见明显肿块。左侧乳腺BI-RADS 1类。"
+ultrasound_report ="左侧乳腺10点方位实质性结节。BI-RADS 4a类。余双侧乳腺内实质性结节，BI-RADS 3类。"
 # 将匹配结果转成字典数组
 # def convert_matching_results_dict_list(result_list):
 #     result_dict_list = []
