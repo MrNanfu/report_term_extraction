@@ -176,7 +176,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         elif flg == 1:  # 超声报告的remove方法
             for j in range(int(len(segmentstall))):
                 if len((segmentstall[j])[4]) == 0 :
-                    segmentstall[j][4].append('BI-RADS 1')
+                    segmentstall[j][4].append('null')
                     if j < len(segmentstall) - 1:
                         segmentstall[j][4].append(segmentstall[j + 1][1][1] - 1)    # 由于BI-RADS 1没有出现在语句中，假设其位置为下一个句子的前一个位置
                     else:
@@ -905,7 +905,15 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                       [['右侧腋窝及锁骨区'], ['右'],segmentsc5right_axilla,segmentsc3right_axilla,
                        segmentsc4right_axilla]]
 
-
+    """
+    对超声报告的bi-rads1进行补全
+    """
+    if 0 in segmentsbnew_temp:
+        if segmentscfinal[0][4][0] == 'null':
+            segmentscfinal[0][4][0] = 'BI-RADS 1'
+    if 1 in segmentsbnew_temp:
+        if segmentscfinal[1][4][0] == 'null':
+            segmentscfinal[1][4][0] = 'BI-RADS 1'
 
     def match(segmentsbfinal, segmentscfinal, m, n):
         # m表示部位，0表示左乳，1表示右乳，2表示左腋窝锁骨，3表示右腋窝锁骨
@@ -999,6 +1007,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     segmentscfinal_output = []
     # 超声不同 超声是左乳右乳有没有出现都要补全的
     if 0 in segmentsbnew_temp:
+        if segmentscfinal[0][4][0] == 'null':
+            segmentscfinal[0][4][0] == 'BI-RADS 1'
         segmentscfinal_output.append(segmentscfinal[0])
     if 1 in segmentsbnew_temp:
         segmentscfinal_output.append(segmentscfinal[1])
