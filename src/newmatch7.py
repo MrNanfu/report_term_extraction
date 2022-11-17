@@ -116,17 +116,24 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                 (segmentsb_yuyi_sep[jnum]).append(segmentsb_yuyi[2 * j6 + 1])
 
     # 对于出现双乳，语义segments6也需要展开,使其与segmentsall的索引保持一致
-    def unfold_yuyi(segmentsb_yuyi, segments2, string1):
+    def unfold_yuyi(segmentsb_yuyi_sep, segments2, string1):
         for i in range(int(len(segments2) / 2)):
             if segments2[2 * i] == string1:
-                r = segmentsb_yuyi[i].copy()
-                segmentsb_yuyi.insert(i + 1, r)
+                r = segmentsb_yuyi_sep[i].copy()
+                segmentsb_yuyi_sep.insert(i + 1, r)
+        return segmentsb_yuyi_sep
 
-    segmentsb_yuyi = unfold_yuyi(segmentsb_yuyi, segmentsb2, '双侧乳腺')
-    segmentsb_yuyi = unfold_yuyi(segmentsb_yuyi, segmentsb2, '双乳')
-    segmentsb_yuyi = unfold_yuyi(segmentsb_yuyi, segmentsb2, '双侧乳房')
-    segmentsb_yuyi = unfold_yuyi(segmentsb_yuyi, segmentsb2, '双侧乳头')
-    segmentsb_yuyi = unfold_yuyi(segmentsb_yuyi, segmentsb2, '双侧腋窝及锁骨区')
+    # segmentsb_yuyi = unfold_yuyi(segmentsb_yuyi, segmentsb2, '双侧乳腺')
+    # segmentsb_yuyi = unfold_yuyi(segmentsb_yuyi, segmentsb2, '双乳')
+    # segmentsb_yuyi = unfold_yuyi(segmentsb_yuyi, segmentsb2, '双侧乳房')
+    # segmentsb_yuyi = unfold_yuyi(segmentsb_yuyi, segmentsb2, '双侧乳头')
+    # segmentsb_yuyi = unfold_yuyi(segmentsb_yuyi, segmentsb2, '双侧腋窝及锁骨区')
+
+    segmentsb_yuyi_sep = unfold_yuyi(segmentsb_yuyi_sep, segmentsb2, '双侧乳腺')
+    segmentsb_yuyi_sep = unfold_yuyi(segmentsb_yuyi_sep, segmentsb2, '双乳')
+    segmentsb_yuyi_sep = unfold_yuyi(segmentsb_yuyi_sep, segmentsb2, '双侧乳房')
+    segmentsb_yuyi_sep = unfold_yuyi(segmentsb_yuyi_sep, segmentsb2, '双侧乳头')
+    segmentsb_yuyi_sep = unfold_yuyi(segmentsb_yuyi_sep, segmentsb2, '双侧腋窝及锁骨区')
 
     # 出现双乳，需要展开，下面的字典需要根据数据里出现过什么不断补充，而且得注意需求是调整超声 病理 还是都调整
     def unfold(segmentsall, segments2, string1, string2, string3):
@@ -403,7 +410,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                         cnt_list[0] += 1
 
                     elif segments[i] in word_probliang_or_e_major:
-                        cnt_list[1] += 1
+                        if segments[i] != '细胞' and  segments[i] != '腺体' and segments[i] != '导管':
+                            cnt_list[1] += 1
 
                     elif segments[i] in word_probliangxing_major:
                         cnt_list[2] += 1
@@ -466,7 +474,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                     if cnt_list[1] != 0:  # 不存在恶性但是存在良恶未知
                         if cnt_list[1] == 1:  # 只存在一个良恶未知
                             for i in range(len(segments)):
-                                if segments[i] in word_probliang_or_e_major:
+                                if segments[i] in word_probliang_or_e_major and segments[i] != '细胞':
                                     segments_normalization_major_minor.append(segments[i])
                                     return segments_normalization_major_minor
                         else:  # 存在多个良恶未知，需要用语义信息去判断
@@ -1001,6 +1009,13 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
 
     if len(segmentsbfinal_output) == 0:
         segmentsbfinal_output = [[[pathological_bodypart], ['null'], ['null'], ['null'], ['null']]]
+    for i in range(len(segmentsbfinal_output)):
+        if len(segmentsbfinal_output[i][2])  == 1 and (segmentsbfinal_output[i][2][0] == '细胞' or segmentsbfinal_output[i][2][0] == '腺体' or segmentsbfinal_output[i][2][0] == '导管'):
+            if segmentsbfinal_output[i][4][0] == 'null':
+                segmentsbfinal_output[i][4][0] = '病理良恶性不明确'
+            segmentsbfinal_output[i][2][0] = '病理诊断不明确'
+            segmentsbfinal_output[i][3][0] = '无法判断物理性质'
+            # segmentsbfinal_output[i][4][0] = '病理良恶性不明确'
 
 
 
