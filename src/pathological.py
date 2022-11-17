@@ -16,7 +16,7 @@ word_probbinglibuwei={'左乳': 0.01,'右乳': 0.01,'双乳': 0.01,"左侧乳腺
 word_probchaoshengbuwei =word_probbinglibuwei
 
 #物理性质
-word_probbingliwuli = {"囊性":0.01,"实性":0.01,"混合性":0.01,"囊实":0.01, "实质性":0.01}
+word_probbingliwuli = {"囊性":0.01,"实性":0.01,"混合性":0.01,"囊实":0.01, "实质性":0.01, "类实性":0.01}
 word_probchaoshengwuli=word_probbingliwuli
 #除了直接找实性囊性词汇外，还通过如下病理性质推断出囊性，当时说除了这些都算实性(不过这个词典也是第一次皮下肿块的需求书里的词典，后续乳腺任务目前没给出实性囊性词典)
 word_probbingliwulinangxing = {"囊肿": 0.01, "表皮样囊肿": 0.01, "皮样囊肿": 0.01, "皮脂腺囊肿": 0.01, "滑膜囊肿": 0.01, "粘液囊肿": 0.01,
