@@ -4,8 +4,8 @@ import copy
 from pathological import word_probbinglicebie, word_probbinglibuwei, word_probbingliwuli, word_probchaoshengwuli, \
     word_probbingliwulinangxing, word_probbingliliangexing, word_probchaoshengliangexing, word_probliangxing, \
     word_probexing, word_probliang_or_e, word_probbinglibingli, word_probchaoshengcebie, word_probchaoshengbuwei, \
-    word_probchaoshengbingli, word_probexing_major, word_probliang_or_e_major, word_probliangxing_major,word_probjiaojie_major, \
-    word_probliangxing_minor
+    word_probchaoshengbingli, word_probexing_major, word_probliang_or_e_major, word_probliangxing_major, \
+    word_probliangxing_minor,word_probjiaojie_major
 
 # 顺序 侧别1 部位2 bp 物理性质3 pp 良恶性4 bm 病理性质5
 from pathological import pathologicalfuc
@@ -916,10 +916,10 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     """
     对超声报告的bi-rads1进行补全
     """
-    if 0 in segmentsbnew_temp:
+    if 0 in segmentsbnew_temp and 0 not in segmentscnew_temp:
         if segmentscfinal[0][4][0] == 'null':
             segmentscfinal[0][4][0] = 'BI-RADS 1'
-    if 1 in segmentsbnew_temp:
+    if 1 in segmentsbnew_temp and 1 not in segmentscnew_temp:
         if segmentscfinal[1][4][0] == 'null':
             segmentscfinal[1][4][0] = 'BI-RADS 1'
 
@@ -934,6 +934,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
             return
         else:
             segmentscfinal_new = copy.deepcopy(segmentscfinal)
+
 
             if n == 4:
 

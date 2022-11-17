@@ -5,7 +5,7 @@ from newmatch7 import parser
 import json
 
 
-pathological_bodypart = "左乳肿物"
+pathological_bodypart = "右乳肿物"
 pathological_report = "“右乳”穿刺组织，见增生的胶原组织，其内见少许萎缩的乳腺腺体，未见确切恶性肿瘤细胞。"
 ultrasound_bodypart = "浅表彩超：乳腺"
 ultrasound_report ="右乳部分切除后，右乳9点低回声区，BI-RADS 4a类。左侧乳腺内低回声结节，BI-RADS 4a类。左侧乳腺局部导管扩张。"
