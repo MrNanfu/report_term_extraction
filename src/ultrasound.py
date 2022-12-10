@@ -1,8 +1,23 @@
 # -*- coding:utf-8 -*-
 #有一些demo只在pathological那边做了，比如否定词的处理，超声这边没加，主要否定词也是主要出现在病理那边，后续应该加上
-from pathological import word_probbinglicebie,word_probbinglibuwei,word_probbingliwuli,word_probchaoshengwuli,word_probbingliwulinangxing,word_probbingliliangexing,word_probchaoshengliangexing,word_probliangxing,word_probexing,word_probliang_or_e,word_probbinglibingli,word_probchaoshengcebie,word_probchaoshengbuwei,word_probchaoshengbingli,word_probjiaojie_major,word_probexing_major,word_probliang_or_e_major,word_probliangxing_major,word_probliangxing_minor
+from pathological import word_probbinglicebie,word_probbinglibuwei,word_probbingliwuli,word_probchaoshengwuli,word_probbingliliangexing,word_probchaoshengliangexing,word_probchaoshengcebie,word_probchaoshengbuwei
 
 from pathological import findsegments
+
+word_probexing_major={"浸润性导管癌":0.01,"浸润性癌":0.01, "浸润癌":0.01, "浸润性乳腺癌":0.01,"导管原位癌":0.01,"原位癌":0.01,"恶性叶状肿瘤":0.01,"包裹性乳头状癌":0.01,"实性乳头状癌":0.01,"导管内乳头状癌":0.01, "化生性癌":0.01, "BI-RADS 4C":0.01,"BI-RADS 4c":0.01,"4c":0.01,"4C":0.01,"BI-RADS 5":0.01,"BI-RADS 6":0.01}
+word_probliang_or_e_major={"导管内瘤":0.01, "肿瘤病变":0.01, "导管内乳头状病变":0.01, "纤维上皮性病变":0.01, "肿瘤性病变":0.01, "导管内乳头状肿瘤":0.01,"叶状肿瘤":0.01,"放射状瘢痕〈B3,不确定的潜在恶性病变）":0.01,"非典型导管增生":0.01,"非典型导管上皮增生":0.01, "导管上皮不典型增生":0.01, "导管上皮非典型增生":0.01, "平坦型上皮非典型增生":0.01,"平坦上皮非典型性":0.01,"导管上皮轻度非典型增生":0.01,"不典型增生":0.01,"导管上皮增生活跃":0.01, "非典型增生":0.01, "不典型导管增生":0.01, "导管上皮增生":0.01,"导管上皮增生稍活跃(B3,不确定的潜在恶性病变）":0.01,"上皮源性肿瘤":0.01,"BI-RADS 0": 0.01}
+word_probliangxing_major={"普通型增生":0.01, "肉芽肿":0.01,"肉芽肿性炎":0.01, "硬化性腺病":0.01, "错构瘤":0.01, "导管内乳头状瘤":0.01, "导管内乳头状瘤炎性病变":0.01,"炎性":0.01,"炎症性改变":0.01,"炎症性":0.01,"炎症改变":0.01,"小叶性肉芽肿性乳腺炎":0.01,"小叶肉芽肿性乳腺炎":0.01,"肉芽肿性小叶炎":0.01,"肉芽肿性小叶性乳腺炎":0.01,"非特异性炎症性病变纤维上皮肿瘤":0.01, "梭形细胞病变":0.01, "非特异性炎症性病变":0.01, "纤维上皮性":0.01, "纤维上皮性肿瘤":0.01,"良性纤维上皮性肿瘤":0.01,"纤维腺瘤样增生":0.01,"纤维腺瘤":0.01,"纤维腺瘤改变":0.01,"幼年型纤维腺瘤":0.01,"良性叶状肿瘤":0.01,"泌乳性腺瘤":0.01,"管状腺瘤":0.01,"结节性泌乳性增生硬化性腺病":0.01, "结节性泌乳性增生":0.01, "错构瘤硬化性腺病":0.01, "复杂硬化性":0.01, "复杂性硬化性":0.01, "复杂硬化性病变":0.01, "表皮样囊肿":0.01, "复杂性硬化性病表皮样囊肿":0.01,"纤维囊性乳腺病":0.01,"纤维囊性变":0.01,"囊肿性病变":0.01, "积乳囊肿":0.01, "囊肿":0.01,"导管扩张症新辅助治疗后改变":0.01,"化疗后改变":0.01,"未见确切恶性肿瘤细胞":0.01,"未见肿瘤":0.01,"BI-RADS 1":0.01,"BI-RADS 2":0.01,"BI-RADS 3":0.01,'BI-RADSⅢ':0.01, "BI-RADS 4A":0.01,
+                      "BI-RADS 4B":0.01,"BI-RADS 4a":0.01,"BI-RADS 4b":0.01,"4a":0.01,"4b":0.01, "4A":0.01,"4B":0.01, '肿块':0.01}
+word_probliangxing_minor={"柱状细胞增生":0.01,"柱状细胞变":0.01,"导管上皮柱状细胞变":0.01,"柱状上皮化生腺病":0.01,"导管上皮普通型增生":0.01,"导管上皮呈普通型增生":0.01,"导管上皮呈筛状增生":0.01,"导管上皮呈旺炽性增生":0.01,"导管普通型增生":0.01,"筛孔状增生":0.01,"导管上皮轻度增生":0.01,"导管上皮增生脂肪组织坏死纤维胶原增生":0.01,"间质纤维增生":0.01,"间质胶原增生":0.01, "间质胶原纤维增生":0.01, "胶原纤维增生":0.01, "大汗腺化生":0.01, "假血管瘤样间质增生":0.01,"假血管瘤样间质增生大汗腺化生":0.01,"腺病":0.01}
+
+
+#整体恶性词典、整体良恶性均可词典、整体良性词典
+word_probexing=word_probexing_major
+word_probliang_or_e=word_probliang_or_e_major
+word_probliangxing={**word_probliangxing_major, **word_probliangxing_minor}
+
+word_probchaoshengbingli={**word_probexing, **word_probliang_or_e_major,**word_probliangxing}
+
 def Merge(dict1, dict2, dict3, dict4):
     res = {**dict1, **dict2, **dict3, **dict4}
     return res
@@ -13,6 +28,7 @@ word_probchaoshengall ={**word_probchaoshengbuwei, **word_probchaoshengwuli, **w
 
 def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
     global leninputchaosheng
+    global segmentsc_full_stop
     input_str = ultrasound_report
     leninputchaosheng = len(input_str)
 
@@ -52,19 +68,19 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
 
 
     for i in range(int(len(segmentsc_merge) / 2)):
-        if segmentsc_merge[2*i] in word_probbinglicebie:
+        if segmentsc_merge[2*i] in word_probchaoshengcebie:
             segmentsc1.append(segmentsc_merge[2 * i])
             segmentsc1.append(segmentsc_merge[2 * i + 1])
-        if segmentsc_merge[2*i] in word_probbinglibuwei:
+        if segmentsc_merge[2*i] in word_probchaoshengbuwei:
             segmentsc2.append(segmentsc_merge[2 * i])
             segmentsc2.append(segmentsc_merge[2 * i + 1])
-        if segmentsc_merge[2*i] in word_probbingliwuli:
+        if segmentsc_merge[2*i] in word_probchaoshengwuli:
             segmentsc3.append(segmentsc_merge[2 * i])
             segmentsc3.append(segmentsc_merge[2 * i + 1])
-        if segmentsc_merge[2*i] in word_probbingliliangexing:
+        if segmentsc_merge[2*i] in word_probchaoshengliangexing:
             segmentsc4.append(segmentsc_merge[2 * i])
             segmentsc4.append(segmentsc_merge[2 * i + 1])
-        if segmentsc_merge[2*i] in word_probbinglibingli:
+        if segmentsc_merge[2*i] in word_probchaoshengbingli:
             segmentsc5.append(segmentsc_merge[2 * i])
             segmentsc5.append(segmentsc_merge[2 * i + 1])
 
@@ -293,7 +309,10 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
                                "梭形细胞/硬化性横纹肌肉瘤": 0.01, "硬化性横纹肌肉瘤": 0.01, "梭形细胞横纹肌肉瘤": 0.01}
     word_probb5yanxing = {"炎症": 0.01, "炎性": 0.01, "慢性化脓性炎": 0.01}
     word_probb5rouyazhong = {"肉芽肿": 0.01, "肉芽肿性炎": 0.01, "异物伴肉芽肿": 0.01, "异物肉芽肿": 0.01, "异物性肉芽肿": 0.01}
+    word_probb5daoguan = {'导管内瘤':0.01,'导管内乳头状瘤':0.01}
     for icgy5 in range(len(segmentsc5)):
+       if segmentsc5[icgy5] in word_probb5daoguan.keys():
+           segmentsc5[icgy5] = '导管内瘤'
        if segmentsc5[icgy5] in word_probb5zhifangliu.keys():
            segmentsc5[icgy5] = '脂肪瘤'
        if segmentsc5[icgy5] in word_probb5zhifangliubing.keys():
@@ -350,6 +369,7 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
             segmentsc5[icgy5] = "BI-RADS 4b"
        if segmentsc5[icgy5] =="4c":
             segmentsc5[icgy5] = "BI-RADS 4c"
+
     # lencldivc5 = int(len(segmentsc5) / 2)
     # icldivc5 = 1
     # while (1):

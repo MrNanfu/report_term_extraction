@@ -5,9 +5,9 @@ from newmatch7 import parser
 import json
 
 
-pathological_bodypart = "左乳肿物"
+pathological_bodypart = "左乳肿物2"
 pathological_report = "1、“右侧乳腺及肿物”乳腺浸润性癌，镜下见三灶，最大径分别为1.5cm（分级：3级）、1.6cm（分级：2级）、2.4cm（分级：3级），分型待免疫组化；可见脉管内癌栓，未见明确神经侵犯。2、内、外、上、下、底切缘未见癌；乳头和皮肤未见癌。3、淋巴结转移癌：自检淋巴结（0/10）；送检“右腋窝淋巴结”（3/25）。"
-ultrasound_bodypart = "浅表彩超：乳腺"
+ultrasound_bodypart = "介入会诊：乳腺、腋窝及锁骨上下区（加弹性成像）"
 ultrasound_report ="右侧乳腺内实质性占位病变，BI-RADS 5类。右侧腋窝可疑淋巴结。"
 # 将匹配结果转成字典数组
 # def convert_matching_results_dict_list(result_list):
