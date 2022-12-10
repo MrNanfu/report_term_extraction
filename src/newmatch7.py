@@ -4,7 +4,7 @@ import copy
 from pathological import word_probbinglicebie, word_probbinglibuwei, word_probbingliwuli, word_probchaoshengwuli, \
     word_probbingliwulinangxing, word_probbingliliangexing, word_probchaoshengliangexing, word_probliangxing, \
     word_probexing, word_probliang_or_e, word_probbinglibingli, word_probchaoshengcebie, word_probchaoshengbuwei, \
-    word_probchaoshengbingli, word_probexing_major, word_probliang_or_e_major, word_probliangxing_major, \
+    word_probexing_major, word_probliang_or_e_major, word_probliangxing_major, \
     word_probliangxing_minor,word_probjiaojie_major
 
 # 顺序 侧别1 部位2 bp 物理性质3 pp 良恶性4 bm 病理性质5
@@ -20,7 +20,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     ultrasoundfuc(ultrasound_bodypart, ultrasound_report)
     from pathological import segmentsb1, segmentsb2, segmentsb3, segmentsb4, segmentsb5, segmentsb6, segmentsb_yuyi, leninputbingli, segmentsb2temp, \
         segmentsb5bf, b4_raw_dict# 引入之前两个函数中得到的列表信息
-    from ultrasound import segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5, segmentsc6, leninputchaosheng, segmentsc2temp
+    from ultrasound import segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5, segmentsc6, leninputchaosheng, segmentsc2temp, segmentsc_full_stop
     global segmentsb1, segmentsb2, segmentsb3, segmentsb4, segmentsb5,segmentsb6, segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5,segmentsc6,leninputbingli, leninputchaosheng, segmentsb5bf, b4_raw_dict
 
     #生成一个整体列表的形式
@@ -237,7 +237,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     def get_key(dict, value):
         return [k for k, v in dict.items() if v == value]
 
-    word_prob3 = {"无病变": 0.01, "混合性": 0.02, "囊性": 0.03, "囊实": 0.04, "实性": 0.05, "实质性": 0.045}
+    word_prob3 = {"无病变": 0.01, "混合性": 0.02, "囊性": 0.03, "囊实": 0.04, "实性": 0.05, "实质性": 0.045, "类实性": 0.048}
+
     # 注意实性囊性这里，医生之前没有给出严重的排名，我是根据网上查的写了一个，乳腺任务这里不用实性囊性，但接下来其他部位的时候需要医生确定下他们之间的排序
     word_prob4 = {"良性": 0.01, "良性或恶性待定": 0.015, "恶性": 0.02, "交界性" : 0.016}
 
@@ -736,6 +737,39 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     segmentsc5left_axilla = normalization5c_all(segmentsc5left_axilla)
     segmentsc5right_axilla = normalization5c_all(segmentsc5right_axilla)
 
+    def locate_target_sentence(target_segmentsc5):
+        stop_location = segmentsc_full_stop.copy()
+        stop_location.insert(0, 's')
+        stop_location.insert(1, 0)
+        if len(target_segmentsc5) == 0:
+            return
+        target_segmentsc5 = target_segmentsc5[0]
+        target_pos = []
+        # 寻找目标病理关键词在语句中的位置
+        for i in range(int(len(segmentsc5) / 2)):
+            if segmentsc5[2 * i] == target_segmentsc5:
+                target_pos.append(segmentsc5[2 * i + 1])
+        target_sentence = []
+        # 根据目标关键词在语句中的位置来定位目标语句
+        for i in range(len(target_pos)):
+            for j in range(int(len(stop_location) / 2)- 1):
+                if stop_location[2 * j + 1] < target_pos[i] and target_pos[i] < stop_location[2 * j + 3]:
+                    tmp = []
+                    tmp.append(stop_location[2 * j + 1])
+                    tmp.append(stop_location[2 * j + 3])
+                    target_sentence.append(tmp)
+        segmentsc3_target = []
+        # 根据目标语句来定位物理性质关键词
+        for i in range(int(len(segmentsc3) / 2)):
+            for j in range(len(target_sentence)):
+                if segmentsc3[2 * i + 1] > target_sentence[j][0] and segmentsc3[2 * i + 1] < target_sentence[j][1]:
+                    segmentsc3_target.append(segmentsc3[2 * i])
+        return  segmentsc3_target
+
+    segmentsc3left_breast = locate_target_sentence(segmentsc5left_breast)
+    segmentsc3right_breast = locate_target_sentence(segmentsc5right_breast)
+    segmentsc3left_axilla = locate_target_sentence(segmentsc5left_axilla)
+    segmentsc3right_axilla = locate_target_sentence(segmentsc5right_axilla)
 
     word_prob_birads_to_liang_e = {"BI-RADS 0": '良性或恶性待定', "BI-RADS 1": '没有发现病灶', "BI-RADS 2": '良性', "BI-RADS 3": '良性', 'BI-RADSⅢ':'良性', "BI-RADS 4a": '良性',
                   "BI-RADS 4b": '良性', "BI-RADS 4c": '恶性', "BI-RADS 5": '恶性', "BI-RADS 6": '已有病理结果', 'null' : 'null', '无效语句':'无效语句'}
@@ -872,7 +906,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     ## 对于超声语句中，出现包含"BI-RAD"语句的病理性质，直接置空为'null'
     def ul_deal(segmentsc):
         segmentsc_new = []
-        if (len(segmentsc)==0):
+        if (not segmentsc):
             segmentsc_new.append('null')
             return segmentsc_new
         return segmentsc
