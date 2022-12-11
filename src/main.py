@@ -2,8 +2,6 @@
 #这里用于自己调试代码时试验，调整Input的值，看各个情况下结果是否满足。用于单独的试验。批量跑excel数据批量试验用的是main_excel脚本
 from newmatch7 import parser
 
-import json
-
 
 pathological_bodypart = "左乳肿物2"
 pathological_report = "右乳”穿刺组织，纤维脂肪组织中见乳腺导管结构，部分导管上皮普通型增生，伴大汗腺化生，间质胶原纤维增生，本次送检组织未见确切肿瘤性病变，请结合临床。"

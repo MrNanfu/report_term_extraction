@@ -370,6 +370,7 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
        if segmentsc5[icgy5] =="4c":
             segmentsc5[icgy5] = "BI-RADS 4c"
 
+
     # lencldivc5 = int(len(segmentsc5) / 2)
     # icldivc5 = 1
     # while (1):
