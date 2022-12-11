@@ -260,8 +260,6 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                 if valuesidetemp > valueside:
                     valueside = valuesidetemp
             segments = get_key(word_prob3, valueside)
-            if segments[0] == "实质性":
-                segments[0] = "实性"
             return segments
 
     for i in range(len(segmentsbnew)):
@@ -768,6 +766,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
 
     segmentsc3left_breast = locate_target_sentence(segmentsc5left_breast)
     segmentsc3right_breast = locate_target_sentence(segmentsc5right_breast)
+
     segmentsc3left_axilla = locate_target_sentence(segmentsc5left_axilla)
     segmentsc3right_axilla = locate_target_sentence(segmentsc5right_axilla)
 
@@ -903,7 +902,17 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     # segmentsb4left_breast = normalization4b(segmentsb4left_breast, segmentsb5left_breast)
     # segmentsb4right_breast = normalization4b(segmentsb4right_breast, segmentsb5right_breast)
 
-    ## 对于超声语句中，出现包含"BI-RAD"语句的病理性质，直接置空为'null'
+    ## 对于超声语句中，出现包含"BI-RAD"语句的病理性质，直接置空为'null
+    def guiyihua(segmentsc):
+
+        if int(len(segmentsc))!=0 :
+            for i in range(int(len(segmentsc))):
+                if segmentsc[i]=="实质性":
+                    segmentsc[i]="实性"
+            return segmentsc
+        else:
+            return segmentsc
+
     def ul_deal(segmentsc):
         segmentsc_new = []
         if (not segmentsc):
@@ -912,6 +921,13 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         return segmentsc
     segmentsc3left_breast = ul_deal(segmentsc3left_breast)
     segmentsc3right_breast = ul_deal(segmentsc3right_breast)
+    segmentsc3left_breast = guiyihua(segmentsc3left_breast)
+    segmentsc3right_breast = guiyihua(segmentsc3right_breast)
+
+    #病理物理"实质性"也需要归一化
+    segmentsb3left_breast = guiyihua(segmentsb3left_breast)
+    segmentsb3right_breast = guiyihua(segmentsb3right_breast)
+
     segmentsc4left_breast = ul_deal(segmentsc4left_breast)
     segmentsc4right_breast = ul_deal(segmentsc4right_breast)
     segmentsc5left_breast = ul_deal(segmentsc5left_breast)
