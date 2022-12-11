@@ -551,7 +551,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                                         idx += 1
                                         if idx == max_idx:
                                             segments_normalization_major_minor.append(segments[i])
-            
+            if len(segments_normalization_major_minor) == 0:
+                return segments[1]
             return segments_normalization_major_minor
 
     for i in range(len(segmentsbnew)):
@@ -1066,7 +1067,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         if len(segmentsbfinal_output[i][2])  == 1 and (segmentsbfinal_output[i][2][0] == '细胞' or segmentsbfinal_output[i][2][0] == '腺体' or segmentsbfinal_output[i][2][0] == '导管'):
             if segmentsbfinal_output[i][4][0] == 'null':
                 segmentsbfinal_output[i][4][0] = '病理良恶性不明确'
-            segmentsbfinal_output[i][2][0] = '病理诊断不明确'
+            # segmentsbfinal_output[i][2][0] = '病理诊断不明确'
             segmentsbfinal_output[i][3][0] = '无法判断物理性质'
             # segmentsbfinal_output[i][4][0] = '病理良恶性不明确'
 
