@@ -559,6 +559,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         # 医生给的字典里只有病理性质，所以不知道超声要不要也这样提取，先不加，加上后可能需要调整代码
         # segmentscnew[i][4] = normalization_major_minor(segmentscnew[i][4])
 
+
+
     # 拷贝一个作为输出，这里是根据主要次要诊断筛选后的信息
     segmentsbnew_copy_step2 = copy.deepcopy(segmentsbnew)
     segmentscnew_copy_step2 = copy.deepcopy(segmentscnew)

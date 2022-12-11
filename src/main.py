@@ -2,7 +2,6 @@
 #这里用于自己调试代码时试验，调整Input的值，看各个情况下结果是否满足。用于单独的试验。批量跑excel数据批量试验用的是main_excel脚本
 from newmatch7 import parser
 
-import json
 
 
 pathological_bodypart = "右乳肿物2"

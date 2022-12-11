@@ -365,6 +365,8 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
                     segmentsb5new.append(segmentsb5[2 * i + 1])
             segmentsb5 = segmentsb5new
 
+
+
         # print('segmentsb5new为')
         # print(segmentsb5new)
 
