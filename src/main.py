@@ -3,11 +3,13 @@
 from newmatch7 import parser
 
 
-pathological_bodypart = "左乳肿物2"
-pathological_report = "右乳”穿刺组织，纤维脂肪组织中见乳腺导管结构，部分导管上皮普通型增生，伴大汗腺化生，间质胶原纤维增生，本次送检组织未见确切肿瘤性病变，请结合临床。"
+pathological_bodypart = "“左乳肿物"
+pathological_report ="“左侧副乳腺”纤维腺瘤，部分区域导管上皮增生稍活跃，考虑为导管上皮普通型增生。"
+
 
 ultrasound_bodypart = "介入会诊：乳腺、腋窝及锁骨上下区（加弹性成像）"
-ultrasound_report ="双侧乳腺囊性结节声像，考虑BI-RADS 2类。"
+ultrasound_report ="肝脏、胆囊、脾脏、胰腺未见明显异常声像。双肾、输尿管、膀胱未见明显异常声像。子宫、双附件区未见明显异常声像。甲状腺未见明显异常声像。双侧乳腺未见明显占位性病变，BI-RADS 1类。"
+
 # 将匹配结果转成字典数组
 # def convert_matching_results_dict_list(result_list):
 #     result_dict_list = []

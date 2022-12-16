@@ -367,19 +367,35 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
             interval_negative.append(loc_full_stop)
             # segmentsb_negative_word_all_copy.pop()
             # segmentsb_negative_word_all_copy.pop()
+    #
+    # # if len(invalid_b) == 0:
+    # for i in range(int(len(segmentsb5) / 2)):
+    #     if segmentsb5[2 * i + 1] < interval_negative[0] or segmentsb5[2 * i + 1] > interval_negative[-1]:
+    #         segmentsb5new.append(segmentsb5[2 * i])
+    #         segmentsb5new.append(segmentsb5[2 * i + 1])
+    #     else:
+    #         for j in range(int(len(interval_negative) / 2) - 1):
+    #             if segmentsb5[2 * i + 1] > interval_negative[2 * j + 1] and  segmentsb5[2 * i + 1] < interval_negative[2 * (j + 1)]:
+    #                 segmentsb5new.append(segmentsb5[2 * i])
+    #                 segmentsb5new.append(segmentsb5[2 * i + 1])
+    #                 break
+    # segmentsb5 = segmentsb5new
 
-    # if len(invalid_b) == 0:
-    for i in range(int(len(segmentsb5) / 2)):
-        if segmentsb5[2 * i + 1] < interval_negative[0] or segmentsb5[2 * i + 1] > interval_negative[-1]:
-            segmentsb5new.append(segmentsb5[2 * i])
-            segmentsb5new.append(segmentsb5[2 * i + 1])
-        else:
-            for j in range(int(len(interval_negative) / 2) - 1):
-                if segmentsb5[2 * i + 1] > interval_negative[2 * j + 1] and  segmentsb5[2 * i + 1] < interval_negative[2 * (j + 1)]:
-                    segmentsb5new.append(segmentsb5[2 * i])
-                    segmentsb5new.append(segmentsb5[2 * i + 1])
-                    break
-    segmentsb5 = segmentsb5new
+
+
+    if len(invalid_b) != 0:
+        for i in range(int(len(segmentsb5) / 2)):
+            if segmentsb5[2 * i + 1] < interval_negative[0] or segmentsb5[2 * i + 1] > interval_negative[-1]:
+                segmentsb5new.append(segmentsb5[2 * i])
+                segmentsb5new.append(segmentsb5[2 * i + 1])
+            else:
+                for j in range(int(len(interval_negative) / 2) - 1):
+                    if segmentsb5[2 * i + 1] > interval_negative[2 * j + 1] and segmentsb5[2 * i + 1] < \
+                            interval_negative[2 * (j + 1)]:
+                        segmentsb5new.append(segmentsb5[2 * i])
+                        segmentsb5new.append(segmentsb5[2 * i + 1])
+                        break
+        segmentsb5 = segmentsb5new
 
 
 
@@ -465,7 +481,7 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
                                   "梭形细胞/硬化性横纹肌肉瘤": 0.01, "硬化性横纹肌肉瘤": 0.01, "梭形细胞横纹肌肉瘤": 0.01}
     word_probb5yanxing = {"炎症": 0.01, "炎性": 0.01, "慢性化脓性炎": 0.01}
     word_probb5rouyazhong = {"肉芽肿": 0.01, "肉芽肿性炎": 0.01, "异物伴肉芽肿": 0.01, "异物肉芽肿": 0.01, "异物性肉芽肿": 0.01}
-    word_probb5daoguan = {'导管内瘤': 0.01, '导管内乳头状瘤': 0.01}
+    word_probb5daoguan = {'导管内瘤': 0.01, '导管内乳头状肿瘤': 0.01}
     for ibgy5 in range(len(segmentsb5)):
         if segmentsb5[ibgy5] in word_probb5zhifangliu.keys():
             segmentsb5[ibgy5] = '脂肪瘤'
