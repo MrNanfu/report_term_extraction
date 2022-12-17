@@ -18,7 +18,7 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     lenstringc = len(ultrasound_report)
     pathologicalfuc(pathological_bodypart, pathological_report)
     ultrasoundfuc(ultrasound_bodypart, ultrasound_report)
-    from pathological import segmentsb1, segmentsb2, segmentsb3, segmentsb4, segmentsb5, segmentsb6, segmentsb_yuyi, leninputbingli, segmentsb2temp, \
+    from pathological import segmentsb1, segmentsb2, segmentsb3, segmentsb4, segmentsb5, segmentsb6, segmentsb7, segmentsb_yuyi, leninputbingli, segmentsb2temp, \
         segmentsb5bf, b4_raw_dict# 引入之前两个函数中得到的列表信息
     from ultrasound import segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5, segmentsc6, leninputchaosheng, segmentsc2temp, segmentsc_full_stop
     global segmentsb1, segmentsb2, segmentsb3, segmentsb4, segmentsb5,segmentsb6, segmentsc1, segmentsc2, segmentsc3, segmentsc4, segmentsc5,segmentsc6,leninputbingli, leninputchaosheng, segmentsb5bf, b4_raw_dict
@@ -470,7 +470,13 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                     #             break
                     # if flg_mianyi == 1:  # 有‘免疫组化’语义字段，但是其后没有病理，因此需要特判
                     #     return segments_normalization_major_minor
-                    if cnt_list[1] != 0:  # 不存在恶性但是存在良恶未知
+                    if cnt_list[4] != 0: # 不存在恶性但是存在交界性
+                        if cnt_list[4] == 1:  # 只存在一个良恶未知
+                            for i in range(len(segments)):
+                                if segments[i] in word_probjiaojie_major and segments[i] != '细胞':
+                                    segments_normalization_major_minor.append(segments[i])
+                                    return segments_normalization_major_minor
+                    if cnt_list[1] != 0:  # 不存在交界性但是存在良恶未知
                         if cnt_list[1] == 1:  # 只存在一个良恶未知
                             for i in range(len(segments)):
                                 if segments[i] in word_probliang_or_e_major and segments[i] != '细胞':
@@ -583,6 +589,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                     segmentsb4 = ['良性或恶性待定']
                 if segmentsb_5[0] in word_probliangxing:
                     segmentsb4 = ['良性']
+                if segmentsb_5[0] in word_probjiaojie_major:
+                    segmentsb4 = ['交界性']
         else:
             if segmentsb_5[0] in word_probexing:
                 segmentsb4 = ['恶性']
@@ -590,6 +598,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                 segmentsb4 = ['良性或恶性待定']
             if segmentsb_5[0] in word_probliangxing:
                 segmentsb4 = ['良性']
+            if segmentsb_5[0] in word_probjiaojie_major:
+                segmentsb4 = ['交界性']
         return segmentsb4
 
 
@@ -598,8 +608,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     # 病理主次要诊断筛选后再利用筛选后的病理进行良恶性归一化
     for i in range(len(segmentsbnew)):
         segmentsbnew[i][3]=normalization4b_after_major_minor(segmentsbnew[i][4])
-    for i in range(len(segmentscnew)):
-        segmentscnew[i][3]=normalization4b_after_major_minor(segmentscnew[i][4])
+    # for i in range(len(segmentscnew)):
+    #     segmentscnew[i][3]=normalization4b_after_major_minor(segmentscnew[i][4])
 
     def get_key(dict, value):
         return [k for k, v in dict.items() if v == value]
@@ -760,12 +770,15 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                     tmp.append(stop_location[2 * j + 3])
                     target_sentence.append(tmp)
         segmentsc3_target = []
-        # 根据目标语句来定位物理性质关键词
-        for i in range(int(len(segmentsc3) / 2)):
-            for j in range(len(target_sentence)):
-                if segmentsc3[2 * i + 1] > target_sentence[j][0] and segmentsc3[2 * i + 1] < target_sentence[j][1]:
-                    segmentsc3_target.append(segmentsc3[2 * i])
-        return  segmentsc3_target
+        if len(target_sentence) != 0:
+            # 根据目标语句来定位物理性质关键词
+            for i in range(int(len(segmentsc3) / 2)):
+                for j in range(len(target_sentence)):
+                    if segmentsc3[2 * i + 1] > target_sentence[j][0] and segmentsc3[2 * i + 1] < target_sentence[j][1]:
+                        segmentsc3_target.append(segmentsc3[2 * i])
+            return  segmentsc3_target
+        segmentsc3_target.append(segmentsc3[0])
+        return segmentsc3_target
 
     segmentsc3left_breast = locate_target_sentence(segmentsc5left_breast)
     segmentsc3right_breast = locate_target_sentence(segmentsc5right_breast)
@@ -1064,7 +1077,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     if len(segmentsbfinal_output) == 0:
         segmentsbfinal_output = [[[pathological_bodypart], ['null'], ['null'], ['null'], ['null']]]
     for i in range(len(segmentsbfinal_output)):
-        if len(segmentsbfinal_output[i][2])  == 1 and (segmentsbfinal_output[i][2][0] == '细胞' or segmentsbfinal_output[i][2][0] == '腺体' or segmentsbfinal_output[i][2][0] == '导管'):
+        if segmentsbfinal_output[i][2][0] == 'null' and len(segmentsb7) != 0:
+            segmentsbfinal_output[i][2][0] = segmentsb7[0]
             if segmentsbfinal_output[i][4][0] == 'null':
                 segmentsbfinal_output[i][4][0] = '病理良恶性不明确'
             # segmentsbfinal_output[i][2][0] = '病理诊断不明确'
@@ -1087,7 +1101,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         segmentscfinal_output.append(segmentscfinal[3])
 
     if len(segmentscfinal_output) == 0:
-        segmentscfinal_output = [[[ultrasound_bodypart], ['null'], ['null'], ['null'], ['null']]]
+        segmentscfinal_output.append(segmentscfinal[0])
+        # segmentscfinal_output = [[[ultrasound_bodypart], ['null'], ['null'], ['null'], ['null']]]
 
     # 病理谈到哪些侧别，匹配结果跟病理保持一致
     matchresult_output = []
