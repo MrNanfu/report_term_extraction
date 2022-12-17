@@ -3,12 +3,11 @@
 from newmatch7 import parser
 
 
-pathological_bodypart = "“左乳肿物"
-pathological_report ="“左乳肿物2”穿刺组织，考虑为浸润性癌，需免疫组化协诊。※如同意做免疫组化请来病理科。"
-
+pathological_bodypart = "左乳肿物;右乳肿物"
+pathological_report ="“右乳区段”纤维囊性乳腺病，局部考虑为导管内乳头状瘤。"
 
 ultrasound_bodypart = "介入会诊：乳腺、腋窝及锁骨上下区（加弹性成像）"
-ultrasound_report ="左侧乳腺实性结节，增强超声（CEUS）考虑Ca可能，结节整体增强，可常规取材。"
+ultrasound_report ="右侧乳腺内实质性结节，BI-RADS 4a类，建议超声造影。左侧乳腺内实质性结节，BI-RADS 3类。"
 
 # 将匹配结果转成字典数组
 # def convert_matching_results_dict_list(result_list):

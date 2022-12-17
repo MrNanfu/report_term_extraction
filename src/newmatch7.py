@@ -777,6 +777,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                     if segmentsc3[2 * i + 1] > target_sentence[j][0] and segmentsc3[2 * i + 1] < target_sentence[j][1]:
                         segmentsc3_target.append(segmentsc3[2 * i])
             return  segmentsc3_target
+        if int(len(segmentsc3))==0:
+            return segmentsc3_target
         segmentsc3_target.append(segmentsc3[0])
         return segmentsc3_target
 
