@@ -309,7 +309,7 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
                                "梭形细胞/硬化性横纹肌肉瘤": 0.01, "硬化性横纹肌肉瘤": 0.01, "梭形细胞横纹肌肉瘤": 0.01}
     word_probb5yanxing = {"炎症": 0.01, "炎性": 0.01, "慢性化脓性炎": 0.01}
     word_probb5rouyazhong = {"肉芽肿": 0.01, "肉芽肿性炎": 0.01, "异物伴肉芽肿": 0.01, "异物肉芽肿": 0.01, "异物性肉芽肿": 0.01}
-    word_probb5daoguan = {'导管内瘤':0.01,'导管内乳头状瘤':0.01}
+    word_probb5daoguan = {'导管内瘤':0.01,'导管内乳头状肿瘤':0.01}
     for icgy5 in range(len(segmentsc5)):
        if segmentsc5[icgy5] in word_probb5daoguan.keys():
            segmentsc5[icgy5] = '导管内瘤'
@@ -369,6 +369,7 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
             segmentsc5[icgy5] = "BI-RADS 4b"
        if segmentsc5[icgy5] =="4c":
             segmentsc5[icgy5] = "BI-RADS 4c"
+
 
     # lencldivc5 = int(len(segmentsc5) / 2)
     # icldivc5 = 1

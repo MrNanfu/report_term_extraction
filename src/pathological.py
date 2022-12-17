@@ -42,10 +42,12 @@ word_reliability = {"建议": 0.01, "鉴别": 0.01, "排除": 0.01, "待": 0.01,
 #新的字典
 #主要诊断里的恶性 良恶性均可 良性 以及次要诊断（都是良性）
 word_probexing_major={"浸润性导管癌":0.01,"浸润性癌":0.01, "浸润癌":0.01, "浸润性乳腺癌":0.01,"导管原位癌":0.01,"原位癌":0.01,"恶性叶状肿瘤":0.01,"包裹性乳头状癌":0.01,"实性乳头状癌":0.01,"导管内乳头状癌":0.01, "化生性癌":0.01}
-word_probliang_or_e_major={"导管内瘤":0.01, "肿瘤病变":0.01, "导管内乳头状病变":0.01, "纤维上皮性病变":0.01, "肿瘤性病变":0.01, "导管内乳头状肿瘤":0.01,"叶状肿瘤":0.01,"放射状瘢痕〈B3,不确定的潜在恶性病变）":0.01,"非典型导管增生":0.01,"非典型导管上皮增生":0.01, "导管上皮不典型增生":0.01, "导管上皮非典型增生":0.01, "平坦型上皮非典型增生":0.01,"平坦上皮非典型性":0.01,"导管上皮轻度非典型增生":0.01,"不典型增生":0.01,"导管上皮增生活跃":0.01, "非典型增生":0.01, "不典型导管增生":0.01, "导管上皮增生":0.01,"导管上皮增生稍活跃(B3,不确定的潜在恶性病变）":0.01,"上皮源性肿瘤":0.01}
+word_probliang_or_e_major={"导管内瘤":0.01, "肿瘤病变":0.01, "导管内乳头状病变":0.01, "纤维上皮性病变":0.01, "肿瘤性病变":0.01, "导管乳头状瘤":0.01,"导管内乳头状肿瘤":0.01,"叶状肿瘤":0.01,"放射状瘢痕〈B3,不确定的潜在恶性病变）":0.01,"非典型导管增生":0.01,"非典型导管上皮增生":0.01, "导管上皮不典型增生":0.01, "导管上皮非典型增生":0.01, "平坦型上皮非典型增生":0.01,"平坦上皮非典型性":0.01,"导管上皮轻度非典型增生":0.01,"不典型增生":0.01,"导管上皮增生活跃":0.01, "非典型增生":0.01, "不典型导管增生":0.01, "导管上皮增生":0.01,"导管上皮增生稍活跃(B3,不确定的潜在恶性病变）":0.01,"上皮源性肿瘤":0.01}
 word_probliangxing_major={"普通型增生":0.01, "肉芽肿":0.01,"肉芽肿性炎":0.01, "硬化性腺病":0.01, "错构瘤":0.01, "导管内乳头状瘤":0.01, "导管内乳头状瘤炎性病变":0.01,"炎性":0.01,"炎症性改变":0.01,"炎症性":0.01,"炎症改变":0.01,"小叶性肉芽肿性乳腺炎":0.01,"小叶肉芽肿性乳腺炎":0.01,"肉芽肿性小叶炎":0.01,"肉芽肿性小叶性乳腺炎":0.01,"非特异性炎症性病变纤维上皮肿瘤":0.01, "梭形细胞病变":0.01, "非特异性炎症性病变":0.01, "纤维上皮性":0.01, "纤维上皮性肿瘤":0.01,"良性纤维上皮性肿瘤":0.01,"纤维腺瘤样增生":0.01,"纤维腺瘤":0.01,"纤维腺瘤改变":0.01,"幼年型纤维腺瘤":0.01,"良性叶状肿瘤":0.01,"泌乳性腺瘤":0.01,"管状腺瘤":0.01,"结节性泌乳性增生硬化性腺病":0.01, "结节性泌乳性增生":0.01, "错构瘤硬化性腺病":0.01, "复杂硬化性":0.01, "复杂性硬化性":0.01, "复杂硬化性病变":0.01, "表皮样囊肿":0.01, "复杂性硬化性病表皮样囊肿":0.01,"纤维囊性乳腺病":0.01,"纤维囊性变":0.01,"囊肿性病变":0.01, "积乳囊肿":0.01, "囊肿":0.01,"导管扩张症新辅助治疗后改变":0.01,"化疗后改变":0.01,"未见确切恶性肿瘤细胞":0.01,"未见肿瘤":0.011, '肿块':0.01}
 word_probjiaojie_major={"交界性叶状肿瘤" : 0.01}
-word_probliangxing_minor={"囊肿": 0.01,"柱状细胞增生":0.01,"柱状细胞变":0.01,"导管上皮柱状细胞变":0.01,"柱状上皮化生腺病":0.01,"导管上皮普通型增生":0.01,"导管上皮呈普通型增生":0.01,"导管上皮呈筛状增生":0.01,"导管上皮呈旺炽性增生":0.01,"导管普通型增生":0.01,"筛孔状增生":0.01,"导管上皮轻度增生":0.01,"导管上皮增生脂肪组织坏死纤维胶原增生":0.01,"间质纤维增生":0.01,"间质胶原增生":0.01, "间质胶原纤维增生":0.01, "胶原纤维增生":0.01, "大汗腺化生":0.01, "假血管瘤样间质增生":0.01,"假血管瘤样间质增生大汗腺化生":0.01,"腺病":0.01}
+
+word_probliangxing_minor={"脂肪瘤":0.01,"囊肿": 0.01,"柱状细胞增生":0.01,"柱状细胞变":0.01,"导管上皮柱状细胞变":0.01,"柱状上皮化生腺病":0.01,"导管上皮普通型增生":0.01,"导管上皮呈普通型增生":0.01,"导管上皮呈筛状增生":0.01,"导管上皮呈旺炽性增生":0.01,"导管普通型增生":0.01,"筛孔状增生":0.01,"导管上皮轻度增生":0.01,"导管上皮增生脂肪组织坏死纤维胶原增生":0.01,"间质纤维增生":0.01,"间质胶原增生":0.01, "间质胶原纤维增生":0.01, "胶原纤维增生":0.01, "大汗腺化生":0.01, "假血管瘤样间质增生":0.01,"假血管瘤样间质增生大汗腺化生":0.01,"腺病":0.01}
+
 
 # 语义字典
 word_prob_yuyi = {"建议免疫组化":0.01, "免疫组化":0.01, "伴":0.01, "个别":0.01, "部分":0.01, "主体":0.01}
@@ -365,19 +367,37 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
             interval_negative.append(loc_full_stop)
             # segmentsb_negative_word_all_copy.pop()
             # segmentsb_negative_word_all_copy.pop()
+    #
+    # # if len(invalid_b) == 0:
+    # for i in range(int(len(segmentsb5) / 2)):
+    #     if segmentsb5[2 * i + 1] < interval_negative[0] or segmentsb5[2 * i + 1] > interval_negative[-1]:
+    #         segmentsb5new.append(segmentsb5[2 * i])
+    #         segmentsb5new.append(segmentsb5[2 * i + 1])
+    #     else:
+    #         for j in range(int(len(interval_negative) / 2) - 1):
+    #             if segmentsb5[2 * i + 1] > interval_negative[2 * j + 1] and  segmentsb5[2 * i + 1] < interval_negative[2 * (j + 1)]:
+    #                 segmentsb5new.append(segmentsb5[2 * i])
+    #                 segmentsb5new.append(segmentsb5[2 * i + 1])
+    #                 break
+    # segmentsb5 = segmentsb5new
 
-    # if len(invalid_b) == 0:
-    for i in range(int(len(segmentsb5) / 2)):
-        if segmentsb5[2 * i + 1] < interval_negative[0] or segmentsb5[2 * i + 1] > interval_negative[-1]:
-            segmentsb5new.append(segmentsb5[2 * i])
-            segmentsb5new.append(segmentsb5[2 * i + 1])
-        else:
-            for j in range(int(len(interval_negative) / 2) - 1):
-                if segmentsb5[2 * i + 1] > interval_negative[2 * j + 1] and  segmentsb5[2 * i + 1] < interval_negative[2 * (j + 1)]:
-                    segmentsb5new.append(segmentsb5[2 * i])
-                    segmentsb5new.append(segmentsb5[2 * i + 1])
-                    break
-    segmentsb5 = segmentsb5new
+
+
+    if len(invalid_b) != 0:
+        for i in range(int(len(segmentsb5) / 2)):
+            if segmentsb5[2 * i + 1] < interval_negative[0] or segmentsb5[2 * i + 1] > interval_negative[-1]:
+                segmentsb5new.append(segmentsb5[2 * i])
+                segmentsb5new.append(segmentsb5[2 * i + 1])
+            else:
+                for j in range(int(len(interval_negative) / 2) - 1):
+                    if segmentsb5[2 * i + 1] > interval_negative[2 * j + 1] and segmentsb5[2 * i + 1] < \
+                            interval_negative[2 * (j + 1)]:
+                        segmentsb5new.append(segmentsb5[2 * i])
+                        segmentsb5new.append(segmentsb5[2 * i + 1])
+                        break
+        segmentsb5 = segmentsb5new
+
+
 
         # print('segmentsb5new为')
         # print(segmentsb5new)
@@ -461,7 +481,7 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
                                   "梭形细胞/硬化性横纹肌肉瘤": 0.01, "硬化性横纹肌肉瘤": 0.01, "梭形细胞横纹肌肉瘤": 0.01}
     word_probb5yanxing = {"炎症": 0.01, "炎性": 0.01, "慢性化脓性炎": 0.01}
     word_probb5rouyazhong = {"肉芽肿": 0.01, "肉芽肿性炎": 0.01, "异物伴肉芽肿": 0.01, "异物肉芽肿": 0.01, "异物性肉芽肿": 0.01}
-    word_probb5daoguan = {'导管内瘤': 0.01, '导管内乳头状瘤': 0.01}
+    word_probb5daoguan = {'导管内瘤': 0.01, '导管内乳头状肿瘤': 0.01}
     for ibgy5 in range(len(segmentsb5)):
         if segmentsb5[ibgy5] in word_probb5zhifangliu.keys():
             segmentsb5[ibgy5] = '脂肪瘤'
@@ -561,6 +581,12 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
 
         elif segmentsb5bf[2 * icldivb5 - 2] in word_probliangxing.keys():
             segmentsb4.append('良性')
+            segmentsb4.append(segmentsb5bf[2 * icldivb5 - 1])
+            icldivb5 += 1
+            if icldivb5 > lencldivb5:
+                break
+        elif segmentsb5bf[2 * icldivb5 - 2] in word_probjiaojie.keys():
+            segmentsb4.append('交界性')
             segmentsb4.append(segmentsb5bf[2 * icldivb5 - 1])
             icldivb5 += 1
             if icldivb5 > lencldivb5:
