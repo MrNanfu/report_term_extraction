@@ -50,7 +50,7 @@ word_probliangxing_minor={"脂肪瘤":0.01,"囊肿": 0.01,"柱状细胞增生":0
 
 
 # 语义字典
-word_prob_yuyi = {"建议免疫组化":0.01, "免疫组化":0.01, "伴":0.01, "个别":0.01, "部分":0.01, "主体":0.01}
+word_prob_yuyi = {"建议免疫组化":0.01,  "待免疫组化":0.01,"免疫组化":0.01, "伴":0.01, "个别":0.01, "部分":0.01, "主体":0.01}
 
 
 #整体恶性词典、整体良恶性均可词典、整体良性词典
@@ -99,7 +99,7 @@ def findsegments(input, word_prob):#最大匹配的那个函数
 
 
 #合并成一个大字典，用这个字典进去一起找，找完之后再区分开是部位还是性质等等
-word_probbingliall={**word_probbinglibuwei,**word_probbingliwuli,**word_probbingliliangexing,**word_probbinglibingli, **word_prob_invalid}
+word_probbingliall={**word_probbinglibuwei,**word_probbingliwuli,**word_probbingliliangexing,**word_probbinglibingli, **word_prob_invalid, **word_probbingli_other}
 # print(word_probbingliall)
 
 ## 切缘、皮缘等词的出现，定义为无效病理语句
@@ -125,7 +125,7 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
     # segmentsb1=[]
     # segmentsb1=findsegments(input_str, word_probbinglicebie)
 
-    global segmentsb1,segmentsb2,segmentsb3,segmentsb4,segmentsb5, segmentsb6, segmentsb_yuyi
+    global segmentsb1,segmentsb2,segmentsb3,segmentsb4,segmentsb5, segmentsb6, segmentsb_yuyi, segmentsb7
     #1代表侧别、2代表部位、3代表物理性质、4代表良恶
     segmentsb1=[]#注意这里又加了b1，虽然这次任务用不上
     segmentsb2=[]
@@ -137,6 +137,7 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
 
     segmentsb6=[]
     segmentsb_yuyi = [] # 存放语义信息
+    segmentsb7 = [] # 存放其它病理关键词信息
 
     # 提取语义关键词
     segmentsb_yuyi = findsegments(input_str, word_prob_yuyi)
@@ -159,10 +160,34 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
         if segmentsb_merge[2*i] in word_probbinglibingli:
             segmentsb5.append(segmentsb_merge[2*i])
             segmentsb5.append(segmentsb_merge[2*i+1])
-
+        if segmentsb_merge[2*i] in word_probbingli_other:
+            segmentsb7.append(segmentsb_merge[2*i])
+            segmentsb7.append(segmentsb_merge[2*i+1])
         # if segmentsb_merge[2 * i] in word_prob_invalid:
         #     segmentsb5.append("无效语句")
         #     segmentsb5.append(0)
+
+    # 将”左乳、右乳“类似语句替换成双乳
+    if int(len(segmentsb2) / 2) >= 2:
+        segmentsb2_tmp = []
+        eps = 8
+        flg = 0
+        for i in range(int(len(segmentsb2) / 2) - 1):
+            if segmentsb2[ 2 * i + 3] - segmentsb2[ 2 * i + 1] <= eps:
+                segmentsb2_tmp.append('双乳')
+                segmentsb2_tmp.append(segmentsb2[ 2 * i + 1])
+                if i == int(len(segmentsb2 ) / 2) - 2:
+                    flg = 1
+                i += 1
+            else:
+                segmentsb2_tmp.append(segmentsb2[2 * i])
+                segmentsb2_tmp.append(segmentsb2[2 * i + 1])
+        if not flg:
+            max_idx = int(len(segmentsb2) / 2) - 1
+            segmentsb2_tmp.append(segmentsb2[2 * max_idx])
+            segmentsb2_tmp.append(segmentsb2[2 * max_idx + 1])
+        segmentsb2 = segmentsb2_tmp
+
 
 
     if int(len(reliability)) != 0:
@@ -337,6 +362,7 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
     # print(segmentsb_negative_word,segmentsb_comma,segmentsb_full_stop)
 
     # 按有多个否定词来处理
+
     segmentsb_negative_word_all_copy = segmentsb_negative_word_all.copy()
     segmentsb5new = []
     interval_negative = []
@@ -379,11 +405,7 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
     #                 segmentsb5new.append(segmentsb5[2 * i])
     #                 segmentsb5new.append(segmentsb5[2 * i + 1])
     #                 break
-    # segmentsb5 = segmentsb5new
-
-
-
-    if len(invalid_b) != 0:
+    if len(reliability) != 0 and len(interval_negative) != 0:
         for i in range(int(len(segmentsb5) / 2)):
             if segmentsb5[2 * i + 1] < interval_negative[0] or segmentsb5[2 * i + 1] > interval_negative[-1]:
                 segmentsb5new.append(segmentsb5[2 * i])
