@@ -8,7 +8,7 @@ from base_read_excel import get_final_data
 # 获取文件所在位置
 filelocation_bl = './病理/'
 filelocation_us = './超声/'
-filelocation_all = './合成表/'
+filelocation_all = './新数据/'
 f = File_Add()
 # 读取所有数据
 #print('读取病理excel数据......')
@@ -29,6 +29,6 @@ a = get_final_data(data_all)
 
 
 b = f.write_excel_1(a)
-b.to_excel('./a.xlsx')
+b.to_excel('./b.xlsx')
 end_time = time.time()
 print('合并完成      运行时间为：%s Seconds '%(end_time-start_time))
