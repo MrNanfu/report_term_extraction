@@ -769,24 +769,40 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                     tmp.append(stop_location[2 * j + 1])
                     tmp.append(stop_location[2 * j + 3])
                     target_sentence.append(tmp)
+        segmentscall_target = []
         segmentsc3_target = []
+        segmentsc5_target = []
         if len(target_sentence) != 0:
             # 根据目标语句来定位物理性质关键词
             for i in range(int(len(segmentsc3) / 2)):
                 for j in range(len(target_sentence)):
                     if segmentsc3[2 * i + 1] > target_sentence[j][0] and segmentsc3[2 * i + 1] < target_sentence[j][1]:
                         segmentsc3_target.append(segmentsc3[2 * i])
-            return  segmentsc3_target
-        if int(len(segmentsc3))==0:
-            return segmentsc3_target
-        segmentsc3_target.append(segmentsc3[0])
-        return segmentsc3_target
+        #     return  segmentsc3_target
+        # if int(len(segmentsc3))==0:
+        #     return segmentsc3_target
+        # segmentsc3_target.append(segmentsc3[0])
+        if len(target_sentence) != 0:
+            # 根据目标语句来定位物理性质关键词
+            for i in range(int(len(segmentsc5) / 2)):
+                for j in range(len(target_sentence)):
+                    if segmentsc5[2 * i + 1] > target_sentence[j][0] and segmentsc5[2 * i + 1] < target_sentence[j][1]:
+                        segmentsc5_target.append(segmentsc5[2 * i])
+        segmentscall_target.append(segmentsc3_target)
+        segmentscall_target.append(segmentsc5_target)
+        return segmentscall_target
 
-    segmentsc3left_breast = locate_target_sentence(segmentsc5left_breast)
-    segmentsc3right_breast = locate_target_sentence(segmentsc5right_breast)
+    segmentscall__target_left_breast = locate_target_sentence(segmentsc5left_breast)
+    segmentsc3left_breast, segmentsc5left_breast = segmentscall__target_left_breast[0], segmentscall__target_left_breast[1]
 
-    segmentsc3left_axilla = locate_target_sentence(segmentsc5left_axilla)
-    segmentsc3right_axilla = locate_target_sentence(segmentsc5right_axilla)
+    segmentscall__target_right_breast = locate_target_sentence(segmentsc5right_breast)
+    segmentsc3right_breast, segmentsc5right_breast = segmentscall__target_right_breast[0], segmentscall__target_right_breast[1]
+
+    # segmentscall__target_left_axilla = locate_target_sentence(segmentsc5left_axilla)
+    # segmentsc3left_axilla = segmentscall__target_left_axilla[0]
+    # segmentsc5left_axilla = segmentscall__target_left_axilla[1]
+    # segmentscall__target_right_axilla = locate_target_sentence(segmentsc5right_axilla)
+    # segmentsc3right_axilla, segmentsc5right_axilla = segmentscall__target_right_axilla[0], segmentscall__target_right_axilla[1]
 
     word_prob_birads_to_liang_e = {"BI-RADS 0": '良性或恶性待定', "BI-RADS 1": '没有发现病灶', "BI-RADS 2": '良性', "BI-RADS 3": '良性', 'BI-RADSⅢ':'良性', "BI-RADS 4a": '良性',
                   "BI-RADS 4b": '良性', "BI-RADS 4c": '恶性', "BI-RADS 5": '恶性', "BI-RADS 6": '已有病理结果', 'null' : 'null', '无效语句':'无效语句'}
