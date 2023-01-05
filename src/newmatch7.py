@@ -260,7 +260,10 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                 if valuesidetemp > valueside:
                     valueside = valuesidetemp
             segments = get_key(word_prob3, valueside)
-            return segments
+        for i in range(len(segments)):
+            if segments[i] == '混合':
+                segments[i] = '混合性'
+        return segments
 
     for i in range(len(segmentsbnew)):
         segmentsbnew[i][2] = normalization3(segmentsbnew[i][2],segmentsbnew[i][4] )
@@ -558,7 +561,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                                         if idx == max_idx:
                                             segments_normalization_major_minor.append(segments[i])
             if len(segments_normalization_major_minor) == 0:
-                return segments[1]
+                if len(segments) != 0:
+                    return segments[1]
             return segments_normalization_major_minor
 
     for i in range(len(segmentsbnew)):
@@ -574,9 +578,10 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
 
     def normalization4b_after_major_minor(segmentsb_5):
         segmentsb4 = []
-        if segmentsb_5[0] == '无效语句':
-            segmentsb4 = ['无效语句']
-            return segmentsb4
+        if len(segmentsb_5) != 0:
+            if segmentsb_5[0] == '无效语句':
+                segmentsb4 = ['无效语句']
+                return segmentsb4
 
         if  b4_raw_dict:
             if segmentsb_5[0] in b4_raw_dict:
@@ -592,6 +597,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                 if segmentsb_5[0] in word_probjiaojie_major:
                     segmentsb4 = ['交界性']
         else:
+            if len(segmentsb_5) == 0:
+                return segmentsb4
             if segmentsb_5[0] in word_probexing:
                 segmentsb4 = ['恶性']
             if segmentsb_5[0] in word_probliang_or_e_major:
@@ -671,8 +678,16 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                 segmentsnew_temp.append(3)
         return segmentsnew_temp
 
+
     segmentsbnew_temp = findnotnone(segmentsbnew)
     segmentscnew_temp = findnotnone(segmentscnew)
+
+    if len(segmentsbnew_temp) == 0:
+        segmentsbnew_temp = []
+        if segmentsb2[0] in {"左乳": 0.01, "左侧乳头": 0.01, "左侧乳房": 0.01, "左侧乳腺": 0.01,  "左侧副乳": 0.01, "左":0.01}:
+            segmentsbnew_temp.append(0)
+        if segmentsb2[0] in {"右乳": 0.01, "右侧乳头": 0.01, "右侧乳房": 0.01, "右侧乳腺": 0.01,  "右侧副乳": 0.01, "右":0.01 }:
+            segmentsbnew_temp.append(1)
 
     segmentsbfinal = [[['部位分割标志'], ['左乳'],['左'],segmentsb5left_breast,segmentsb3left_breast, segmentsb4left_breast],
                       [['部位分割标志'], ['右乳'], ['右'],segmentsb5right_breast, segmentsb3right_breast, segmentsb4right_breast],
@@ -777,7 +792,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
             for i in range(int(len(segmentsc3) / 2)):
                 for j in range(len(target_sentence)):
                     if segmentsc3[2 * i + 1] > target_sentence[j][0] and segmentsc3[2 * i + 1] < target_sentence[j][1]:
-                        segmentsc3_target.append(segmentsc3[2 * i])
+                        if segmentsc3[2 * i] == '混合':
+                            segmentsc3_target.append('混合性')
         #     return  segmentsc3_target
         # if int(len(segmentsc3))==0:
         #     return segmentsc3_target
@@ -791,12 +807,12 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         segmentscall_target.append(segmentsc3_target)
         segmentscall_target.append(segmentsc5_target)
         return segmentscall_target
-
-    segmentscall__target_left_breast = locate_target_sentence(segmentsc5left_breast)
-    segmentsc3left_breast, segmentsc5left_breast = segmentscall__target_left_breast[0], segmentscall__target_left_breast[1]
-
-    segmentscall__target_right_breast = locate_target_sentence(segmentsc5right_breast)
-    segmentsc3right_breast, segmentsc5right_breast = segmentscall__target_right_breast[0], segmentscall__target_right_breast[1]
+    if len(segmentsc5left_breast) != 0:
+        segmentscall__target_left_breast = locate_target_sentence(segmentsc5left_breast)
+        segmentsc3left_breast, segmentsc5left_breast = segmentscall__target_left_breast[0], segmentscall__target_left_breast[1]
+    if len(segmentsc5right_breast) != 0:
+        segmentscall__target_right_breast = locate_target_sentence(segmentsc5right_breast)
+        segmentsc3right_breast, segmentsc5right_breast = segmentscall__target_right_breast[0], segmentscall__target_right_breast[1]
 
     # segmentscall__target_left_axilla = locate_target_sentence(segmentsc5left_axilla)
     # segmentsc3left_axilla = segmentscall__target_left_axilla[0]
@@ -1093,8 +1109,13 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         segmentsbfinal_output.append(segmentsbfinal[3])
 
     if len(segmentsbfinal_output) == 0:
-        segmentsbfinal_output = [[[pathological_bodypart], ['null'], ['null'], ['null'], ['null']]]
+        segmentsbfinal_output = [[[segmentsbfinal_output[0][2][0]], ['null'], ['null'], ['null'], ['null']]]
     for i in range(len(segmentsbfinal_output)):
+        if len(segmentsbfinal_output) == 1 and len(segmentsbfinal_output[0][2]) == 0:
+            if segmentsb2[0] in {"左乳": 0.01, "左侧乳头": 0.01, "左侧乳房": 0.01, "左侧乳腺": 0.01, "左侧副乳": 0.01, "左": 0.01}:
+                segmentsbfinal_output = [[[segmentsbfinal_output[0][0][0]], ['左'], ['null'], ['null'], ['null']]]
+            if segmentsb2[0] in {"右乳": 0.01, "右侧乳头": 0.01, "右侧乳房": 0.01, "右侧乳腺": 0.01, "右侧副乳": 0.01, "右": 0.01}:
+                segmentsbfinal_output = [[[segmentsbfinal_output[0][0][0]], ['右'], ['null'], ['null'], ['null']]]
         if segmentsbfinal_output[i][2][0] == 'null' and len(segmentsb7) != 0:
             segmentsbfinal_output[i][2][0] = segmentsb7[0]
             if segmentsbfinal_output[i][4][0] == 'null':

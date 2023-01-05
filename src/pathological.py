@@ -172,8 +172,10 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
         segmentsb2_tmp = []
         eps = 8
         flg = 0
+
+
         for i in range(int(len(segmentsb2) / 2) - 1):
-            if segmentsb2[ 2 * i + 3] - segmentsb2[ 2 * i + 1] <= eps:
+            if segmentsb2[ 2 * i + 3] in {"右乳": 0.01, "右侧乳头": 0.01, "右侧乳房": 0.01, "右侧乳腺": 0.01, "右侧副乳": 0.01, "右": 0.01} and segmentsb2[ 2 * i + 1] in {"左乳": 0.01, "左侧乳头": 0.01, "左侧乳房": 0.01, "左侧乳腺": 0.01, "左侧副乳": 0.01, "左": 0.01} and segmentsb2[ 2 * i + 3] - segmentsb2[ 2 * i + 1] <= eps:
                 segmentsb2_tmp.append('双乳')
                 segmentsb2_tmp.append(segmentsb2[ 2 * i + 1])
                 if i == int(len(segmentsb2 ) / 2) - 2:

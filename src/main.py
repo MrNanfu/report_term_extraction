@@ -3,7 +3,7 @@
 from newmatch7 import parser
 
 
-pathological_bodypart = "右乳肿物"
+pathological_bodypart = "左乳肿物"
 pathological_report ="二次报告：1、“左乳及肿物”切除标本：结合免疫组化结果，残腔周围见少许导管原位癌残留，病灶最大径约0.5cm，低核级，实体型，未见坏死。周围乳腺呈腺病改变。2、“左腋窝组织”经充分补充取材，仅见淋巴结2枚，未见转移癌（0/2）。3、“左腋窝淋巴结”见淋巴结3枚，未见转移癌（0/3）。免疫组化结果（均设立阳性及阴性对照）：导管内癌：ER(部分导管90%，中等-强阳性；部分导管-)、PR(-)、HER-2(2+)、Ki-67(5%)、E-Cadherin(膜+)、CK5/6（-）、P63(导管周肌上皮+)、Calponin(导管周肌上皮+)。"
 
 ultrasound_bodypart = "浅表彩超：乳腺"
