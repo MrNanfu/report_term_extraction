@@ -4,11 +4,11 @@ from pathological import word_probbinglicebie,word_probbinglibuwei,word_probbing
 
 from pathological import findsegments
 
-word_probexing_major={"浸润性导管癌":0.01,"浸润性癌":0.01, "浸润癌":0.01, "浸润性乳腺癌":0.01,"导管原位癌":0.01,"原位癌":0.01,"恶性叶状肿瘤":0.01,"包裹性乳头状癌":0.01,"实性乳头状癌":0.01,"导管内乳头状癌":0.01, "化生性癌":0.01, "BI-RADS 4C":0.01,"BI-RADS 4c":0.01,"4c":0.01,"4C":0.01,"BI-RADS 5":0.01,"BI-RADS 6":0.01}
+word_probexing_major={"浸润性乳头状癌":0.01,"浸润性导管癌":0.01,"浸润性癌":0.01, "浸润癌":0.01, "浸润性乳腺癌":0.01,"导管原位癌":0.01,"原位癌":0.01,"恶性叶状肿瘤":0.01,"包裹性乳头状癌":0.01,"实性乳头状癌":0.01,"导管内乳头状癌":0.01, "化生性癌":0.01, "BI-RADS 4C":0.01,"BI-RADS 4c":0.01,"4c":0.01,"4C":0.01,"BI-RADS 5":0.01,"BI-RADS 6":0.01}
 word_probliang_or_e_major={"导管内瘤":0.01, "肿瘤病变":0.01, "导管内乳头状病变":0.01, "纤维上皮性病变":0.01, "肿瘤性病变":0.01, "导管内乳头状肿瘤":0.01,"叶状肿瘤":0.01,"放射状瘢痕〈B3,不确定的潜在恶性病变）":0.01,"非典型导管增生":0.01,"非典型导管上皮增生":0.01, "导管上皮不典型增生":0.01, "导管上皮非典型增生":0.01, "平坦型上皮非典型增生":0.01,"平坦上皮非典型性":0.01,"导管上皮轻度非典型增生":0.01,"不典型增生":0.01,"导管上皮增生活跃":0.01, "非典型增生":0.01, "不典型导管增生":0.01, "导管上皮增生":0.01,"导管上皮增生稍活跃(B3,不确定的潜在恶性病变）":0.01,"上皮源性肿瘤":0.01,"BI-RADS 0": 0.01}
-word_probliangxing_major={"普通型增生":0.01, "肉芽肿":0.01,"肉芽肿性炎":0.01, "硬化性腺病":0.01, "错构瘤":0.01, "导管内乳头状瘤":0.01, "导管内乳头状瘤炎性病变":0.01,"炎性":0.01,"炎症性改变":0.01,"炎症性":0.01,"炎症改变":0.01,"小叶性肉芽肿性乳腺炎":0.01,"小叶肉芽肿性乳腺炎":0.01,"肉芽肿性小叶炎":0.01,"肉芽肿性小叶性乳腺炎":0.01,"非特异性炎症性病变纤维上皮肿瘤":0.01, "梭形细胞病变":0.01, "非特异性炎症性病变":0.01, "纤维上皮性":0.01, "纤维上皮性肿瘤":0.01,"良性纤维上皮性肿瘤":0.01,"纤维腺瘤样增生":0.01,"纤维腺瘤":0.01,"纤维腺瘤改变":0.01,"幼年型纤维腺瘤":0.01,"良性叶状肿瘤":0.01,"泌乳性腺瘤":0.01,"管状腺瘤":0.01,"结节性泌乳性增生硬化性腺病":0.01, "结节性泌乳性增生":0.01, "错构瘤硬化性腺病":0.01, "复杂硬化性":0.01, "复杂性硬化性":0.01, "复杂硬化性病变":0.01, "表皮样囊肿":0.01, "复杂性硬化性病表皮样囊肿":0.01,"纤维囊性乳腺病":0.01,"纤维囊性变":0.01,"囊肿性病变":0.01, "积乳囊肿":0.01, "囊肿":0.01,"导管扩张症新辅助治疗后改变":0.01,"化疗后改变":0.01,"未见确切恶性肿瘤细胞":0.01,"未见肿瘤":0.01,"BI-RADS 1":0.01,"BI-RADS 2":0.01,"BI-RADS 3":0.01,'BI-RADSⅢ':0.01, "BI-RADS 4A":0.01,
-                      "BI-RADS 4B":0.01,"BI-RADS 4a":0.01,"BI-RADS 4b":0.01,"4a":0.01,"4b":0.01, "4A":0.01,"4B":0.01}
-word_probliangxing_minor={"柱状细胞增生":0.01,"柱状细胞变":0.01,"导管上皮柱状细胞变":0.01,"柱状上皮化生腺病":0.01,"导管上皮普通型增生":0.01,"导管上皮呈普通型增生":0.01,"导管上皮呈筛状增生":0.01,"导管上皮呈旺炽性增生":0.01,"导管普通型增生":0.01,"筛孔状增生":0.01,"导管上皮轻度增生":0.01,"导管上皮增生脂肪组织坏死纤维胶原增生":0.01,"间质纤维增生":0.01,"间质胶原增生":0.01, "间质胶原纤维增生":0.01, "胶原纤维增生":0.01, "大汗腺化生":0.01, "假血管瘤样间质增生":0.01,"假血管瘤样间质增生大汗腺化生":0.01,"腺病":0.01}
+word_probliangxing_major={"导管内沉积物":0.01,"普通型增生":0.01, "肉芽肿":0.01,"肉芽肿性炎":0.01, "硬化性腺病":0.01, "错构瘤":0.01, "导管内乳头状瘤":0.01, "导管内乳头状瘤炎性病变":0.01,"炎性":0.01,"炎症性改变":0.01,"炎症性":0.01,"炎症改变":0.01,"小叶性肉芽肿性乳腺炎":0.01,"小叶肉芽肿性乳腺炎":0.01,"肉芽肿性小叶炎":0.01,"肉芽肿性小叶性乳腺炎":0.01,"非特异性炎症性病变纤维上皮肿瘤":0.01, "梭形细胞病变":0.01, "非特异性炎症性病变":0.01, "纤维上皮性":0.01, "纤维上皮性肿瘤":0.01,"良性纤维上皮性肿瘤":0.01,"纤维腺瘤样增生":0.01,"纤维腺瘤":0.01,"纤维腺瘤改变":0.01,"幼年型纤维腺瘤":0.01,"良性叶状肿瘤":0.01,"泌乳性腺瘤":0.01,"管状腺瘤":0.01,"结节性泌乳性增生硬化性腺病":0.01, "结节性泌乳性增生":0.01, "错构瘤硬化性腺病":0.01, "复杂硬化性":0.01, "复杂性硬化性":0.01, "复杂硬化性病变":0.01, "表皮样囊肿":0.01, "复杂性硬化性病表皮样囊肿":0.01,"纤维囊性乳腺病":0.01,"纤维囊性变":0.01,"囊肿性病变":0.01, "积乳囊肿":0.01, "囊肿":0.01,"导管扩张症新辅助治疗后改变":0.01,"化疗后改变":0.01,"未见确切恶性肿瘤细胞":0.01,"未见肿瘤":0.01,"BI-RADS 1":0.01,"BI-RADS 2":0.01,"BI-RADS 3":0.01,'BI-RADSⅢ':0.01, "BI-RADS 4A":0.01,
+                      "BI-RADS 4B":0.01,"BI-RADS 4a":0.01,"BI-RADS 4b":0.01,"4a":0.01,"4b":0.01, "4A":0.01,"4B":0.01,"BI-RADS 4 a":0.01}
+word_probliangxing_minor={"胶原增生":0.01,"增生结节":0.01,"瘤样增生":0.01,"腺病":0.01,"间质纤维胶原组织增生":0.01,"假血管瘤样增生":0.01,"脂肪瘤":0.01,"囊肿": 0.01,"柱状细胞增生":0.01,"柱状细胞变":0.01,"导管上皮柱状细胞变":0.01,"柱状上皮化生腺病":0.01,"导管上皮普通型增生":0.01,"导管上皮呈普通型增生":0.01,"导管上皮呈筛状增生":0.01,"导管上皮呈旺炽性增生":0.01,"导管普通型增生":0.01,"筛孔状增生":0.01,"导管上皮轻度增生":0.01,"导管上皮增生脂肪组织坏死纤维胶原增生":0.01,"间质纤维增生":0.01,"间质胶原增生":0.01, "间质胶原纤维增生":0.01, "胶原纤维增生":0.01, "大汗腺化生":0.01, "假血管瘤样间质增生":0.01,"假血管瘤样间质增生大汗腺化生":0.01,"腺病":0.01}
 
 
 #整体恶性词典、整体良恶性均可词典、整体良性词典
@@ -213,70 +213,134 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
 
     # 否定词 出现否定词的时候 它形容的那些病理性质需要排除掉或者取反，下面列出了一些需要排除的
 
-    word_prob_negative_word_all = {'排除': 0.01, '鉴别': 0.01, '不完全除外': 0.01, '不能除外': 0.01, '不除外': 0.01, '除外': 0.01,
-                                   '未见': 0.01, '疑': 0.01}
-    # 带未见的先注释掉 未见的那个句子里有时候会报错
+    word_prob_negative_word_all={'不支持':0.01,'有无': 0.01,'不排除':0.01,'排除':0.01,'鉴别':0.01,'不完全除外':0.01,'不能除外':0.01,'不除外':0.01,'除外':0.01,'未见': 0.01}
 
     # word_prob_negative_word_all = {'排除': 0.01, '鉴别': 0.01, '不完全除外': 0.01, '不能除外': 0.01, '不除外': 0.01, '除外': 0.01}
     word_prob_negative_word1 = {'排除': 0.01, '鉴别': 0.01, '除外': 0.01, '未见': 0.01}
     # word_prob_negative_word1 = {'排除': 0.01, '鉴别': 0.01,'除外': 0.01,'未见': 0.01}
     # 和上面切面那个问题同理，都是利用最大匹配的算法，这里由于不除外不能除外虽然表达肯定意思，但是如果不把这些词放里，就会提取到除外这样的否定词
-    word_prob_negative_word2 = {'不完全除外': 0.01, '不能除外': 0.01, '不除外': 0.01, '疑': 0.01}
-    word_prob_comma = {'，': 0.01, '；': 0.01, '、': 0.01}  # 注意打字时候这里是中文标点
-    word_prob_full_stop = {'。': 0.01}  # 中文句号
-    # 就是通过表格数据找寻规律，比如出现排除这种词，它前面第一个逗号到后面第一个句号里的词可能都需要排除掉，具体看表格里不同医生的写法去总结共性，然后这里也可以以后用NLP
-
+    word_prob_negative_word2 = {'不完全除外': 0.01, '不能除外': 0.01, '不除外': 0.01 ,'考虑': 0.01, '疑' : 0.01}
+    word_prob_comma={'，':0.01,'；':0.01,'、':0.01}#注意打字时候这里是中文标点
+    word_prob_full_stop={'。':0.01}#中文句号
+    word_prob_semicolon = {';':0.01}
+    word_prob_sep = {**word_prob_full_stop, **word_prob_semicolon, **word_prob_comma}
+  # 就是通过表格数据找寻规律，比如出现排除这种词，它前面第一个逗号到后面第一个句号里的词可能都需要排除掉，具体看表格里不同医生的写法去总结共性，然后这里也可以以后用NLP
     segmentsc_negative_word_all = findsegments(input_str, word_prob_negative_word_all)
+    segmentsc_wuxiao_word = findsegments(input_str, word_prob_invalid)
     segmentsc_negative_word1 = []
     segmentsc_negative_word2 = []
-    for i in range(int(len(segmentsc_negative_word_all) / 2)):
-        if segmentsc_negative_word_all[2 * i] in word_prob_negative_word1:
-            segmentsc_negative_word1.append(segmentsc_negative_word_all[2 * i])
-            segmentsc_negative_word1.append(segmentsc_negative_word_all[2 * i + 1])
-        if segmentsc_negative_word_all[2 * i] in word_prob_negative_word2:
-            segmentsc_negative_word2.append(segmentsc_negative_word_all[2 * i])
-            segmentsc_negative_word2.append(segmentsc_negative_word_all[2 * i + 1])
-    segmentsc_comma = findsegments(input_str, word_prob_comma)
-    segmentsc_full_stop = findsegments(input_str, word_prob_full_stop)
+    for i in range(int(len(segmentsc_negative_word_all)/2)):
+        if segmentsc_negative_word_all[2*i] in word_prob_negative_word1:
+            segmentsc_negative_word1.append(segmentsc_negative_word_all[2*i])
+            segmentsc_negative_word1.append(segmentsc_negative_word_all[2*i+1])
+        if segmentsc_negative_word_all[2*i] in word_prob_negative_word2:
+            segmentsc_negative_word2.append(segmentsc_negative_word_all[2*i])
+            segmentsc_negative_word2.append(segmentsc_negative_word_all[2*i+1])
+    segmentsc_comma=findsegments(input_str, word_prob_comma)
+    segmentsc_full_stop=findsegments(input_str, word_prob_full_stop)
+    segmentsc_semicolon = findsegments(input_str, word_prob_semicolon)
+    segmentsc_sep = findsegments(input_str, word_prob_sep)
     # print('segmentsb_negative_word,segmentsb_comma,segmentsb_full_stop为')
     # print(segmentsb_negative_word,segmentsb_comma,segmentsb_full_stop)
-    if len(segmentsc_negative_word1) != 0:
-        # 先按只有一个否定词来处理
-        loc_negative_word = segmentsc_negative_word1[1]
-        for i in range(int(len(segmentsc_full_stop) / 2)):
-            if segmentsc_full_stop[2 * i + 1] > loc_negative_word:
-                loc_full_stop = segmentsc_full_stop[2 * i + 1]
-                break
-        # print('句号位置为')
-        # print(loc_full_stop)
-        loc_comma = -1
-        loc_full_stop = -1
-        for j in range(int(len(segmentsc_comma) / 2)):
-            if j < int(len(segmentsc_comma) / 2 - 1):
-                if (segmentsc_comma[2 * j + 1] < loc_negative_word) and (
-                        segmentsc_comma[2 * j + 3] > loc_negative_word):
-                    loc_comma = segmentsc_comma[2 * j + 1]
-                    break
-            if j == int(len(segmentsc_comma) / 2 - 1):
-                if (segmentsc_comma[2 * j + 1] < loc_negative_word):
-                    loc_comma = segmentsc_comma[2 * j + 1]
-                    break
-        # print('逗号位置为')
-        # print(loc_comma)
-        # 还没写 2*j+3超出去的情况
 
-        segmentsb5new = []
+    # 按有多个否定词来处理
 
-        for i in range(int(len(segmentsc5) / 2)):
-            # print(loc_comma)
+    segmentsc_negative_word_all_copy = segmentsc_negative_word_all.copy()
+    segmentsc5new = []
+    interval_negative = []
+    for k in range(int(len(segmentsc_negative_word_all) / 2)):
+        if len(segmentsc_negative_word_all_copy) != 0:
+            loc_comma = 0
+            loc_full_stop = 0
+            loc_negative_word = segmentsc_negative_word_all_copy[2 * k + 1]
+            for i in range(int(len(segmentsc_sep) / 2)):
+                if segmentsc_sep[2 * i + 1] > loc_negative_word:
+                    loc_full_stop = segmentsc_sep[2 * i + 1]
+                    break
+            # print('句号位置为')
             # print(loc_full_stop)
-            if segmentsc5[2 * i + 1] < loc_comma or segmentsc5[2 * i + 1] > loc_full_stop:
-                segmentsb5new.append(segmentsc5[2 * i])
-                segmentsb5new.append(segmentsc5[2 * i + 1])
-        segmentsb5 = segmentsb5new
+            for j in range(int(len(segmentsc_comma) / 2)):
+                if j < int(len(segmentsc_comma) / 2 - 1):
+                    if (segmentsc_comma[2 * j + 1] < loc_negative_word) and (
+                            segmentsc_comma[2 * j + 3] > loc_negative_word):
+                        loc_comma = segmentsc_comma[2 * j + 1]
+                        break
+                if j == int(len(segmentsc_comma) / 2 - 1):
+                    if (segmentsc_comma[2 * j + 1] < loc_negative_word):
+                        loc_comma = segmentsc_comma[2 * j + 1]
+                        break
+            # print('逗号位置为')
+            # print(loc_comma)
+            # 还没写 2*j+3超出去的情况
+            interval_negative.append(loc_comma)
+            interval_negative.append(loc_full_stop)
+
+    if len(reliability) != 0 and len(interval_negative) != 0:
+        for i in range(int(len(segmentsc5) / 2)):
+            if segmentsc5[2 * i + 1] < interval_negative[0] or segmentsc5[2 * i + 1] > interval_negative[-1]:
+                segmentsc5new.append(segmentsc5[2 * i])
+                segmentsc5new.append(segmentsc5[2 * i + 1])
+            else:
+                for j in range(int(len(interval_negative) / 2) - 1):
+                    if segmentsc5[2 * i + 1] > interval_negative[2 * j + 1] and segmentsc5[2 * i + 1] < \
+                            interval_negative[2 * (j + 1)]:
+                        segmentsc5new.append(segmentsc5[2 * i])
+                        segmentsc5new.append(segmentsc5[2 * i + 1])
+                        break
+        segmentsc5 = segmentsc5new
+
         # print('segmentsb5new为')
         # print(segmentsb5new)
+    if len(segmentsc_negative_word_all) != 0:
+        loc_full_stop1 = -1
+        loc_full_stop2 = -1
+        """
+        切缘相关的句号和逗号位置信息提取
+        """
+        if int(len(segmentsc_sep) / 2) == 1:
+            for i in range(int(len(segmentsc_merge) / 2)):
+                if segmentsc_merge[2 * i] in word_prob_invalid:
+                    segmentsc5.append("无效语句")
+                    segmentsc5.append(segmentsc_merge[2 * i + 1])
+                    break
+        else:
+            if len(segmentsc_wuxiao_word) != 0:
+                # 先按只有一个切缘来处理
+                loc_wuxiao_word = segmentsc_wuxiao_word[1]
+                for i in range(int(len(segmentsc_sep) / 2)):
+                    if segmentsc_sep[2 * i + 1] > loc_wuxiao_word:
+                        loc_full_stop2 = segmentsc_sep[2 * i + 1]
+                        if 2 * i - 1 < 0:
+                            loc_full_stop1 = 1
+                        else:
+                            loc_full_stop1 = segmentsc_sep[2 * i - 1]
+                        break
+        segmentsc5new = []
+        for i in range(int(len(segmentsc5) / 2)):
+            if segmentsc5[2 * i + 1] < loc_full_stop1 or segmentsc5[2 * i + 1] > loc_full_stop2:
+                segmentsc5new.append(segmentsc5[2 * i])
+                segmentsc5new.append(segmentsc5[2 * i + 1])
+        segmentsc5 = segmentsc5new
 
+        segmentsc3new = []
+        for i in range(int(len(segmentsc3_raw) / 2)):
+            if segmentsc3_raw[2 * i + 1] < loc_full_stop1 or segmentsc3_raw[2 * i + 1] > loc_full_stop2:
+                segmentsc3new.append(segmentsc3_raw[2 * i])
+                segmentsc3new.append(segmentsc3_raw[2 * i + 1])
+        segmentsc3_raw = segmentsc3new
+
+        ## 良恶性也要依据否定词进行修改
+        def remove_liange(segmentsc4_raw, segmentsc_negative_word1):
+            segmentsc4_after = []
+            if int(len(segmentsc_negative_word1)) != 0:
+                for i in range(int(len(segmentsc4_raw) / 2)):
+                    for j in range(int(len(segmentsc_negative_word1) / 2)):
+                        if -5 < segmentsc4_raw[2 * i + 1] - segmentsc_negative_word1[2 * j + 1] < 5:
+                            segmentsc4_after.append(segmentsc4_raw[2 * i])
+                            segmentsc4_after.append(segmentsc4_raw[2 * i + 1])
+            return segmentsc4_after
+
+        segmentsbc4_raw = remove_liange(segmentsc4_raw, segmentsc_negative_word1)
 
     global segmentsc5bf
     segmentsc5bf=segmentsc5.copy()
@@ -310,7 +374,11 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
     word_probb5yanxing = {"炎症": 0.01, "炎性": 0.01, "慢性化脓性炎": 0.01}
     word_probb5rouyazhong = {"肉芽肿": 0.01, "肉芽肿性炎": 0.01, "异物伴肉芽肿": 0.01, "异物肉芽肿": 0.01, "异物性肉芽肿": 0.01}
     word_probb5daoguan = {'导管内瘤':0.01,'导管内乳头状肿瘤':0.01}
+    word_probb5daoguan = {'导管内瘤': 0.01, '导管内乳头状肿瘤': 0.01}
+    word_probb5xianbing = {'瘤样增生':0.01,'增生结节':0.01}
     for icgy5 in range(len(segmentsc5)):
+       if segmentsc5[icgy5] in word_probb5xianbing.keys():
+           segmentsc5[icgy5] = '腺病'
        if segmentsc5[icgy5] in word_probb5daoguan.keys():
            segmentsc5[icgy5] = '导管内瘤'
        if segmentsc5[icgy5] in word_probb5zhifangliu.keys():
@@ -353,6 +421,8 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
           segmentsc5[icgy5] = '肉芽肿'
        if segmentsc5[icgy5] =="BI-RADS 4A":
             segmentsc5[icgy5] = "BI-RADS 4a"
+       if segmentsc5[icgy5] =="BI-RADS 4 a":
+            segmentsc5[icgy5] = "BI-RADS 4a"
        if segmentsc5[icgy5] =="BI-RADS 4B":
             segmentsc5[icgy5] = "BI-RADS 4b"
        if segmentsc5[icgy5] =="BI-RADS 4C":
@@ -369,6 +439,7 @@ def ultrasoundfuc(ultrasound_bodypart,ultrasound_report):
             segmentsc5[icgy5] = "BI-RADS 4b"
        if segmentsc5[icgy5] =="4c":
             segmentsc5[icgy5] = "BI-RADS 4c"
+
 
 
     # lencldivc5 = int(len(segmentsc5) / 2)
