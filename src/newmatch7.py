@@ -753,7 +753,9 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         stop_location.insert(0, 's')
         stop_location.insert(1, 0)
         if len(target_segmentsc5) == 0:
-            return
+            # return (cyt)
+            return target_segmentsc5
+
         target_segmentsc5 = target_segmentsc5[0]
         target_pos = []
         # 寻找目标病理关键词在语句中的位置
@@ -793,10 +795,12 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         return segmentscall_target
 
     segmentscall__target_left_breast = locate_target_sentence(segmentsc5left_breast)
-    segmentsc3left_breast, segmentsc5left_breast = segmentscall__target_left_breast[0], segmentscall__target_left_breast[1]
+    if(segmentscall__target_left_breast):
+        segmentsc3left_breast, segmentsc5left_breast = segmentscall__target_left_breast[0], segmentscall__target_left_breast[1]
 
     segmentscall__target_right_breast = locate_target_sentence(segmentsc5right_breast)
-    segmentsc3right_breast, segmentsc5right_breast = segmentscall__target_right_breast[0], segmentscall__target_right_breast[1]
+    if (segmentscall__target_right_breast):
+        segmentsc3right_breast, segmentsc5right_breast = segmentscall__target_right_breast[0], segmentscall__target_right_breast[1]
 
     # segmentscall__target_left_axilla = locate_target_sentence(segmentsc5left_axilla)
     # segmentsc3left_axilla = segmentscall__target_left_axilla[0]
@@ -943,6 +947,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
             for i in range(int(len(segmentsc))):
                 if segmentsc[i]=="实质性":
                     segmentsc[i]="实性"
+                if segmentsc[i]=="混合":
+                    segmentsc[i]="混合性"
             return segmentsc
         else:
             return segmentsc
