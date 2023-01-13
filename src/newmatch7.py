@@ -189,6 +189,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                     else:
                         segmentstall[j][4].append(segmentstall[j][1][1] + 1)    # 句子为最后一个句子时，假设其位置为当前句首加一
                 segmentall_new.append((segmentstall[j]))
+        # if len(segmentall_new) == 0:
+        #     segmentall_new = segmentstall
         return segmentall_new
 
     segmentsball = remove(segmentsball, 0)
@@ -245,8 +247,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
     # 多个实性囊性出现时进行归一化
     def normalization3(segments,segments4):
         mark = 0
-        for i in range(len(segments)):
-            if segments[i] == '无效语句' or segments4[0] == '无效语句' :
+        for i in range(len(segments)) :
+            if segments[i] == '无效语句' or len(segments4) != 0 and segments4[0] == '无效语句' :
                 mark = 1
         if mark :
             new_s = ['无效语句']
@@ -263,6 +265,14 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         for i in range(len(segments)):
             if segments[i] == '混合':
                 segments[i] = '混合性'
+        tmp = []
+        if len(segments4) != 0 and segments4[0] in word_probbingliwulinangxing:
+            tmp.append('囊性')
+        else:
+            tmp.append('实性')
+        if tmp != 0 and segments != 0:
+            if tmp[0] != segments[0]:
+                return tmp
         return segments
 
     for i in range(len(segmentsbnew)):
@@ -570,7 +580,8 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         # 医生给的字典里只有病理性质，所以不知道超声要不要也这样提取，先不加，加上后可能需要调整代码
         # segmentscnew[i][4] = normalization_major_minor(segmentscnew[i][4])
 
-
+    for i in range(len(segmentsbnew)):
+        segmentsbnew[i][2] = normalization3(segmentsbnew[i][2], segmentsbnew[i][4])
 
     # 拷贝一个作为输出，这里是根据主要次要诊断筛选后的信息
     segmentsbnew_copy_step2 = copy.deepcopy(segmentsbnew)
@@ -796,12 +807,14 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
                     if segmentsc3[2 * i + 1] > target_sentence[j][0] and segmentsc3[2 * i + 1] < target_sentence[j][1]:
                         if segmentsc3[2 * i] == '混合':
                             segmentsc3_target.append('混合性')
+                        else:
+                            segmentsc3_target.append(segmentsc3[2 * i])
         #     return  segmentsc3_target
         # if int(len(segmentsc3))==0:
         #     return segmentsc3_target
         # segmentsc3_target.append(segmentsc3[0])
         if len(target_sentence) != 0:
-            # 根据目标语句来定位物理性质关键词
+            # 根据目标语句来定位病理性质关键词
             for i in range(int(len(segmentsc5) / 2)):
                 for j in range(len(target_sentence)):
                     if segmentsc5[2 * i + 1] > target_sentence[j][0] and segmentsc5[2 * i + 1] < target_sentence[j][1]:
@@ -813,10 +826,30 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
 
     if len(segmentsc5left_breast) != 0:
         segmentscall__target_left_breast = locate_target_sentence(segmentsc5left_breast)
-        segmentsc3left_breast, segmentsc5left_breast = segmentscall__target_left_breast[0], segmentscall__target_left_breast[1]
+        tmp3 = []
+        tmp5 = []
+        for i in range(len(segmentscall__target_left_breast[0])):
+            if segmentscall__target_left_breast[0][i] in segmentsc3left_breast:
+                tmp3.append(segmentscall__target_left_breast[0][i])
+        for i in range(len(segmentscall__target_left_breast[1])):
+            if segmentscall__target_left_breast[1][i] in segmentsc5left_breast:
+                tmp5.append(segmentscall__target_left_breast[1][i])
+        segmentsc3left_breast, segmentsc5left_breast = tmp3, tmp5
+
     if len(segmentsc5right_breast) != 0:
         segmentscall__target_right_breast = locate_target_sentence(segmentsc5right_breast)
-        segmentsc3right_breast, segmentsc5right_breast = segmentscall__target_right_breast[0], segmentscall__target_right_breast[1]
+        tmp3 = []
+        tmp5 = []
+        for i in range(len(segmentscall__target_right_breast[0])):
+            if segmentscall__target_right_breast[0][i] in segmentsc3right_breast:
+                tmp3.append(segmentscall__target_right_breast[0][i])
+        for i in range(len(segmentscall__target_right_breast[1])):
+            if segmentscall__target_right_breast[1][i] in segmentsc5right_breast:
+                tmp5.append(segmentscall__target_right_breast[1][i])
+        segmentsc3right_breast, segmentsc5right_breast = tmp3, tmp5
+
+    segmentsc3left_breast = normalization3(segmentsc3left_breast, [])
+    segmentsc3right_breast = normalization3(segmentsc3right_breast, [])
 
     # segmentscall__target_left_axilla = locate_target_sentence(segmentsc5left_axilla)
     # segmentsc3left_axilla = segmentscall__target_left_axilla[0]
@@ -1115,7 +1148,14 @@ def parser(pathological_bodypart, pathological_report, ultrasound_bodypart, ultr
         segmentsbfinal_output.append(segmentsbfinal[3])
 
     if len(segmentsbfinal_output) == 0:
-        segmentsbfinal_output = [[[segmentsbfinal_output[0][2][0]], ['null'], ['null'], ['null'], ['null']]]
+        flg = 0
+        for i in range(int(len(segmentsb2) / 2)):
+            if segmentsb2[i] == '双乳':
+                flg = 1
+                segmentsbfinal_output = [[['左乳'], ['null'], ['null'], ['null'], ['null']], [['右乳'], ['null'], ['null'], ['null'], ['null']]]
+                break
+        if flg == 0:
+            segmentsbfinal_output = [[[segmentsbfinal_output[0][2][0]], ['null'], ['null'], ['null'], ['null']]]
     for i in range(len(segmentsbfinal_output)):
         if len(segmentsbfinal_output) == 1 and len(segmentsbfinal_output[0][2]) == 0:
             if segmentsb2[0] in {"左乳": 0.01, "左侧乳头": 0.01, "左侧乳房": 0.01, "左侧乳腺": 0.01, "左侧副乳": 0.01, "左": 0.01}:

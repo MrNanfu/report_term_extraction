@@ -12,7 +12,7 @@ word_probchaoshengcebie=word_probbinglicebie
 word_probbinglibuwei={'左乳': 0.01,'右乳': 0.01,'双乳': 0.01,"左侧乳腺": 0.01,"右侧乳腺": 0.01,"双侧乳腺": 0.01,
                       "左侧乳房腺体": 0.01,"右侧乳房腺体": 0.01,"双侧乳房腺体": 0.01,"左侧乳头": 0.01,"右侧乳头": 0.01,
                       "左侧乳房": 0.01,"右侧乳房": 0.01,"双侧乳房": 0.01,
-                      "切面": 0.01,"面": 0.01, "左":0.01}#因为出现过 左乳乳房腺体这种事情的存在 导致提取了 左乳 病理空白 然后是 乳房腺体 加病 ，所以删除了单独的乳头、乳腺这类词汇
+                      "切面": 0.01,"面部": 0.01, "左":0.01}#因为出现过 左乳乳房腺体这种事情的存在 导致提取了 左乳 病理空白 然后是 乳房腺体 加病 ，所以删除了单独的乳头、乳腺这类词汇
 word_probchaoshengbuwei =word_probbinglibuwei
 
 #物理性质
@@ -175,7 +175,7 @@ def pathologicalfuc(pathological_bodypart, pathological_report):#给parse输入�
 
 
         for i in range(int(len(segmentsb2) / 2) - 1):
-            if segmentsb2[ 2 * i + 3] in {"右乳": 0.01, "右侧乳头": 0.01, "右侧乳房": 0.01, "右侧乳腺": 0.01, "右侧副乳": 0.01, "右": 0.01} and segmentsb2[ 2 * i + 1] in {"左乳": 0.01, "左侧乳头": 0.01, "左侧乳房": 0.01, "左侧乳腺": 0.01, "左侧副乳": 0.01, "左": 0.01} and segmentsb2[ 2 * i + 3] - segmentsb2[ 2 * i + 1] <= eps:
+            if segmentsb2[ 2 * i + 2] in {"右乳": 0.01, "右侧乳头": 0.01, "右侧乳房": 0.01, "右侧乳腺": 0.01, "右侧副乳": 0.01, "右": 0.01} and segmentsb2[ 2 * i] in {"左乳": 0.01, "左侧乳头": 0.01, "左侧乳房": 0.01, "左侧乳腺": 0.01, "左侧副乳": 0.01, "左": 0.01} and segmentsb2[ 2 * i + 3] - segmentsb2[ 2 * i + 1] <= eps:
                 segmentsb2_tmp.append('双乳')
                 segmentsb2_tmp.append(segmentsb2[ 2 * i + 1])
                 if i == int(len(segmentsb2 ) / 2) - 2:
