@@ -1,14 +1,15 @@
 from term import Term
 class Sentence:
     """
-    The structure of a sentence is ('part', 'pathological_propert1', ... 'pathological_propertN')
+    The structure of a sentence is ('part', 'pathological_propert1', ... 'pathological_propertN', ... , others)
     """
     def __init__(self) -> None:
         self.term_list = []
         self.position_start = -1
         self.position_end = -1
         self.valid = 1   # 1 -> valid, 0 -> invalid
-        self.sizeway = None # type = 1
+        self.located = 0
+        self.sideway = None # type = 1
         self.part = None    # type = 2
         self.pathological_property_list = []    # type = 3
         self.benign_malignant_property_list = []   # type = 4
