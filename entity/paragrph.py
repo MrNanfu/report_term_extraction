@@ -33,7 +33,6 @@ word_prob_benign_malignant = {"良": 0.01, "良性": 0.01, "恶": 0.01, "恶性"
 word_prob_benign_malignant_ultrasound = {"BI-RADS 1":0.01,"BI-RADS 2":0.01,"BI-RADS 3":0.01,'BI-RADSⅢ':0.01, "BI-RADS 4A":0.01,"BI-RADS 4B":0.01,"BI-RADS 4a":0.01,"BI-RADS 4b":0.01,"4a":0.01,"4b":0.01, "4A":0.01,"4B":0.01,"BI-RADS 4 a":0.01}
 word_prob_junction_major = {"交界性叶状肿瘤" : 0.01}
 
-
 # 病理词典（分别包含恶性主要、良性或恶性主要、良性主要、交界性主要、良性次要）
 word_prob_malignant_major = {"浸润性乳头状癌":0.01,"浸润性小叶癌":0.01,"浸润性导管癌":0.01,"浸润性癌":0.01, "浸润癌":0.01, "浸润性乳腺癌":0.01,"导管原位癌":0.01,"原位癌":0.01,"恶性叶状肿瘤":0.01,"包裹性乳头状癌":0.01,"实性乳头状癌":0.01,"导管内乳头状癌":0.01, "化生性癌":0.01}
 word_prob_benign_or_malignant_major = {"非典型小叶增生":0.01,"导管内瘤":0.01, "肿瘤病变":0.01, "导管内乳头状病变":0.01, "纤维上皮性病变":0.01, "肿瘤性病变":0.01,"导管内乳头状肿瘤":0.01,"叶状肿瘤":0.01,"放射状瘢痕〈B3,不确定的潜在恶性病变）":0.01,"非典型导管增生":0.01,"非典型导管上皮增生":0.01, "导管上皮不典型增生":0.01, "导管上皮非典型增生":0.01, "平坦型上皮非典型增生":0.01,"平坦上皮非典型性":0.01,"导管上皮轻度非典型增生":0.01,"不典型增生":0.01,"导管上皮增生活跃":0.01, "非典型增生":0.01, "不典型导管增生":0.01, "导管上皮增生":0.01,"导管上皮增生稍活跃(B3,不确定的潜在恶性病变）":0.01,"上皮源性肿瘤":0.01}
@@ -171,6 +170,11 @@ class Paragraph:
         return segments
     
     def constrcut_raw_term_list(self):
+        """
+        1. find out the all raw_words of input
+        2. set the word, position, type of the term according to raw_word and append the raw_term to raw_term_list
+        """
+        # find out the all raw_words of input
         raw_word_list = []
         if self.report_type == 0:
             raw_word_list = Paragraph.findsegments(self.input, word_prob_pathological_all)
@@ -197,46 +201,36 @@ class Paragraph:
             if raw_word in word_prob_sep:
                 type = 7
             if raw_word  in word_prob_other:
-                type = 8                                                                                           
+                type = 8       
+            # set the word, position, type of the term according to raw_word and append the raw_term to raw_term_list
             self.raw_term_list.append(Term(raw_word, position_paragraph, type)) 
     
+    def select_specific_term_list(self, term_list : list, type : int):
+        specific_term_list = []
+        for term in term_list:
+            if term.type == type:
+                specific_term_list.append(term)
+        return specific_term_list
+        
+    
     def process_raw_term_list(self):
+        """
+        1. normalize sideway
+        2. normalize part 
+        3. process part to convert '左乳xxx右乳' into '双乳'
+        4. normalize benigh_malignant
+        """
         processed_term_list = []
         raw_term_list = self.raw_term_list
-        
+        processed_term_list = copy.deepcopy(self.raw_term_list) 
         # normalize sideway
-        for term in raw_term_list:
+        for term in processed_term_list:
             if term.type == 1:
                 if term.word in {"左": 0.01, "左侧": 0.01}:
                     term.word = '左'
                 if term.word in {"右": 0.01, "右侧": 0.01}:
                     term.word = '右'
                     
-        # process part to convert '左乳xxx右乳' into '双乳'
-        eps = 8
-        flg = 0
-        for i in range(len(raw_term_list) - 1):
-            if raw_term_list[i].type == 2:
-                pre_word = raw_term_list[i].word
-                next_word = None
-                idx = -1
-                for j in range(i + 1, len(raw_term_list)):
-                    if raw_term_list[j].type == 2:
-                        next_word = raw_term_list[j].word
-                        idx = j
-                pre_position_paragraph = raw_term_list[i].position_paragraph
-                next_position_paragraph = raw_term_list[j].position_paragraph
-                pre_type = raw_term_list[i].type
-                if pre_word in word_prob_left_breast and next_word in word_prob_right_breast and (next_position_paragraph - pre_position_paragraph) <= eps:
-                    processed_term_list.append(Term('双乳', pre_position_paragraph, pre_type))
-                    if i == len(raw_term_list) - 2:
-                        flg = 1
-                    i += 1
-                else:
-                    processed_term_list.append(Term(pre_word, pre_position_paragraph, pre_type))
-        if flg == 0:
-             processed_term_list.append(Term(raw_term_list[-1].word, raw_term_list[-1].position_paragraph, raw_term_list[-1].type))
-        
         #  normalize part 
         for term in processed_term_list:
             if term.type != 2:
@@ -290,6 +284,28 @@ class Paragraph:
             if term.word in word_probb2yewosuogudouble.keys():
                 term.word = '双侧腋窝及锁骨区'
 
+        # process part to convert '左乳xxx右乳' into '双乳'
+        eps = 15
+        flg = 0
+        part_term_list = []
+        part_term_list = self.select_specific_term_list(processed_term_list, 2)
+        for i in range(len(part_term_list) - 1):
+            pre_word = part_term_list[i].word
+            next_word = part_term_list[i + 1].word
+            pre_position_paragraph = part_term_list[i].position_paragraph
+            next_position_paragraph = part_term_list[i + 1].position_paragraph
+            if pre_word in word_prob_left_breast and next_word in word_prob_right_breast and (next_position_paragraph - pre_position_paragraph) <= eps:
+                part_term_list[i].word = '双乳'
+                if i == len(part_term_list) - 2:
+                    flg = 1
+                # delete next term in processed_term_list
+                for term in processed_term_list:
+                    if term.position_paragraph == next_position_paragraph:
+                        processed_term_list.remove(term)
+                        break
+                i += 1
+
+        
         # normalize benigh_malignant
         if self.report_type == 0:
             for term in processed_term_list:
@@ -351,11 +367,13 @@ class Paragraph:
         
     
     def construct_sentence_list(self):
+        """
+        Construct the sentence list according to processed_term_list
+        The structure of a sentence is ('part', 'pathological_propert1', ... 'pathological_propertN', ..., others)
+        """
         processed_term_list = self.processed_term_list
         part_term_list = []
-        for term in processed_term_list:
-            if term.type == 2:
-                part_term_list.append(term)
+        part_term_list = self.select_specific_term_list(processed_term_list, 2)
         sentence_check_type = 3
         if self.report_type == 1:
             sentence_check_type = 4
@@ -373,7 +391,7 @@ class Paragraph:
                 
     def convert_input_to_sentence_list(self):
         """
-        1. convert input to term
+        1. convert input to term_list
         2. process term_list
         3. convert term_list into sentence_list
         """
@@ -386,7 +404,7 @@ class Paragraph:
         1. define invalid pathological sentence
         2. process negative keywords
         3. unfold '双乳'
-        4. generate pathological according  pathological property
+        4. generate physics according  pathological property
         """
 
         # define invalid pathological sentence
@@ -468,8 +486,10 @@ class Paragraph:
                 part_r = word_prob_unfold_breast[part][1]
                 sentence_l = copy.deepcopy(sentence)
                 sentence_r = copy.deepcopy(sentence)
-                sentence_l.part = part_l
-                sentence_r.part = part_r
+                sentence_l.part = '左乳'
+                sentence_l.sideway = '左'
+                sentence_r.part = '右乳'
+                sentence_r.sideway = '右'
                 sentence_list_new.append(sentence_l)
                 sentence_list_new.append(sentence_r)
         self.sentence_list = sentence_list_new
@@ -485,11 +505,17 @@ class Paragraph:
                     
     def convert_input_to_paragraph(self):  
         self.convert_input_to_sentence_list()
-        # self.process_sentence_list()
+        self.process_sentence_list()
 
 if __name__ == '__main__':
-    input = '“左乳腺肿物”、“右乳腺肿物”肿块切除标本，良性纤维上皮性肿瘤，伴导管上皮普通型增生，主体考虑为纤维腺瘤，局部呈良性叶状肿瘤改变。备注：建议密切随诊，监测有无复发或演进。'
+    # input = "“左乳肿物”①良性囊肿；②乳腺腺病，部分导管上皮增生，倾向为普通型增生，建议行免疫组化协诊排除不典型增生。※如同意做免疫组化请于工作日至外科楼二楼病理科办理相关手续。"
+    # print(input)
+    # paragraph_0 = Paragraph(input, 0)
+    # paragraph_0.convert_input_to_paragraph()
+    # print(paragraph_0)
+    
+    input = "双侧乳腺内实质性结节（M1），BI-RADS 4a类。"
     print(input)
-    paragraph = Paragraph(input, 0)
-    paragraph.convert_input_to_paragraph()
-    print(paragraph)
+    paragraph_1 = Paragraph(input, 1)
+    paragraph_1.convert_input_to_paragraph()
+    print(paragraph_1)
