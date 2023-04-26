@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from term import Term
-from sentence import Sentence
+from entity.term  import Term
+from entity.sentence  import Sentence
 import copy
 # 侧别
 word_prob_sideway = {"左": 0.01, "右": 0.01, "左侧": 0.01, "右侧": 0.01}
@@ -31,14 +31,21 @@ word_prob_other = {"细胞":0.01,"导管":0.01,"腺体":0.01}
 #良恶性
 word_prob_benign_malignant = {"良": 0.01, "良性": 0.01, "恶": 0.01, "恶性": 0.01, "交界": 0.01, "交界性": 0.01, }#其实这里是重复的 但是开始时候文档给的是都带性的 后来发现实际里有不带性的 也应该识别上加上的
 word_prob_benign_malignant_ultrasound = {"BI-RADS 1":0.01,"BI-RADS 2":0.01,"BI-RADS 3":0.01,'BI-RADSⅢ':0.01, "BI-RADS 4A":0.01,"BI-RADS 4B":0.01,"BI-RADS 4a":0.01,"BI-RADS 4b":0.01,"4a":0.01,"4b":0.01, "4A":0.01,"4B":0.01,"BI-RADS 4 a":0.01}
-word_prob_junction_major = {"交界性叶状肿瘤" : 0.01}
+# bi-rads良恶性
+word_prob_birads_to_benign_malignant = {"BI-RADS 0": '良性或恶性待定', "BI-RADS 1": '没有发现病灶', "BI-RADS 2": '良性', "BI-RADS 3": '良性', 'BI-RADSⅢ':'良性', "BI-RADS 4a": '良性',
+                  "BI-RADS 4b": '良性', "BI-RADS 4c": '恶性', "BI-RADS 5": '恶性', "BI-RADS 6": '已有病理结果'}
 
 # 病理词典（分别包含恶性主要、良性或恶性主要、良性主要、交界性主要、良性次要）
 word_prob_malignant_major = {"浸润性乳头状癌":0.01,"浸润性小叶癌":0.01,"浸润性导管癌":0.01,"浸润性癌":0.01, "浸润癌":0.01, "浸润性乳腺癌":0.01,"导管原位癌":0.01,"原位癌":0.01,"恶性叶状肿瘤":0.01,"包裹性乳头状癌":0.01,"实性乳头状癌":0.01,"导管内乳头状癌":0.01, "化生性癌":0.01}
 word_prob_benign_or_malignant_major = {"非典型小叶增生":0.01,"导管内瘤":0.01, "肿瘤病变":0.01, "导管内乳头状病变":0.01, "纤维上皮性病变":0.01, "肿瘤性病变":0.01,"导管内乳头状肿瘤":0.01,"叶状肿瘤":0.01,"放射状瘢痕〈B3,不确定的潜在恶性病变）":0.01,"非典型导管增生":0.01,"非典型导管上皮增生":0.01, "导管上皮不典型增生":0.01, "导管上皮非典型增生":0.01, "平坦型上皮非典型增生":0.01,"平坦上皮非典型性":0.01,"导管上皮轻度非典型增生":0.01,"不典型增生":0.01,"导管上皮增生活跃":0.01, "非典型增生":0.01, "不典型导管增生":0.01, "导管上皮增生":0.01,"导管上皮增生稍活跃(B3,不确定的潜在恶性病变）":0.01,"上皮源性肿瘤":0.01}
 word_prob_benign_major = {"肉芽肿性乳腺炎":0.01,"泌乳腺瘤":0.01,"化脓性乳腺炎":0.01,"普通型增生":0.01, "肉芽肿":0.01,"肉芽肿性炎":0.01, "硬化性腺病":0.01, "错构瘤":0.01, "导管内乳头状瘤":0.01,"导管乳头状瘤":0.01, "导管内乳头状瘤炎性病变":0.01,"炎性":0.01,"炎症性改变":0.01,"炎症性":0.01,"炎症改变":0.01,"小叶性肉芽肿性乳腺炎":0.01,"小叶肉芽肿性乳腺炎":0.01,"肉芽肿性小叶炎":0.01,"肉芽肿性小叶性乳腺炎":0.01,"非特异性炎症性病变纤维上皮肿瘤":0.01, "梭形细胞病变":0.01, "非特异性炎症性病变":0.01, "纤维上皮性":0.01, "纤维上皮性肿瘤":0.01,"良性纤维上皮性肿瘤":0.01,"纤维腺瘤样增生":0.01,"纤维腺瘤":0.01,"纤维腺瘤改变":0.01,"幼年型纤维腺瘤":0.01,"良性叶状肿瘤":0.01,"泌乳性腺瘤":0.01,"管状腺瘤":0.01,"结节性泌乳性增生硬化性腺病":0.01, "结节性泌乳性增生":0.01, "错构瘤硬化性腺病":0.01, "复杂硬化性":0.01, "复杂性硬化性":0.01, "复杂硬化性病变":0.01, "表皮样囊肿":0.01, "复杂性硬化性病表皮样囊肿":0.01,"纤维囊性乳腺病":0.01,"纤维囊性变":0.01,"囊肿性病变":0.01, "积乳囊肿":0.01, "囊肿":0.01,"导管扩张症新辅助治疗后改变":0.01,"化疗后改变":0.01,"未见确切恶性肿瘤细胞":0.01,"未见肿瘤":0.011}
+word_prob_junction_major = {"交界性叶状肿瘤" : 0.01}
 # word_prob_benign_major_ultrasound = {"导管内沉积物":0.01,"普通型增生":0.01, "肉芽肿":0.01,"肉芽肿性炎":0.01, "硬化性腺病":0.01, "错构瘤":0.01, "导管内乳头状瘤":0.01, "导管内乳头状瘤炎性病变":0.01,"炎性":0.01,"炎症性改变":0.01,"炎症性":0.01,"炎症改变":0.01,"小叶性肉芽肿性乳腺炎":0.01,"小叶肉芽肿性乳腺炎":0.01,"肉芽肿性小叶炎":0.01,"肉芽肿性小叶性乳腺炎":0.01,"非特异性炎症性病变纤维上皮肿瘤":0.01, "梭形细胞病变":0.01, "非特异性炎症性病变":0.01, "纤维上皮性":0.01, "纤维上皮性肿瘤":0.01,"良性纤维上皮性肿瘤":0.01,"纤维腺瘤样增生":0.01,"纤维腺瘤":0.01,"纤维腺瘤改变":0.01,"幼年型纤维腺瘤":0.01,"良性叶状肿瘤":0.01,"泌乳性腺瘤":0.01,"管状腺瘤":0.01,"结节性泌乳性增生硬化性腺病":0.01, "结节性泌乳性增生":0.01, "错构瘤硬化性腺病":0.01, "复杂硬化性":0.01, "复杂性硬化性":0.01, "复杂硬化性病变":0.01, "表皮样囊肿":0.01, "复杂性硬化性病表皮样囊肿":0.01,"纤维囊性乳腺病":0.01,"纤维囊性变":0.01,"囊肿性病变":0.01, "积乳囊肿":0.01, "囊肿":0.01,"导管扩张症新辅助治疗后改变":0.01,"化疗后改变":0.01,"未见确切恶性肿瘤细胞":0.01,"未见肿瘤":0.01}
 word_prob_benign_minor = {"胶原增生":0.01,"增生结节":0.01,"瘤样增生":0.01,"腺病":0.01,"间质纤维胶原组织增生":0.01,"假血管瘤样增生":0.01,"脂肪瘤":0.01,"囊肿": 0.01,"柱状细胞增生":0.01,"柱状细胞变":0.01,"导管上皮柱状细胞变":0.01,"柱状上皮化生腺病":0.01,"导管上皮普通型增生":0.01,"导管上皮呈普通型增生":0.01,"导管上皮呈筛状增生":0.01,"导管上皮呈旺炽性增生":0.01,"导管普通型增生":0.01,"筛孔状增生":0.01,"导管上皮轻度增生":0.01,"导管上皮增生脂肪组织坏死纤维胶原增生":0.01,"间质纤维增生":0.01,"间质胶原增生":0.01, "间质胶原纤维增生":0.01, "胶原纤维增生":0.01, "大汗腺化生":0.01, "假血管瘤样间质增生":0.01,"假血管瘤样间质增生大汗腺化生":0.01}
+
+# 主要诊断、次要诊断
+word_prob_major = {**word_prob_malignant_major, **word_prob_benign_or_malignant_major, **word_prob_benign_major}
+word_prob_minor = {**word_prob_benign_minor}
 
 # 整体恶性词典、整体良恶性均可词典、整体良性词典、整体交界词典
 word_prob_malignant = word_prob_malignant_major
@@ -52,7 +59,7 @@ word_prob_pathological_property={**word_prob_malignant, **word_prob_benign_or_ma
 
 
 # 病理性质相关语义字典
-word_prob_patological_property_semantics = {"建议免疫组化":0.01,  "待免疫组化":0.01,"免疫组化":0.01, "伴":0.01, "个别":0.01, "部分":0.01, "主体":0.01}
+word_prob_patological_property_semantics = {"建议免疫组化":0.01,  "待免疫组化":0.01,"免疫组化":0.01, "伴":0.01, "个别":0.01, "部分":0.01, "主体":0.01, "的": 0.01}
 
 # 病理匹配结果可信度词典
 word_prob_reliability = {"建议": 0.01, "鉴别": 0.01, "排除": 0.01, "待": 0.01, "需": 0.01, "进一步": 0.01}
@@ -142,6 +149,10 @@ class Paragraph:
         self.raw_term_list = []
         self.processed_term_list = []
         self.sentence_list = []
+        self.sentence_list_left = []
+        self.sentence_list_right = []
+        self.sentence_conclusion_left = []
+        self.sentence_conclusion_right = []
         
     
     @ staticmethod
@@ -190,8 +201,8 @@ class Paragraph:
                 type = 2
             if raw_word in word_prob_pathological_property:  
                 type = 3
-            if self.report_type == 0 and raw_word in word_prob_benign_malignant:  
-                type = 4
+            # if self.report_type == 0 and raw_word in word_prob_benign_malignant:  
+            #     type = 4
             if self.report_type == 1 and raw_word in word_prob_benign_malignant_ultrasound:  
                 type = 4
             if raw_word in word_prob_physical:  
@@ -475,20 +486,20 @@ class Paragraph:
         # unfold '双乳' 
         sentence_list_new = []
         for sentence in self.sentence_list:
-            if sentence.part not in word_prob_unfold_breast:
+            if sentence.part.word not in word_prob_unfold_breast:
                 sentence_list_new.append(sentence)
-            if sentence.part in word_prob_unfold_breast:
+            if sentence.part.word in word_prob_unfold_breast:
                 part = ''
                 for key in word_prob_unfold_breast.keys():
-                    if sentence.part == key:
+                    if sentence.part.word == key:
                         part = key
                 part_l = word_prob_unfold_breast[part][0]
                 part_r = word_prob_unfold_breast[part][1]
                 sentence_l = copy.deepcopy(sentence)
                 sentence_r = copy.deepcopy(sentence)
-                sentence_l.part = '左乳'
+                sentence_l.part.word = '左乳'
                 sentence_l.sideway = '左'
-                sentence_r.part = '右乳'
+                sentence_r.part.word = '右乳'
                 sentence_r.sideway = '右'
                 sentence_list_new.append(sentence_l)
                 sentence_list_new.append(sentence_r)

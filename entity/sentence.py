@@ -1,4 +1,4 @@
-from term import Term
+from entity.term import Term
 class Sentence:
     """
     The structure of a sentence is ('part', 'pathological_propert1', ... 'pathological_propertN', ... , others)
@@ -20,17 +20,23 @@ class Sentence:
     
     def add_term(self, term : Term = None, position_sentence : int = -1):# assume preprocess has been done to part
         if len(self.term_list) == 0:
-            self.part = term.word
+            self.part = term
             self.position_start = term.position_paragraph
             if '左' in term.word:
-                self.sizeway = '左' 
+                self.sideway = '左' 
             if '右' in term.word:
-                self.sizeway = '右' 
+                self.sideway = '右' 
         term.position_sentence = position_sentence
         self.term_list.append(term)
         
     def classify_term_into_property_list(self): # assume preprocess has been done to pathological, malignant, physical
         assert len(self.term_list) >= 2
+        self.pathological_property_list = []    # type = 3
+        self.benign_malignant_property_list = []   # type = 4
+        self.physical_property_list = []    # type = 5
+        self.semantics_list = []    #type = 6
+        self.sep_list = []      # type = 7
+        self.other_list = []    # type = 8
         for term in self.term_list:
             if term.type == 3:
                 self.pathological_property_list.append(term)

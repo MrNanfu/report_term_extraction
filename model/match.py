@@ -1,5 +1,5 @@
-from ..entity.paragrph import Paragraph
-from ..entity.result import Result
+from entity.paragraph import Paragraph
+from entity.result import Result
 class Match:
     def __init__(self) -> None:
         pass
