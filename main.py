@@ -2,6 +2,7 @@ from entity.paragraph import Paragraph
 from model.extraction import Extracion
 from model.target_locate import TargetSentenceLocate
 from model.match import Match
+from entity.result import Result
 
 def run():
     print('病理报告:')
@@ -27,8 +28,11 @@ def run():
     locate1.locate_target_sentence()
     print()
     
+     # ------------------------------------------------------------------------------------------------------------------
+    print('匹配结果：')
     match = Match()
     result = match.match(paragraph_0, paragraph_1)
+    print(result)
     
 if __name__ == '__main__':
     run()

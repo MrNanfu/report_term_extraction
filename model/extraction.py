@@ -153,13 +153,13 @@ class Extracion:
                     continue
                 pathological_property_term = sentence.pathological_property_list[0]
                 if pathological_property_term.word in word_prob_malignant:
-                    sentence.benign_malignant_property_list.append('恶性')
+                    sentence.benign_malignant_property_list.append(Term('恶性', pathological_property_term.position_paragraph, 4))
                 elif pathological_property_term.word in word_prob_benign_or_malignant:
-                    sentence.benign_malignant_property_list.append('良性或恶性待定')
+                    sentence.benign_malignant_property_list.append(Term('良性或恶性待定', pathological_property_term.position_paragraph, 4))
                 elif pathological_property_term.word in word_prob_benign:
-                    sentence.benign_malignant_property_list.append('良性')
+                    sentence.benign_malignant_property_list.append(Term('良性', pathological_property_term.position_paragraph, 4))
                 elif pathological_property_term.word in word_prob_junction_major:
-                    sentence.benign_malignant_property_list.append('交界性')
+                    sentence.benign_malignant_property_list.append(Term('交界性', pathological_property_term.position_paragraph, 4))
                   
     
     def physical_property_extracion(self):

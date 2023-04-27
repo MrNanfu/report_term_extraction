@@ -31,9 +31,7 @@ word_prob_other = {"细胞":0.01,"导管":0.01,"腺体":0.01}
 #良恶性
 word_prob_benign_malignant = {"良": 0.01, "良性": 0.01, "恶": 0.01, "恶性": 0.01, "交界": 0.01, "交界性": 0.01, }#其实这里是重复的 但是开始时候文档给的是都带性的 后来发现实际里有不带性的 也应该识别上加上的
 word_prob_benign_malignant_ultrasound = {"BI-RADS 1":0.01,"BI-RADS 2":0.01,"BI-RADS 3":0.01,'BI-RADSⅢ':0.01, "BI-RADS 4A":0.01,"BI-RADS 4B":0.01,"BI-RADS 4a":0.01,"BI-RADS 4b":0.01,"4a":0.01,"4b":0.01, "4A":0.01,"4B":0.01,"BI-RADS 4 a":0.01}
-# bi-rads良恶性
-word_prob_birads_to_benign_malignant = {"BI-RADS 0": '良性或恶性待定', "BI-RADS 1": '没有发现病灶', "BI-RADS 2": '良性', "BI-RADS 3": '良性', 'BI-RADSⅢ':'良性', "BI-RADS 4a": '良性',
-                  "BI-RADS 4b": '良性', "BI-RADS 4c": '恶性', "BI-RADS 5": '恶性', "BI-RADS 6": '已有病理结果'}
+
 
 # 病理词典（分别包含恶性主要、良性或恶性主要、良性主要、交界性主要、良性次要）
 word_prob_malignant_major = {"浸润性乳头状癌":0.01,"浸润性小叶癌":0.01,"浸润性导管癌":0.01,"浸润性癌":0.01, "浸润癌":0.01, "浸润性乳腺癌":0.01,"导管原位癌":0.01,"原位癌":0.01,"恶性叶状肿瘤":0.01,"包裹性乳头状癌":0.01,"实性乳头状癌":0.01,"导管内乳头状癌":0.01, "化生性癌":0.01}
@@ -151,8 +149,8 @@ class Paragraph:
         self.sentence_list = []
         self.sentence_list_left = []
         self.sentence_list_right = []
-        self.sentence_conclusion_left = []
-        self.sentence_conclusion_right = []
+        self.sentence_conclusion_left = None
+        self.sentence_conclusion_right = None
         
     
     @ staticmethod
